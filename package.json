@@ -1,0 +1,58 @@
+{
+    "name": "i18n-mcp-translator",
+    "version": "1.0.0",
+    "description": "An MCP server to translate source code files to i18n keys.",
+    "main": "build/index.js",
+    "type": "module",
+    "bin": {
+        "i18n-mcp-translator": "build/index.js"
+    },
+    "files": [
+        "build",
+        "README.md"
+    ],
+    "scripts": {
+        "prepublishOnly": "npm run build",
+        "start": "tsx src/index.ts",
+        "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+        "watch": "tsc --watch",
+        "inspector": "dotenv -- npm run _inspector:run",
+        "_inspector:run": "npx @modelcontextprotocol/inspector -e GOOGLE_AI_API_KEY=$GOOGLE_AI_API_KEY node build/index.js"
+    },
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "keywords": [
+        "i18n",
+        "i18next",
+        "onesky",
+        "translate",
+        "google-gemini",
+        "mcp"
+    ],
+    "author": "Alan Chao",
+    "license": "ISC",
+    "dependencies": {
+        "@babel/generator": "^7.27.5",
+        "@babel/parser": "^7.27.5",
+        "@babel/traverse": "^7.27.4",
+        "@google/generative-ai": "^0.24.1",
+        "@modelcontextprotocol/sdk": "^1.13.2",
+        "axios": "^1.10.0",
+        "chalk": "^5.4.1",
+        "dotenv": "^16.6.0",
+        "glob": "^11.0.3",
+        "prettier": "^3.6.1",
+        "zod": "^3.25.67"
+    },
+    "devDependencies": {
+        "@types/babel__generator": "^7.27.0",
+        "@types/babel__traverse": "^7.20.7",
+        "@types/node": "^24.0.4",
+        "@types/prettier": "^2.7.3",
+        "dotenv-cli": "^8.0.0",
+        "ts-node": "^10.9.2",
+        "tsx": "^4.20.3",
+        "typescript": "^5.8.3"
+    }
+}
