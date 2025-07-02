@@ -149,20 +149,24 @@ function parseArgs(): Partial<ServerConfig> {
 function loadEnvConfig(): Partial<ServerConfig> {
     const config: Partial<ServerConfig> = {};
 
-    if (process.env.I18N_MCP_DIR) {
-        config.translationDir = process.env.I18N_MCP_DIR;
-    }
     if (process.env.I18N_MCP_BASE_LANGUAGE) {
         config.baseLanguage = process.env.I18N_MCP_BASE_LANGUAGE;
     }
+
     if (process.env.I18N_MCP_TARGET_LANGUAGES) {
         config.targetLanguages = process.env.I18N_MCP_TARGET_LANGUAGES.split(',');
     }
+
     if (process.env.I18N_MCP_DEBUG) {
         config.debug = process.env.I18N_MCP_DEBUG.toLowerCase() === 'true';
     }
+
     if (process.env.I18N_MCP_SRC_DIR) {
         config.srcDir = process.env.I18N_MCP_SRC_DIR;
+    }
+
+    if (process.env.I18N_MCP_TRANSLATION_DIR) {
+        config.translationDir = process.env.I18N_MCP_TRANSLATION_DIR;
     }
 
     if (process.env.I18N_MCP_PROJECT_ROOT) {
