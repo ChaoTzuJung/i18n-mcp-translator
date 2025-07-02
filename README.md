@@ -10,6 +10,11 @@ It scans your codebase for hardcoded Traditional Chinese text, generates i18n ke
 - Updates a centralized `lang.json` file.
 - Returns modified code with i18n keys.
 - Powered by Google Gemini AI.
+- **NEW:** Auto-detects supported languages from OneSky API on startup.
+- **NEW:** Caches OneSky locale data for 24 hours (memory + file cache).
+- **NEW:** Full language info mapping (code, local/english name, region, etc) for all configured languages.
+- **NEW:** Robust fallback/override: always uses your config, but validates and enriches with OneSky data.
+- **NEW:** Graceful fallback to local mock data if OneSky API fails.
 
 ## Requirements
 
@@ -41,7 +46,18 @@ Or export it in your shell:
 export GOOGLE_AI_API_KEY=your-google-api-key-here
 ```
 
-### 2. Download and configure `.mcp.json`
+### 2. OneSky API Key (optional, for auto language detection)
+
+If you want to auto-detect and validate languages from OneSky, set:
+
+```bash
+export ONESKY_API_KEY=your-onesky-api-key
+export ONESKY_API_SECRET=your-onesky-api-secret
+```
+
+If not set, the server will use local mock data and still work.
+
+### 3. Download and configure `.mcp.json`
 
 - Download the sample `.mcp.json` from this repository or your MCP client.
 - Place it in your home directory: `~/.cursor/mcp.json`
@@ -50,11 +66,35 @@ export GOOGLE_AI_API_KEY=your-google-api-key-here
 ```json
 "i18n-mcp-translator": {
   "command": "node",
-  "args": ["/absolute/path/to/build/index.js"],
+  "args": ["/absolute/path/to/i18n-mcp-translator/build/index.js"],
   "env": {
-    "GOOGLE_AI_API_KEY": "your-google-api-key-here"
+    "GOOGLE_AI_API_KEY": "your-google-api-key-here",
+    "ONESKY_API_KEY": "your-onesky-api-key",
+    "ONESKY_API_SECRET": "your-onesky-api-secret",
+    "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+    "I18N_MCP_TARGET_LANGUAGES": "zh-TW,zh-CN,zh-HK,en-US,ja,pt-BR,es-419,th-TH",
+    "I18N_MCP_TRANSLATION_DIR": "/absolute/path/to/your/translation/dir",
+    "I18N_MCP_SRC_DIR": "/absolute/path/to/your/project/src",
+    "I18N_MCP_PROJECT_ROOT": "/absolute/path/to/your/project"
   }
 }
+```
+
+Or use the following command to start the MCP server:
+
+```json
+ "i18n-mcp-translator": {
+      "command": "node",
+      "args": [
+        "/Users/fever_alanchao/feversocial/i18n-mcp-translator/build/index.js",
+        "--api-key", "your-google-api-key-here",
+        "--base-language", "zh-TW",
+        "--target-languages", "zh-TW,zh-CN,zh-HK,en-US,ja,pt-BR,es-419,th-TH",
+        "--dir", "/absolute/path/to/your/translation/dir",
+        "--src-dir", "/absolute/path/to/your/project/src",
+        "--project-root", "/absolute/path/to/your/project"
+      ]
+ }
 ```
 
 ## Usage
@@ -99,6 +139,20 @@ Example payload:
     - Translate to English, Japanese, Simplified Chinese
 - Updates `src/assets/locale/lang.json` with all translations.
 - Returns the refactored code and a summary.
+- **On startup:**
+    - Loads your language config from env/args
+    - Fetches all supported locales from OneSky (if API key present)
+    - Caches locale data for 24h (memory + file)
+    - Maps all configured languages to full info (code, name, etc)
+    - If OneSky API fails, uses local fallback data
+    - Always respects your config, but warns if a language is not found in OneSky
+
+## Advanced: Caching & Fallback
+
+- **Cache file:** `.cache/onesky-locales.json` (auto-created)
+- **Cache duration:** 24 hours
+- **Fallback:** If OneSky API or cache fails, uses built-in mock data
+- **Your config always wins:** You can specify any language codes; the system will try to enrich with OneSky info, but never blocks your workflow
 
 ## License
 

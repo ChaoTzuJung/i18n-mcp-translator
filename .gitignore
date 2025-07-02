@@ -1,20 +1,3 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-
-# testing
-/coverage
-
-# Optional eslint cache
-.eslintcache
-
-# production
-/build
-
-# misc
-.DS_Store
-
 # Environment Variable
 .env
 .env.local
@@ -23,15 +6,46 @@
 .env.production.local
 .env.test
 
-# Yarn
-.yarnclean
+# compiled outputAdd commentMore actions
+/dist
+/build
+/tmp
+/out-tsc
 
-# Vscode
-.vscode
+# dependencies
+node_modules/
 .idea
+.project
+.classpath
+.settings/
+*.sublime-workspace
+.cache
 
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# testing
+coverage
+
+# Optional eslint cache
+.eslintcache
+
+
+# misc
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.idea/*
+# System Files
+.DS_Store
+Thumbs.db
+
+# test
+/app
+
+# Yarn
+.yarnclean
