@@ -1,6 +1,6 @@
 {
     "name": "i18n-mcp-translator",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "An MCP server to translate source code files to i18n keys.",
     "main": "build/index.js",
     "type": "module",

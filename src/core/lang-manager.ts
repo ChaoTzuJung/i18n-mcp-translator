@@ -92,10 +92,41 @@ export class LangManager {
     }
 
     private hasNestedTranslationStructure(langData: Record<string, any>): boolean {
-        // Check if any language has a "translation" key
+        console.error('langData', langData);
+
+        // Check if this is truly a nested structure where ALL content is under "translation"
         for (const lang of Object.keys(langData)) {
-            if (langData[lang] && typeof langData[lang] === 'object' && 'translation' in langData[lang]) {
-                return true;
+            console.error('lang', lang);
+            if (!langData[lang] || typeof langData[lang] !== 'object') {
+                continue;
+            }
+
+            const langObj = langData[lang];
+            const keys = Object.keys(langObj);
+
+            // If "translation" exists and has content, and it's the ONLY meaningful key
+            if (
+                'translation' in langObj &&
+                langObj.translation &&
+                typeof langObj.translation === 'object' &&
+                Object.keys(langObj.translation).length > 0
+            ) {
+                // Count non-empty keys other than "translation"
+                const otherNonEmptyKeys = keys.filter(
+                    key =>
+                        key !== 'translation' &&
+                        langObj[key] !== null &&
+                        langObj[key] !== undefined &&
+                        !(
+                            typeof langObj[key] === 'object' &&
+                            Object.keys(langObj[key]).length === 0
+                        )
+                );
+
+                // If translation has content and there are no other meaningful keys, it's nested
+                if (otherNonEmptyKeys.length === 0) {
+                    return true;
+                }
             }
         }
         return false;
@@ -114,7 +145,7 @@ export class LangManager {
             // Sort keys alphabetically for consistent ordering
             const sortedLangData: Record<string, any> = {};
             const isNested = this.hasNestedTranslationStructure(langData);
-            
+
             for (const langKey in langData) {
                 if (isNested && langData[langKey].translation) {
                     // Handle nested structure with "translation" key
