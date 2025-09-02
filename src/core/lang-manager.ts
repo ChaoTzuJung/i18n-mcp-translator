@@ -23,13 +23,16 @@ export class LangManager {
         const projectRoot = serverConfig.projectRoot || process.cwd();
 
         // If translationDir is absolute, use it directly
-        // TODO: lang.json 的檔案名稱可以透過 env 或是 args 來設定
         if (path.isAbsolute(translationDir)) {
-            return path.join(translationDir, 'lang.json');
+            return path.join(translationDir, serverConfig?.translationFileName || 'lang.json');
         }
 
         // Otherwise, resolve relative to project root
-        return path.resolve(projectRoot, translationDir, 'lang.json');
+        return path.resolve(
+            projectRoot,
+            translationDir,
+            serverConfig?.translationFileName || 'lang.json'
+        );
     }
 
     async readOrCreateLangFile(): Promise<Record<string, any>> {
