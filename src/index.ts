@@ -19,30 +19,19 @@ async function main(): Promise<void> {
     const config: ServerConfig = {
         name: 'i18n-mcp-translator',
         version: '1.0.0',
-        translationDir: './locales',
-        baseLanguage: 'zh-TW',
         debug: false,
+        baseLanguage: 'zh-TW',
+        translationDir: './locales',
         ...envConfig,
         ...argsConfig
     } as ServerConfig;
 
-    // Validate required translationDir
     if (!config.translationDir) {
-        console.warn(
-            JSON.stringify({
-                jsonrpc: '2.0',
-                method: 'notification',
-                params: {
-                    type: 'warning',
-                    message: 'Error: Translation directory is required. Use --dir or I18N_MCP_DIR'
-                }
-            })
+        console.error(
+            'Error: Translation directory is required. Use --dir or I18N_MCP_TRANSLATION_DIR'
         );
         process.exit(1);
     }
-
-    // Create and start server
-    console.info('Fucking config:', config);
 
     const server = new TranslationMCPServer(config);
     await server.start();
@@ -82,6 +71,17 @@ function parseArgs(): Partial<ServerConfig> {
                 }
                 break;
 
+            case '--debug':
+                config.debug = true;
+                break;
+
+            case '--api-key':
+                if (nextArg && !nextArg.startsWith('-')) {
+                    config.apiKey = nextArg;
+                    i++;
+                }
+                break;
+
             case '--base-language':
             case '-b':
                 if (nextArg && !nextArg.startsWith('-')) {
@@ -93,7 +93,14 @@ function parseArgs(): Partial<ServerConfig> {
             case '--target-languages':
             case '-t':
                 if (nextArg && !nextArg.startsWith('-')) {
-                    config.targetLanguages = nextArg.split(',');
+                    config.targetLanguages = nextArg.split(',').map(lang => lang.trim());
+                    i++;
+                }
+                break;
+
+            case '--translation-file':
+                if (nextArg && !nextArg.startsWith('-')) {
+                    config.translationFileName = nextArg;
                     i++;
                 }
                 break;
@@ -106,10 +113,6 @@ function parseArgs(): Partial<ServerConfig> {
                 }
                 break;
 
-            case '--debug':
-                config.debug = true;
-                break;
-
             case '--src-dir':
                 if (nextArg && !nextArg.startsWith('-')) {
                     config.srcDir = nextArg;
@@ -120,13 +123,6 @@ function parseArgs(): Partial<ServerConfig> {
             case '--project-root':
                 if (nextArg && !nextArg.startsWith('-')) {
                     config.projectRoot = nextArg;
-                    i++;
-                }
-                break;
-
-            case '--api-key':
-                if (nextArg && !nextArg.startsWith('-')) {
-                    config.apiKey = nextArg;
                     i++;
                 }
                 break;
@@ -149,12 +145,24 @@ function parseArgs(): Partial<ServerConfig> {
 function loadEnvConfig(): Partial<ServerConfig> {
     const config: Partial<ServerConfig> = {};
 
+    if (process.env.GOOGLE_AI_API_KEY) {
+        config.apiKey = process.env.GOOGLE_AI_API_KEY;
+    }
+
     if (process.env.I18N_MCP_BASE_LANGUAGE) {
         config.baseLanguage = process.env.I18N_MCP_BASE_LANGUAGE;
     }
 
     if (process.env.I18N_MCP_TARGET_LANGUAGES) {
         config.targetLanguages = process.env.I18N_MCP_TARGET_LANGUAGES.split(',');
+    }
+
+    if (process.env.I18N_MCP_TRANSLATION_FILE) {
+        config.translationFileName = process.env.I18N_MCP_TRANSLATION_FILE;
+    }
+
+    if (process.env.I18N_MCP_TRANSLATION_DIR) {
+        config.translationDir = process.env.I18N_MCP_TRANSLATION_DIR;
     }
 
     if (process.env.I18N_MCP_DEBUG) {
@@ -165,16 +173,8 @@ function loadEnvConfig(): Partial<ServerConfig> {
         config.srcDir = process.env.I18N_MCP_SRC_DIR;
     }
 
-    if (process.env.I18N_MCP_TRANSLATION_DIR) {
-        config.translationDir = process.env.I18N_MCP_TRANSLATION_DIR;
-    }
-
     if (process.env.I18N_MCP_PROJECT_ROOT) {
         config.projectRoot = process.env.I18N_MCP_PROJECT_ROOT;
-    }
-
-    if (process.env.GOOGLE_AI_API_KEY) {
-        config.apiKey = process.env.GOOGLE_AI_API_KEY;
     }
 
     return config;

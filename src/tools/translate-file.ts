@@ -8,7 +8,6 @@ import { ServerConfig } from '../types/config.js';
 import { AiService } from '../core/ai-service.js';
 import { LangManager } from '../core/lang-manager.js';
 import { FileProcessor } from '../core/file-processor.js';
-import { OneSkyService } from '../core/onesky-service.js';
 import { TranslationConfig } from '../types/i18n.js';
 
 /**

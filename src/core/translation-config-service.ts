@@ -1,19 +1,19 @@
 /**
  * Service for building and managing translation configuration
  */
-import { OneSkyService } from './onesky-service.js';
+import { LanguageDiscoveryService } from './language-discovery-service.js';
 import { type TranslationConfig, type LanguageInfo } from '../types/i18n.js';
 import { type ServerConfig } from '../types/config.js';
 
 export class TranslationConfigService {
-    private readonly oneSkyService: OneSkyService;
+    private readonly languageDiscoveryService: LanguageDiscoveryService;
 
     constructor() {
-        this.oneSkyService = new OneSkyService();
+        this.languageDiscoveryService = new LanguageDiscoveryService();
     }
 
     /**
-     * Build TranslationConfig from ServerConfig and OneSky data
+     * Build TranslationConfig from ServerConfig and discovered languages
      */
     async buildTranslationConfig(serverConfig: ServerConfig): Promise<TranslationConfig> {
         console.error('[TranslationConfigService] Building translation configuration...');
@@ -22,16 +22,21 @@ export class TranslationConfigService {
         const sourceLanguage = serverConfig.baseLanguage || 'zh-TW';
 
         // 2. Get target languages from config (with default fallback)
-        const targetLanguages = serverConfig.targetLanguages || ['en', 'ja', 'zh-CN'];
+        const targetLanguages = serverConfig.targetLanguages || ['en-US'];
 
         // 3. Build required languages list (source + targets)
         const requiredLanguages = [sourceLanguage, ...targetLanguages];
         const uniqueLanguages = [...new Set(requiredLanguages)]; // Remove duplicates
 
-        // 4. Fetch all available locales from OneSky
-        const allLocales = await this.oneSkyService.fetchSupportedLocales();
+        // 4. Discover available languages from translation files
+        const translationDir = serverConfig.translationDir || './src/assets/locale';
+        const allLocales = await this.languageDiscoveryService.discoverLanguages(
+            translationDir, 
+            serverConfig.translationFileName,
+            uniqueLanguages
+        );
 
-        // 5. Build langMap with required languages
+        // 5. Build langMap with available languages
         const langMap = this.buildLangMap(uniqueLanguages, allLocales);
 
         // 6. Validate that all required languages are available
@@ -151,17 +156,13 @@ export class TranslationConfigService {
     }
 
     /**
-     * Clear OneSky service cache
+     * Get all available locales for debugging/info purposes
      */
-    async clearCache(): Promise<void> {
-        this.oneSkyService.clearCache();
-        console.error('[TranslationConfigService] Cache cleared.');
-    }
-
-    /**
-     * Get all available locales from OneSky (for debugging/info purposes)
-     */
-    async getAllAvailableLocales(): Promise<LanguageInfo[]> {
-        return this.oneSkyService.fetchSupportedLocales();
+    async getAllAvailableLocales(serverConfig: ServerConfig): Promise<LanguageInfo[]> {
+        const translationDir = serverConfig.translationDir || './src/assets/locale';
+        return this.languageDiscoveryService.discoverLanguages(
+            translationDir, 
+            serverConfig.translationFileName
+        );
     }
 }

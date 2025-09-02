@@ -41,7 +41,7 @@ export class TranslationMCPServer {
             baseLanguage: 'zh-TW', // Updated default to Traditional Chinese
             debug: false,
             srcDir: undefined,
-            targetLanguages: ['en', 'ja', 'zh-CN'] // Default target languages
+            targetLanguages: ['en-US'] // Default target languages
         };
 
         // Ensure we have a default translationDir if not provided
@@ -221,9 +221,7 @@ export class TranslationMCPServer {
      * Stop the server and cleanup resources
      */
     async stop(): Promise<void> {
-        // Clear caches
-        if (this.translationConfigService) {
-            await this.translationConfigService.clearCache();
-        }
+        // No cleanup needed for file-based language discovery
+        console.error('[MCP Server] Server stopped.');
     }
 }

@@ -20,29 +20,18 @@ export class AiService {
         this.model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
         // 直接使用傳入的設定
         this.config = translationConfig;
-
-        // TODO: 如何透過 env 或是 args 來設定這些 config
-        // this.config = {
-        //     sourceLanguage: 'Traditional Chinese',
-        //     targetLanguages: ['English', 'Japanese', 'Simplified Chinese'],
-        //     langMap: {
-        //         en: 'en-US',
-        //         ja: 'ja',
-        //         'zh-CN': 'zh-CN',
-        //         'zh-TW': 'zh-TW'
-        //     },
-        //     sourceLangKey: 'zh-TW'
-        // };
     }
 
     async getAiSuggestions(text: string, context: string): Promise<AiSuggestion | null> {
+        // Dynamically build translations schema based on configured target languages
+        const translationsSchema: Record<string, string> = {};
+        for (const langCode of this.config.targetLanguages) {
+            translationsSchema[langCode] = 'string';
+        }
+
         const jsonOutputSchema = {
             i18nKey: 'string',
-            translations: {
-                en: 'string',
-                ja: 'string',
-                'zh-CN': 'string'
-            },
+            translations: translationsSchema,
             originalText: 'string'
         };
 

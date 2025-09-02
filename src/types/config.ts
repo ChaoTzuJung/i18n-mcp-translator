@@ -8,6 +8,8 @@ export interface ServerConfig {
     version: string;
     /** Translation files directory */
     translationDir: string;
+    /** Translation file name (optional, defaults to scanning all JSON files) */
+    translationFileName?: string;
     /** Base language for structure template */
     baseLanguage?: string;
     /** Target languages for translation */
