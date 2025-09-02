@@ -104,7 +104,20 @@ export class LanguageDiscoveryService {
 
             // Simple heuristic: if keys look like language codes (contains common language patterns)
             const languageCodePattern = /^[a-z]{2}(-[A-Z]{2,})?$/;
-            const potentialLanguages = keys.filter(key => languageCodePattern.test(key));
+            let potentialLanguages = keys.filter(key => languageCodePattern.test(key));
+
+            // If no language codes found at top level, check if this has nested "translation" structure
+            if (potentialLanguages.length === 0) {
+                // Check if any top-level key contains a "translation" object with language-like keys
+                for (const key of keys) {
+                    if (languageCodePattern.test(key) && 
+                        langData[key] && 
+                        typeof langData[key] === 'object' && 
+                        'translation' in langData[key]) {
+                        potentialLanguages.push(key);
+                    }
+                }
+            }
 
             if (potentialLanguages.length === 0) {
                 console.warn(

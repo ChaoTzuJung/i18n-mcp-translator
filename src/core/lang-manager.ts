@@ -76,9 +76,29 @@ export class LangManager {
                 langData[fileLangKey] = {};
             }
 
-            // Add the new key-value pair
-            langData[fileLangKey][i18nKey] = text;
+            // Check if this uses nested "translation" structure
+            if (this.hasNestedTranslationStructure(langData)) {
+                // Ensure the "translation" key exists
+                if (!langData[fileLangKey].translation) {
+                    langData[fileLangKey].translation = {};
+                }
+                // Add the new key-value pair under "translation"
+                langData[fileLangKey].translation[i18nKey] = text;
+            } else {
+                // Add the new key-value pair directly
+                langData[fileLangKey][i18nKey] = text;
+            }
         }
+    }
+
+    private hasNestedTranslationStructure(langData: Record<string, any>): boolean {
+        // Check if any language has a "translation" key
+        for (const lang of Object.keys(langData)) {
+            if (langData[lang] && typeof langData[lang] === 'object' && 'translation' in langData[lang]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     async writeLangFile(langData: Record<string, any>): Promise<void> {
@@ -93,13 +113,28 @@ export class LangManager {
 
             // Sort keys alphabetically for consistent ordering
             const sortedLangData: Record<string, any> = {};
+            const isNested = this.hasNestedTranslationStructure(langData);
+            
             for (const langKey in langData) {
-                const sortedKeys = Object.keys(langData[langKey]).sort();
-                const sortedLang: Record<string, string> = {};
-                for (const key of sortedKeys) {
-                    sortedLang[key] = langData[langKey][key];
+                if (isNested && langData[langKey].translation) {
+                    // Handle nested structure with "translation" key
+                    const sortedKeys = Object.keys(langData[langKey].translation).sort();
+                    const sortedTranslations: Record<string, string> = {};
+                    for (const key of sortedKeys) {
+                        sortedTranslations[key] = langData[langKey].translation[key];
+                    }
+                    sortedLangData[langKey] = {
+                        translation: sortedTranslations
+                    };
+                } else {
+                    // Handle flat structure
+                    const sortedKeys = Object.keys(langData[langKey]).sort();
+                    const sortedLang: Record<string, string> = {};
+                    for (const key of sortedKeys) {
+                        sortedLang[key] = langData[langKey][key];
+                    }
+                    sortedLangData[langKey] = sortedLang;
                 }
-                sortedLangData[langKey] = sortedLang;
             }
 
             await JsonParser.writeFile(this.langFilePath, sortedLangData, 4);
