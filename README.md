@@ -161,6 +161,7 @@ npx @modelcontextprotocol/inspector ./build/index.js \
 ```
 
 This will open a web interface where you can:
+
 - View available tools (`translate-file`)
 - Test tool calls with sample data
 - View server logs and debug output
@@ -171,28 +172,36 @@ This will open a web interface where you can:
 If you're using Claude Code (claude.ai/code):
 
 1. **Configure your MCP client** (`.cursor/mcp.json` or similar):
+
 ```json
 {
-  "i18n-mcp-translator": {
-    "command": "node",
-    "args": [
-      "/absolute/path/to/i18n-mcp-translator/build/index.js",
-      "--api-key", "your-google-api-key-here",
-      "--base-language", "zh-TW", 
-      "--target-languages", "en-US,ja",
-      "--translation-file", "lang.json",
-      "--dir", "/absolute/path/to/your/translation/directory",
-      "--src-dir", "/absolute/path/to/your/project/src",
-      "--project-root", "/absolute/path/to/your/project"
-    ]
-  }
+    "i18n-mcp-translator": {
+        "command": "node",
+        "args": [
+            "/absolute/path/to/i18n-mcp-translator/build/index.js",
+            "--api-key",
+            "your-google-api-key-here",
+            "--base-language",
+            "zh-TW",
+            "--target-languages",
+            "en-US,ja",
+            "--translation-file",
+            "lang.json",
+            "--dir",
+            "/absolute/path/to/your/translation/directory",
+            "--src-dir",
+            "/absolute/path/to/your/project/src",
+            "--project-root",
+            "/absolute/path/to/your/project"
+        ]
+    }
 }
 ```
 
 2. **Test with a sample file**:
-   - Open a file with hardcoded Chinese text
-   - Ask Claude to translate the file using the MCP tool
-   - Check the generated translations and modified code
+    - Open a file with hardcoded Chinese text
+    - Ask Claude to translate the file using the MCP tool
+    - Check the generated translations and modified code
 
 #### 4. CLI Testing (Direct Command)
 
@@ -222,15 +231,15 @@ npx -y i18n-mcp-translator \
 
 ### Configuration Parameters
 
-| Parameter | Environment Variable | Description | Example |
-|-----------|---------------------|-------------|---------|
-| `--api-key` | `GOOGLE_AI_API_KEY` | Google AI API key | `AIzaSyC...` |
-| `--base-language` | `I18N_MCP_BASE_LANGUAGE` | Source language | `zh-TW` |
-| `--target-languages` | `I18N_MCP_TARGET_LANGUAGES` | Comma-separated target languages | `en-US,ja,zh-CN` |
-| `--translation-file` | `I18N_MCP_TRANSLATION_FILE` | Translation file name | `lang.json` |
-| `--dir` | `I18N_MCP_TRANSLATION_DIR` | Translation directory | `src/assets/locale` |
-| `--src-dir` | `I18N_MCP_SRC_DIR` | Source code directory | `/path/to/src` |
-| `--project-root` | `I18N_MCP_PROJECT_ROOT` | Project root directory | `/path/to/project` |
+| Parameter            | Environment Variable        | Description                      | Example             |
+| -------------------- | --------------------------- | -------------------------------- | ------------------- |
+| `--api-key`          | `GOOGLE_AI_API_KEY`         | Google AI API key                | `AIzaSyC...`        |
+| `--base-language`    | `I18N_MCP_BASE_LANGUAGE`    | Source language                  | `zh-TW`             |
+| `--target-languages` | `I18N_MCP_TARGET_LANGUAGES` | Comma-separated target languages | `en-US,ja,zh-CN`    |
+| `--translation-file` | `I18N_MCP_TRANSLATION_FILE` | Translation file name            | `lang.json`         |
+| `--dir`              | `I18N_MCP_TRANSLATION_DIR`  | Translation directory            | `src/assets/locale` |
+| `--src-dir`          | `I18N_MCP_SRC_DIR`          | Source code directory            | `/path/to/src`      |
+| `--project-root`     | `I18N_MCP_PROJECT_ROOT`     | Project root directory           | `/path/to/project`  |
 
 ### Debugging
 
@@ -246,17 +255,17 @@ The server outputs detailed logs to stderr. Key log patterns:
 
 #### Common Issues
 
-1. **Wrong languages generated**: 
-   - Check if using local build (`./build/index.js`) vs published version (`npx -y`)
-   - Verify target languages are comma-separated: `"en-US,ja"` not `"en-US ja"`
+1. **Wrong languages generated**:
+    - Check if using local build (`./build/index.js`) vs published version (`npx -y`)
+    - Verify target languages are comma-separated: `"en-US,ja"` not `"en-US ja"`
 
 2. **Translation directory not found**:
-   - Ensure paths are absolute or relative to `--project-root`
-   - Check directory permissions
+    - Ensure paths are absolute or relative to `--project-root`
+    - Check directory permissions
 
 3. **API key issues**:
-   - Verify `GOOGLE_AI_API_KEY` is set correctly
-   - Check API key permissions and quotas
+    - Verify `GOOGLE_AI_API_KEY` is set correctly
+    - Check API key permissions and quotas
 
 #### Sample Test File
 
@@ -265,14 +274,14 @@ Create a test file with hardcoded Chinese:
 ```javascript
 // test-component.js
 export function TestComponent() {
-  return (
-    <div>
-      <h1>結果頁顯示時機</h1>
-      <p>答對題數</p>
-      <input placeholder="題數" />
-      <button>{count} 題(含)以上</button>
-    </div>
-  );
+    return (
+        <div>
+            <h1>結果頁顯示時機</h1>
+            <p>答對題數</p>
+            <input placeholder="題數" />
+            <button>{count} 題(含)以上</button>
+        </div>
+    );
 }
 ```
 
@@ -334,18 +343,3 @@ ISC
 ## Author
 
 Alan Chao
-
-## Commands
-
-```bash
-npx -y i18n-mcp-translator \
-    --api-key "AIzaSyCaqTBSaTXzDKH5_hfXRLz97n-uhHsfbS4" \
-    --base-language "zh-TW" \
-    --target-languages "en-US" \
-    --translation-file "lang.json" \
-    --dir "src/assets/locale" \
-    --src-dir "/Users/fever_alanchao/feversocial/i18n-mcp-translat
-  or/build/src" \
-    --project-root
-  "/Users/fever_alanchao/feversocial/i18n-mcp-translator/build"
-```
