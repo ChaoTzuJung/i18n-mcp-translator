@@ -165,7 +165,7 @@ export class LangManager {
                 }
             }
 
-            await JsonParser.writeFile(this.langFilePath, sortedLangData, 4);
+            await JsonParser.writeFile(this.langFilePath, sortedLangData);
             console.error(
                 chalk.green(`\n✅ Language file successfully updated at ${this.langFilePath}`)
             );

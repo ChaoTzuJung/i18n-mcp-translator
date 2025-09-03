@@ -103,6 +103,13 @@ export class AiService {
           - If it's a form input placeholder, use 'placeholder.'.
           - The rest of the key should be a short, descriptive English version of the text. For '關閉', a good key would be 'btn.close'.
       
+          **CRITICAL JSON Formatting Requirements:**
+          - NEVER modify the JSON formatting or structure beyond the actual translations
+          - Do NOT change indentation, quote styles, or spacing
+          - Only provide the requested content (i18nKey, translations, originalText)
+          - Do NOT add extra formatting, comments, or modifications to the JSON
+          - Your output will be processed by an automated system that requires exact JSON format
+      
           **Input:**
           - Original Text: "${text}"
           - Source Language: "${this.config.sourceLanguage}"
@@ -113,7 +120,7 @@ export class AiService {
           \`\`\`
       
           **Output:**
-          Please provide your response ONLY in a valid JSON format that matches this schema, with no additional text or explanations.
+          Provide ONLY valid JSON matching this exact schema with no additional text or explanations:
           \`\`\`json
           ${JSON.stringify(jsonOutputSchema, null, 2)}
           \`\`\`

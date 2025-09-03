@@ -3,6 +3,7 @@
  */
 
 import { promises as fs } from 'fs';
+import path from 'path';
 
 /**
  * Result of JSON parsing with metadata
@@ -19,9 +20,62 @@ export interface ParseResult {
 }
 
 /**
+ * Project formatting configuration
+ */
+interface ProjectFormatConfig {
+    tabWidth: number;
+    singleQuote: boolean;
+}
+
+/**
  * Safe JSON operations with error handling and metadata
  */
 export class JsonParser {
+    private static formatConfig: ProjectFormatConfig | null = null;
+
+    /**
+     * Load prettier configuration from .prettierrc file
+     */
+    private static async loadFormatConfig(): Promise<ProjectFormatConfig> {
+        if (this.formatConfig) {
+            return this.formatConfig;
+        }
+
+        try {
+            // Look for .prettierrc in current working directory
+            const prettierPath = path.join(process.cwd(), '.prettierrc');
+            const prettierContent = await fs.readFile(prettierPath, 'utf8');
+            const prettierConfig = JSON.parse(prettierContent);
+            
+            this.formatConfig = {
+                tabWidth: prettierConfig.tabWidth || 2,
+                singleQuote: prettierConfig.singleQuote || false
+            };
+        } catch (error) {
+            // Default formatting if prettier config not found
+            this.formatConfig = {
+                tabWidth: 2,
+                singleQuote: false
+            };
+        }
+
+        return this.formatConfig;
+    }
+
+    /**
+     * Custom JSON stringify that respects project formatting preferences
+     */
+    private static async formatJson(data: any, indent?: number): Promise<string> {
+        const config = await this.loadFormatConfig();
+        const tabSize = indent || config.tabWidth;
+        
+        // JSON spec requires double quotes for property names, so we keep the standard format
+        // The singleQuote preference primarily affects JavaScript/TypeScript string literals
+        // For translation files, we'll maintain valid JSON format with double quotes
+        const jsonString = JSON.stringify(data, null, tabSize);
+        
+        return jsonString;
+    }
     /**
      * Safely parse a JSON file with metadata
      * @param filePath - Path to the JSON file
@@ -51,11 +105,11 @@ export class JsonParser {
      * Safely write JSON to a file with formatting
      * @param filePath - Path to write to
      * @param data - Data to write
-     * @param indent - Indentation (default: 2 spaces)
+     * @param indent - Indentation (uses prettier config if available)
      */
-    static async writeFile(filePath: string, data: any, indent: number = 2): Promise<void> {
+    static async writeFile(filePath: string, data: any, indent?: number): Promise<void> {
         try {
-            const content = JSON.stringify(data, null, indent);
+            const content = await this.formatJson(data, indent);
             await fs.writeFile(filePath, content, 'utf8');
         } catch (error) {
             throw new Error(
