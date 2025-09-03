@@ -92,11 +92,8 @@ export class LangManager {
     }
 
     private hasNestedTranslationStructure(langData: Record<string, any>): boolean {
-        console.error('langData', langData);
-
         // Check if this is truly a nested structure where ALL content is under "translation"
         for (const lang of Object.keys(langData)) {
-            console.error('lang', lang);
             if (!langData[lang] || typeof langData[lang] !== 'object') {
                 continue;
             }

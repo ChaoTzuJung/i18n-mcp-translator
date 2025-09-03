@@ -5,10 +5,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { type AiSuggestion, type TranslationConfig } from '../types/i18n.js';
 import { type ServerConfig } from '../types/config.js';
+import { LangManager } from './lang-manager.js';
 
 export class AiService {
     private model: any;
     private config: TranslationConfig;
+    private langManager: LangManager;
 
     constructor(serverConfig: ServerConfig, translationConfig: TranslationConfig) {
         const apiKey = serverConfig.apiKey || process.env.GOOGLE_AI_API_KEY;
@@ -20,9 +22,60 @@ export class AiService {
         this.model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
         // 直接使用傳入的設定
         this.config = translationConfig;
+        this.langManager = new LangManager(serverConfig, translationConfig);
+    }
+
+    private async searchExistingTranslations(text: string): Promise<{ key: string; translations: Record<string, string> } | null> {
+        try {
+            const langData = await this.langManager.readOrCreateLangFile();
+            
+            // Search through all languages and their translations
+            for (const [langCode, langObj] of Object.entries(langData)) {
+                if (!langObj || typeof langObj !== 'object') continue;
+                
+                // Handle nested structure (with "translation" key)
+                const translationsObj = langObj.translation || langObj;
+                if (typeof translationsObj !== 'object') continue;
+                
+                // Search for the text in any translation value
+                for (const [key, value] of Object.entries(translationsObj)) {
+                    if (typeof value === 'string' && value.trim() === text.trim()) {
+                        // Found a match! Collect all translations for this key
+                        const existingTranslations: Record<string, string> = {};
+                        
+                        // Collect translations from all languages for this key
+                        for (const [otherLangCode, otherLangObj] of Object.entries(langData)) {
+                            if (!otherLangObj || typeof otherLangObj !== 'object') continue;
+                            const otherTranslationsObj = otherLangObj.translation || otherLangObj;
+                            if (typeof otherTranslationsObj === 'object' && otherTranslationsObj[key]) {
+                                existingTranslations[otherLangCode] = otherTranslationsObj[key];
+                            }
+                        }
+                        
+                        return { key, translations: existingTranslations };
+                    }
+                }
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Error searching existing translations:', error);
+            return null;
+        }
     }
 
     async getAiSuggestions(text: string, context: string): Promise<AiSuggestion | null> {
+        // First, check if this text already exists in our translation files
+        const existingTranslation = await this.searchExistingTranslations(text);
+        if (existingTranslation) {
+            console.error(`  -> Found existing translation for "${text}" with key: "${existingTranslation.key}"`);
+            return {
+                i18nKey: existingTranslation.key,
+                translations: existingTranslation.translations,
+                originalText: text
+            };
+        }
+
         // Dynamically build translations schema based on configured target languages
         const translationsSchema: Record<string, string> = {};
         for (const langCode of this.config.targetLanguages) {
