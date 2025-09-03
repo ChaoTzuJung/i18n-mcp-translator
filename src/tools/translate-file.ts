@@ -10,6 +10,7 @@ import { LangManager } from '../core/lang-manager.js';
 import { FileProcessor } from '../core/file-processor.js';
 import { TranslationConfig } from '../types/i18n.js';
 
+
 /**
  * Setup the translate file tool
  */

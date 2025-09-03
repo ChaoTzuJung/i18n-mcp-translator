@@ -1,0 +1,25 @@
+{
+  "hash": "67b2c2ca17e05bf5d2259d372154caa2",
+  "timestamp": 1756922900940,
+  "filePath": "/Users/fever_alanchao/feversocial/i18n-mcp-translator/app/src/hooks/useEditorErrorHandler.js",
+  "translatedStrings": [
+    {
+      "original": "無法建立新的對話視窗",
+      "key": "label.cannot_create_new_chat_window",
+      "translation": "Cannot create a new chat window",
+      "timestamp": 1756922900901
+    },
+    {
+      "original": "AI 對話session額度已用盡，無法建立新的對話",
+      "key": "label.ai_session_quota_exhausted",
+      "translation": "AI session quota exhausted, cannot create new conversation",
+      "timestamp": 1756922900901
+    },
+    {
+      "original": "清除對話紀錄",
+      "key": "btn.clear_chat_history",
+      "translation": "Clear chat history",
+      "timestamp": 1756922900901
+    }
+  ]
+}
