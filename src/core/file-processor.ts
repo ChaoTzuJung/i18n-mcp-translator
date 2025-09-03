@@ -8,6 +8,7 @@ import { NodePath } from '@babel/traverse';
 import * as prettier from 'prettier';
 import * as t from '@babel/types';
 import fs from 'fs/promises';
+import path from 'path';
 import { AiService } from './ai-service.js';
 import { isI18nKey, isLikelyChinese } from '../utils/text-utils.js';
 import { resolveFilePath } from '../utils/path-resolver.js';
@@ -115,7 +116,11 @@ export class FileProcessor {
                     `[processFileContent] Generated code length: ${output.code.length} characters`
                 );
 
+                // Load prettier config from project
+                const prettierConfig = (await prettier.resolveConfig(absolutePath)) || {};
+
                 const formattedCode = await prettier.format(output.code, {
+                    ...prettierConfig,
                     parser:
                         absolutePath.endsWith('.tsx') || absolutePath.endsWith('.ts')
                             ? 'typescript'
