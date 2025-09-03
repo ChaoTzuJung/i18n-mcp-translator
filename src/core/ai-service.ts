@@ -95,13 +95,23 @@ export class AiService {
           2.  Translate the original text into a specified list of target languages.
       
           **Rules for Key Generation:**
-          - The key should be in English and use dot.case (e.g., 'component.title').
-          - Infer the context from the provided code snippet.
+          - The key should be in English and use snake_case (e.g., 'component.generate_mind_map_proposal').
+          - Infer the context from the provided code snippet and follow existing naming patterns when possible.
           - If the text is in a <button>, start the key with 'btn.'.
           - If the text is in a <h1>, <h2>, etc., start the key with 'title.'.
           - If the text is in a <p>, <span>, or general text node, start with 'label.'.
           - If it's a form input placeholder, use 'placeholder.'.
-          - The rest of the key should be a short, descriptive English version of the text. For '關閉', a good key would be 'btn.close'.
+          - Follow contextual naming patterns: if you see existing keys like 'label.game_instagram.entry_not_exist_intro_msg', continue with similar structure like 'label.game_instagram.xxxxx'.
+          - Multi-level nesting is acceptable (key1.key2.key3).
+          - The rest of the key should be a short, descriptive English version using snake_case. For '關閉', a good key would be 'btn.close'. For '讓發燒 AI 行銷顧問幫助你快速產生心測提案', use 'label.generate_mind_map_proposal'.
+      
+          **CRITICAL: File Formatting Boundaries - DO NOT:**
+          - Remove comments from source code
+          - Remove line breaks or whitespace
+          - Fix linting issues or code style
+          - Modify file formatting or structure beyond the actual translation work
+          - Change indentation, quote styles, or spacing in existing code
+          - Your ONLY responsibility is i18n key generation and translation
       
           **CRITICAL JSON Formatting Requirements:**
           - NEVER modify the JSON formatting or structure beyond the actual translations
