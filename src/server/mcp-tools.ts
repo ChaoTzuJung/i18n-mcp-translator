@@ -2,7 +2,13 @@
  * MCP tool definitions for the translation server
  */
 
+import { z } from 'zod';
 import { setupTranslateFileTool } from '../tools/translate-file.js';
+import { 
+    handleEnhancedTranslateFile, 
+    handleBatchTranslateFiles,
+    setGlobalConfig
+} from '../tools/enhanced-translate-file.js';
 import { type ServerConfig } from '../types/config.js';
 import { type TranslationConfig } from '../types/i18n.js';
 
@@ -29,6 +35,41 @@ export class MCPTools {
 
         const refreshedServer = { ...server, tool: refreshedTool };
 
+        // Set global config for enhanced translation tools
+        setGlobalConfig(this.config, this.translationConfig);
+
+        // Register original translate-file tool
         setupTranslateFileTool(refreshedServer, this.config, this.translationConfig);
+        
+        // Register enhanced translation tools using Zod schema format (matching original tools)
+        server.tool(
+            'enhanced_translate_file',
+            'Enhanced file translation with intelligent caching and optimization',
+            {
+                file_path: z.string().describe('Path to the file to translate'),
+                use_cache: z.boolean().default(true).describe('Whether to use cache for optimization'),
+                force_refresh: z.boolean().default(false).describe('Force refresh even if cached'),
+                cache_dir: z.string().default('.translation-cache').describe('Cache directory path'),
+                progress_callback: z.boolean().default(false).describe('Enable progress callbacks'),
+                batch_mode: z.boolean().default(false).describe('Enable batch mode optimizations')
+            },
+            handleEnhancedTranslateFile
+        );
+        
+        server.tool(
+            'batch_translate_files',
+            'Batch translate multiple files with parallel processing and intelligent caching',
+            {
+                file_paths: z.array(z.string()).optional().describe('Array of file paths to translate'),
+                src_dir: z.string().optional().describe('Source directory for scanning'),
+                file_patterns: z.array(z.string()).default(['**/*.{js,ts,jsx,tsx}']).describe('File patterns to scan'),
+                max_concurrency: z.number().default(3).describe('Maximum concurrent translations'),
+                cache_dir: z.string().default('.translation-cache').describe('Cache directory path'),
+                use_cache: z.boolean().default(true).describe('Whether to use cache'),
+                force_refresh: z.boolean().default(false).describe('Force refresh all files'),
+                progress_updates: z.boolean().default(true).describe('Show progress updates')
+            },
+            handleBatchTranslateFiles
+        );
     }
 }
