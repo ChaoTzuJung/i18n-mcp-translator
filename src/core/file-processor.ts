@@ -111,7 +111,19 @@ export class FileProcessor {
             console.error(`[processFileContent] Applying changes to ${absolutePath}...`);
 
             try {
-                const output = generate(ast, {}, fileContent);
+                const output = generate(
+                    ast,
+                    {
+                        compact: false, // 不壓縮程式碼
+                        minified: false, // 不最小化
+                        retainLines: true, // 嘗試保留原始行號
+                        comments: true, // 保留註解
+                        jsescOption: {
+                            minimal: true // 最小化字串轉義
+                        }
+                    },
+                    fileContent
+                );
                 console.error(
                     `[processFileContent] Generated code length: ${output.code.length} characters`
                 );
