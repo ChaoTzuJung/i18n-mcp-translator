@@ -54,20 +54,42 @@ Environment variables (can also be passed as CLI args):
 - `I18N_MCP_TARGET_LANGUAGES` - Comma-separated target languages
 - `I18N_MCP_TRANSLATION_DIR` - Directory for language files
 - `I18N_MCP_TRANSLATION_FILE` - Specific translation file name (optional)
+- `I18N_MCP_TRANSLATION_SUBDIRECTORY` - Subdirectory within translation dir (optional, auto-detected)
 - `I18N_MCP_SRC_DIR` - Source code directory
 - `I18N_MCP_PROJECT_ROOT` - Project root for path resolution
 
 ### Translation File Management
 
-**Flexible File Support:**
-- Supports any JSON file naming: `lang.json`, `lang-editor.json`, `lang-client.json`, etc.
-- Auto-discovery: Scans all `.json` files in translation directory if no specific file specified
-- Language detection: Identifies language codes from existing file structure
+The MCP translator supports both legacy and new i18n file structures:
+
+**Legacy Structure (Single file):**
+- Single JSON file: `lang.json`
+- Nested language objects with optional "translation" wrappers
+- Example: `{"zh-TW": {"translation": {"key": "value"}}}`
+
+**New Structure (Per-language files):**
+- Separate JSON files per language, either:
+  - Directly in translation directory: `zh-TW.json`, `en-US.json`
+  - In subdirectories: `client/zh-TW.json`, `editor/zh-TW.json`
+- Flat key-value structure per file: `{"key": "value"}`
+
+**Auto-Detection Logic:**
+1. Checks for per-language JSON files directly in translation directory (e.g., `zh-TW.json`)
+2. If found, uses new structure without subdirectories
+3. Otherwise, checks for subdirectories containing per-language files
+4. If found, uses new structure with subdirectories
+5. Otherwise, uses legacy structure with single nested file
 
 **Configuration Priority:**
-1. Specific file via `I18N_MCP_TRANSLATION_FILE` or `--translation-file`
-2. Auto-discovery of first valid translation file in directory
-3. Creates new file with default name if none exist
+1. Explicit subdirectory via `I18N_MCP_TRANSLATION_SUBDIRECTORY` or `--translation-subdirectory`
+2. Auto-detection of per-language files in translation directory (**most common**)
+3. Auto-detection of subdirectories containing per-language files
+4. Specific file via `I18N_MCP_TRANSLATION_FILE` or `--translation-file` (legacy)
+5. Auto-discovery of first valid translation file in directory
+6. Creates new files/structure as needed
+
+**Recommended Setup:**
+For most projects, simply set `I18N_MCP_TRANSLATION_DIR="./src/assets/locale"` and let the system auto-detect your file structure. No additional configuration needed!
 
 ### Path Resolution Strategy
 

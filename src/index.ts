@@ -105,6 +105,14 @@ function parseArgs(): Partial<ServerConfig> {
                 }
                 break;
 
+            case '--translation-subdirectory':
+            case '--subdirectory':
+                if (nextArg && !nextArg.startsWith('-')) {
+                    config.translationSubdirectory = nextArg;
+                    i++;
+                }
+                break;
+
             case '--dir':
             case '-d':
                 if (nextArg && !nextArg.startsWith('-')) {
@@ -159,6 +167,10 @@ function loadEnvConfig(): Partial<ServerConfig> {
 
     if (process.env.I18N_MCP_TRANSLATION_FILE) {
         config.translationFileName = process.env.I18N_MCP_TRANSLATION_FILE;
+    }
+
+    if (process.env.I18N_MCP_TRANSLATION_SUBDIRECTORY) {
+        config.translationSubdirectory = process.env.I18N_MCP_TRANSLATION_SUBDIRECTORY;
     }
 
     if (process.env.I18N_MCP_TRANSLATION_DIR) {

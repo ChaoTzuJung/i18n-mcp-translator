@@ -20,6 +20,7 @@ node_modules/
 .settings/
 *.sublime-workspace
 .cache
+.translation-cache
 
 # IDE - VSCode
 .vscode/*

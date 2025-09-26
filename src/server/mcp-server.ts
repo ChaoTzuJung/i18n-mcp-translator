@@ -123,7 +123,8 @@ export class TranslationMCPServer {
             this.translationConfig = {
                 sourceLanguage: this.config.baseLanguage,
                 targetLanguages: this.config.targetLanguages,
-                langMap: {}
+                langMap: {},
+                availableLanguages: []
             };
 
             this.setupTools();

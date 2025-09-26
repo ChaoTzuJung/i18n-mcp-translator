@@ -45,7 +45,8 @@ export class TranslationConfigService {
         const translationConfig: TranslationConfig = {
             sourceLanguage,
             targetLanguages,
-            langMap
+            langMap,
+            availableLanguages: allLocales
         };
 
         console.error('[TranslationConfigService] Translation configuration built successfully:');

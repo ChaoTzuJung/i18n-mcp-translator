@@ -88,7 +88,8 @@ export class TranslationCore {
                 // Step 4: Write the updated language file back to disk
                 await this.langManager.writeLangFile(langData);
 
-                summary = `Successfully processed ${filePath}. Found and translated ${suggestions.length} new strings. The lang.json file has been updated.`;
+                const updatedFiles = this.langManager.getUpdatedFilesDescription(langData);
+                summary = `Successfully processed ${filePath}. Found and translated ${suggestions.length} new strings. Updated ${updatedFiles}.`;
 
                 // Return success result with modified code
                 return {

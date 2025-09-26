@@ -27,4 +27,5 @@ export interface TranslationConfig {
     targetLanguages: string[];
     // { 語系代碼: 完整語系資料 }
     langMap: Record<string, LanguageInfo>;
+    availableLanguages: LanguageInfo[];
 }

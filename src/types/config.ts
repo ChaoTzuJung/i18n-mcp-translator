@@ -10,6 +10,8 @@ export interface ServerConfig {
     translationDir: string;
     /** Translation file name (optional, defaults to scanning all JSON files) */
     translationFileName?: string;
+    /** Subdirectory within translation directory (for new structure: client/editor) */
+    translationSubdirectory?: string;
     /** Base language for structure template */
     baseLanguage?: string;
     /** Target languages for translation */

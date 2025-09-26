@@ -3,7 +3,6 @@
  */
 
 import { z } from 'zod';
-import path from 'path';
 import { ServerConfig } from '../types/config.js';
 import { AiService } from '../core/ai-service.js';
 import { LangManager } from '../core/lang-manager.js';
@@ -60,7 +59,8 @@ export function setupTranslateFileTool(
                     // Step 4: Write the updated language file back to disk once
                     await langManager.writeLangFile(langData);
 
-                    summary = `Successfully processed ${filePath}. Found and translated ${suggestions.length} new strings. The lang.json file has been updated.`;
+                    const updatedFiles = langManager.getUpdatedFilesDescription(langData);
+                    summary = `Successfully processed ${filePath}. Found and translated ${suggestions.length} new strings. Updated ${updatedFiles}.`;
 
                     // Return the summary AND the modified code
                     return {

@@ -49,11 +49,50 @@ export class LanguageDiscoveryService {
     ): Promise<LanguageInfo[]> {
         try {
             const files = readdirSync(translationDir);
+            
+            // First, check for per-language JSON files directly in the directory (new structure)
             const jsonFiles = files.filter(file => {
                 const filePath = resolve(translationDir, file);
                 return statSync(filePath).isFile() && extname(file).toLowerCase() === '.json';
             });
 
+            // Check if any JSON files match language code pattern (new structure)
+            const languageCodePattern = /^[a-z]{2}(-[A-Z0-9]{2,})?\.json$/;
+            const perLanguageFiles = jsonFiles.filter(file => languageCodePattern.test(file));
+
+            if (perLanguageFiles.length > 0) {
+                console.error(
+                    `[LanguageDiscoveryService] Found per-language files: [${perLanguageFiles.join(', ')}] - using new structure`
+                );
+                return this.discoverFromPerLanguageFiles(translationDir, perLanguageFiles);
+            }
+
+            // Next, check for subdirectories (new structure with subdirs: client/, editor/, etc.)
+            const subdirs = files.filter(file => {
+                const filePath = resolve(translationDir, file);
+                return statSync(filePath).isDirectory();
+            });
+
+            if (subdirs.length > 0) {
+                console.error(
+                    `[LanguageDiscoveryService] Found subdirectories: [${subdirs.join(', ')}], checking for per-language files`
+                );
+                
+                // Try to discover from subdirectories (new structure)
+                for (const subdir of subdirs) {
+                    const subdirPath = resolve(translationDir, subdir);
+                    const languages = await this.discoverFromSubdirectory(subdirPath);
+                    
+                    if (languages.length > 0) {
+                        console.error(
+                            `[LanguageDiscoveryService] Successfully discovered ${languages.length} languages from subdirectory: ${subdir}`
+                        );
+                        return languages;
+                    }
+                }
+            }
+
+            // Fallback: check for JSON files with legacy structure
             if (jsonFiles.length === 0) {
                 console.error(
                     '[LanguageDiscoveryService] No JSON files found in translation directory, using default languages.'
@@ -62,17 +101,17 @@ export class LanguageDiscoveryService {
             }
 
             console.error(
-                `[LanguageDiscoveryService] Found ${jsonFiles.length} JSON files: [${jsonFiles.join(', ')}]`
+                `[LanguageDiscoveryService] Found ${jsonFiles.length} JSON files: [${jsonFiles.join(', ')}] - checking for legacy structure`
             );
 
-            // Try each file to find one with language structure
+            // Try each file to find one with language structure (legacy structure)
             for (const file of jsonFiles) {
                 const filePath = resolve(translationDir, file);
                 const languages = await this.discoverFromExistingFile(filePath);
 
                 if (languages.length > 0) {
                     console.error(
-                        `[LanguageDiscoveryService] Successfully discovered languages from: ${file}`
+                        `[LanguageDiscoveryService] Successfully discovered languages from legacy file: ${file}`
                     );
                     return languages;
                 }
@@ -85,6 +124,87 @@ export class LanguageDiscoveryService {
         } catch (error) {
             console.error('[LanguageDiscoveryService] Error scanning directory:', error);
             return this.createLanguageInfoFromCodes(defaultLanguages || ['zh-TW', 'en-US']);
+        }
+    }
+
+    /**
+     * Discover languages from per-language JSON files directly in translation directory
+     */
+    private async discoverFromPerLanguageFiles(translationDir: string, perLanguageFiles: string[]): Promise<LanguageInfo[]> {
+        const languageCodes: string[] = [];
+        
+        for (const file of perLanguageFiles) {
+            const langCode = file.replace('.json', '');
+            
+            // Verify the file contains valid translation content
+            const filePath = resolve(translationDir, file);
+            try {
+                const result = await JsonParser.parseFile(filePath);
+                if (result.data && typeof result.data === 'object' && Object.keys(result.data).length > 0) {
+                    languageCodes.push(langCode);
+                }
+            } catch (error) {
+                console.warn(`[LanguageDiscoveryService] Skipping invalid JSON file: ${file}`);
+            }
+        }
+
+        if (languageCodes.length > 0) {
+            console.error(
+                `[LanguageDiscoveryService] Found ${languageCodes.length} language files: [${languageCodes.join(', ')}]`
+            );
+            return this.createLanguageInfoFromCodes(languageCodes);
+        }
+
+        return [];
+    }
+
+    /**
+     * Discover languages from subdirectory containing per-language JSON files
+     */
+    private async discoverFromSubdirectory(subdirPath: string): Promise<LanguageInfo[]> {
+        try {
+            const files = readdirSync(subdirPath);
+            const jsonFiles = files.filter(file => {
+                const filePath = resolve(subdirPath, file);
+                return statSync(filePath).isFile() && extname(file).toLowerCase() === '.json';
+            });
+
+            if (jsonFiles.length === 0) {
+                return [];
+            }
+
+            // Extract language codes from filenames (e.g., "zh-TW.json" -> "zh-TW")
+            const languageCodes: string[] = [];
+            const languageCodePattern = /^[a-z]{2}(-[A-Z0-9]{2,})?\.json$/;
+            
+            for (const file of jsonFiles) {
+                if (languageCodePattern.test(file)) {
+                    const langCode = file.replace('.json', '');
+                    
+                    // Verify the file contains valid translation content
+                    const filePath = resolve(subdirPath, file);
+                    try {
+                        const result = await JsonParser.parseFile(filePath);
+                        if (result.data && typeof result.data === 'object' && Object.keys(result.data).length > 0) {
+                            languageCodes.push(langCode);
+                        }
+                    } catch (error) {
+                        console.warn(`[LanguageDiscoveryService] Skipping invalid JSON file: ${file}`);
+                    }
+                }
+            }
+
+            if (languageCodes.length > 0) {
+                console.error(
+                    `[LanguageDiscoveryService] Found ${languageCodes.length} language files: [${languageCodes.join(', ')}]`
+                );
+                return this.createLanguageInfoFromCodes(languageCodes);
+            }
+
+            return [];
+        } catch (error) {
+            console.error(`[LanguageDiscoveryService] Error scanning subdirectory ${subdirPath}:`, error);
+            return [];
         }
     }
 
