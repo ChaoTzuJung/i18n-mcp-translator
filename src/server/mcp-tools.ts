@@ -9,6 +9,10 @@ import {
     handleBatchTranslateFiles,
     setGlobalConfig
 } from '../tools/enhanced-translate-file.js';
+import { setupMergeTranslationsTool } from '../tools/merge-translations.js';
+import { setupCleanupDiffDirectoryTool } from '../tools/cleanup-diff-directory.js';
+import { setupGenerateLocaleDiffTool } from '../tools/generate-locale-diff.js';
+import { setupGitCommitPushTool } from '../tools/git-commit-push.js';
 import { type ServerConfig } from '../types/config.js';
 import { type TranslationConfig } from '../types/i18n.js';
 
@@ -40,6 +44,18 @@ export class MCPTools {
 
         // Register original translate-file tool
         setupTranslateFileTool(refreshedServer, this.config, this.translationConfig);
+        
+        // Register merge translations tool
+        setupMergeTranslationsTool(refreshedServer, this.config, this.translationConfig);
+        
+        // Register cleanup diff directory tool
+        setupCleanupDiffDirectoryTool(refreshedServer, this.config, this.translationConfig);
+        
+        // Register generate locale diff tool (A1 functionality)
+        setupGenerateLocaleDiffTool(refreshedServer, this.config, this.translationConfig);
+        
+        // Register git commit push tool
+        setupGitCommitPushTool(refreshedServer, this.config, this.translationConfig);
         
         // Register enhanced translation tools using Zod schema format (matching original tools)
         server.tool(

@@ -54,8 +54,8 @@ If not set, the server will use local mock data and still work.
 
 ```json
 "i18n-mcp-translator": {
-  "command": "node",
-  "args": ["/absolute/path/to/i18n-mcp-translator/build/index.js"],
+  "command": "npx",
+  "args": ["-y", "i18n-mcp-translator"],
   "env": {
     "GOOGLE_AI_API_KEY": "your-google-api-key-here",
     "I18N_MCP_BASE_LANGUAGE": "zh-TW",
@@ -72,9 +72,10 @@ Or use the following command to start the MCP server:
 
 ```json
  "i18n-mcp-translator": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "/absolute/path/to/i18n-mcp-translator/build/index.js",
+        "-y",
+        "i18n-mcp-translator",
         "--api-key", "your-google-api-key-here",
         "--base-language", "zh-TW",
         "--target-languages", "zh-TW,zh-CN,zh-HK,en-US,ja,pt-BR,es-419,th-TH",
@@ -102,9 +103,12 @@ npx tsx src/index.ts
 
 The server will run on stdio and wait for MCP requests.
 
-### Using the Translation Tool
+### Available MCP Tools
 
-You can call the `translate-file` tool via MCP protocol.  
+#### 1. `translate-file` - Source Code Translation
+
+You can call the `translate-file` tool via MCP protocol to translate hardcoded Chinese text in source files.
+
 Example payload:
 
 ```json
@@ -119,6 +123,181 @@ Example payload:
 
 - The tool will scan for hardcoded Chinese, replace with i18n keys, and update your translation JSON file(s).
 - The response includes a summary and the modified code.
+
+#### 1.5. `generate_locale_diff` - Compare Branch Changes
+
+Compare current branch with master/main branch to generate diff files for translation team review. This tool automatically detects which branch (master or main) your repository uses.
+
+Example payload:
+
+```json
+{
+    "tool": "generate_locale_diff",
+    "params": {
+        "localeDir": "src/assets/locale",
+        "projectRoot": "/path/to/your/project",
+        "baseBranch": "master",
+        "mainLanguage": "zh-TW",
+        "dryRun": true
+    }
+}
+```
+
+**Parameters:**
+
+- `localeDir` - Path to the locale directory (e.g., "src/assets/locale")
+- `projectRoot` - Project root directory (optional, defaults to current working directory)
+- `baseBranch` - Base branch to compare against (optional, auto-detects master/main)
+- `mainLanguage` - Main language code for diff generation (default: "zh-TW")
+- `dryRun` - Preview mode - show what would be generated without creating files (default: false)
+
+**Use Case:**
+
+1. Developer makes changes to locale files on feature branch
+2. Use `generate_locale_diff` to compare against master/main branch
+3. Tool generates diff files in `src/assets/locale/diff/` directory
+4. Share diff files with translation team for review
+5. After review, use `merge_translations` to integrate changes back
+
+**Features:**
+
+- 🌿 **Smart branch detection**: Automatically detects whether repo uses master or main branch
+- 🔍 **Git integration**: Uses `git diff` to identify exact changes between branches
+- 📊 **Change analysis**: Identifies added, modified, and deleted translation keys
+- 🌐 **Multi-language support**: Generates diff files for all language variants
+- 📝 **Intelligent content**: Main language shows actual changes, others show existing translations or empty strings
+- 🛡️ **Safe preview**: Dry-run mode to preview changes before generating files
+- 🔧 **Git integration**: Optional automatic commit and push of generated diff files
+
+#### 2. `merge_translations` - Merge Reviewed Translations
+
+Merge reviewed translation files back into your project's original translation files. This is perfect for integrating translations that have been reviewed and approved by stakeholders.
+
+Example payload:
+
+```json
+{
+    "tool": "merge_translations",
+    "params": {
+        "originalDir": "src/assets/locale",
+        "reviewedDir": "src/assets/locale/diff",
+        "dryRun": true,
+        "verbose": true,
+        "projectRoot": "/path/to/your/project",
+        "cleanupDiffDirectory": true
+    }
+}
+```
+
+**Parameters:**
+
+- `originalDir` - Path to your project's translation directory (files to be updated)
+- `reviewedDir` - Path to the reviewed translations directory (reviewed files from stakeholders)
+- `dryRun` - Preview changes without modifying files (default: false)
+- `verbose` - Show detailed changes for each translation key (default: false)
+- `projectRoot` - Project root for path resolution (optional)
+- `cleanupDiffDirectory` - Automatically clean up (remove) the diff directory after successful merge (default: false)
+
+**Use Case:**
+
+1. Export translation files to stakeholders for review
+2. Stakeholders review and modify translations in a separate directory (e.g., `diff/` folder)
+3. Use `merge_translations` to integrate approved changes back into your project
+4. Optionally clean up the diff directory after successful merge
+5. Automatically handles new keys, updated translations, and preserves unchanged content
+
+**Features:**
+
+- 🔍 **Smart matching**: Automatically matches language files (en-US.json ↔ en-US.json)
+- 📊 **Detailed reporting**: Shows statistics for new, updated, and unchanged keys
+- 🛡️ **Safe operation**: Dry-run mode to preview changes before applying
+- 🎯 **Selective updates**: Only modifies keys that have actually changed
+- 📝 **Comprehensive logging**: Track all changes with optional verbose output
+- 🧹 **Auto cleanup**: Optionally remove diff directory after successful merge
+- 🔧 **Git integration**: Optional automatic commit and push of merged translation files
+
+#### 3. `cleanup_diff_directory` - Clean Up Diff Directory
+
+Remove diff directory and all its contents after translation merge operations. This tool is useful when you want to clean up temporary diff files separately or when automatic cleanup wasn't enabled during merge.
+
+Example payload:
+
+```json
+{
+    "tool": "cleanup_diff_directory",
+    "params": {
+        "diffDir": "src/assets/locale/diff",
+        "dryRun": true,
+        "projectRoot": "/path/to/your/project"
+    }
+}
+```
+
+**Parameters:**
+
+- `diffDir` - Path to the diff directory to be removed (e.g., "src/assets/locale/diff")
+- `dryRun` - Preview what would be removed without actually deleting (default: false)
+- `projectRoot` - Project root for path resolution (optional)
+
+**Use Case:**
+
+1. After manually reviewing merge results, clean up leftover diff files
+2. Remove diff directory when automatic cleanup was not enabled during merge
+3. Clean up failed merge attempts or partial diff directories
+4. Maintain clean project structure by removing temporary translation files
+
+**Features:**
+
+- 🗑️ **Safe removal**: Removes all files in the diff directory and the directory itself
+- 🔍 **Preview mode**: Dry-run option to see what would be removed
+- 📊 **Detailed logging**: Shows each file being removed with progress indicators
+- 🛡️ **Error handling**: Graceful handling of missing directories or permission issues
+
+#### 4. `git_commit_push` - Git Operations
+
+Commit and optionally push files to git repository with i18n-optimized workflow. This tool provides standalone git operations that can be used independently or in combination with other i18n tools.
+
+Example payload:
+
+```json
+{
+    "tool": "git_commit_push",
+    "params": {
+        "files": ["src/assets/locale/zh-TW.json", "src/assets/locale/en-US.json"],
+        "commitMessage": "i18n: update translations after review",
+        "push": true,
+        "branch": "feature/i18n-updates",
+        "dryRun": true
+    }
+}
+```
+
+**Parameters:**
+
+- `files` - Array of file paths to add and commit (optional, commits all staged files if not provided)
+- `commitMessage` - Custom commit message (optional, auto-generated if not provided)
+- `operationType` - Type of operation for auto-generated commit message (default: "i18n update")
+- `operationDetails` - Additional details for auto-generated commit message (optional)
+- `push` - Push the commit to remote repository (default: false)
+- `branch` - Branch to push to (optional, defaults to current branch)
+- `projectRoot` - Project root directory (optional, defaults to current working directory)
+- `dryRun` - Preview mode without executing git commands (default: false)
+
+**Use Case:**
+
+1. Commit specific translation files after manual edits
+2. Create standardized i18n commit messages across the team
+3. Automate git workflows for translation updates
+4. Batch commit multiple language files with consistent messaging
+
+**Features:**
+
+- 📝 **Smart commit messages**: Auto-generates standardized i18n commit messages
+- 🎯 **Selective commits**: Commit only specific files or use staged files
+- 🚀 **Push integration**: Optionally push commits directly to remote
+- 🌿 **Branch aware**: Automatically detects current branch or use custom branch
+- 🔍 **Preview mode**: Dry-run to see what would be committed/pushed
+- 🛡️ **Error handling**: Graceful handling of git errors and edge cases
 
 ## Development & Testing
 
@@ -171,22 +350,23 @@ This will open a web interface where you can:
 
 If you're using Claude Code (claude.ai/code):
 
-1. **Configure your MCP client** (`.cursor/mcp.json` or similar):
+1. **Configure your MCP client**
+
+##### `.cursor/mcp.json`
 
 ```json
 {
     "i18n-mcp-translator": {
-        "command": "node",
+        "command": "npx",
         "args": [
-            "/absolute/path/to/i18n-mcp-translator/build/index.js",
+            "-y",
+            "i18n-mcp-translator",
             "--api-key",
             "your-google-api-key-here",
             "--base-language",
             "zh-TW",
             "--target-languages",
             "en-US,ja",
-            "--translation-file",
-            "lang.json",
             "--dir",
             "/absolute/path/to/your/translation/directory",
             "--src-dir",
@@ -196,6 +376,12 @@ If you're using Claude Code (claude.ai/code):
         ]
     }
 }
+```
+
+##### `claude code`
+
+```shell
+claude mcp add --transport stdio i18n-mcp-translator --env GOOGLE_AI_API_KEY=your-google-api-key-here --env I18N_MCP_BASE_LANGUAGE=zh-TW --env I18N_MCP_TARGET_LANGUAGES=en-US,ja --env I18N_MCP_TRANSLATION_DIR=/absolute/path/to/your/translation/directory --env I18N_MCP_SRC_DIR=/absolute/path/to/your/project/src --env I18N_MCP_PROJECT_ROOT=/absolute/path/to/your/project -- npx -y i18n-mcp-translator
 ```
 
 2. **Test with a sample file**:
