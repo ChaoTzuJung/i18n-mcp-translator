@@ -95,6 +95,52 @@ export class FileProcessor {
                         });
                     }
                 }
+            },
+            JSXElement: (path: NodePath<t.JSXElement>) => {
+                const openingElement = path.get('openingElement');
+                const elementName = openingElement.get('name');
+
+                // Check if this is a <Trans> component
+                if (elementName.isJSXIdentifier() && elementName.node.name === 'Trans') {
+                    const attributes = openingElement.get('attributes');
+
+                    // Find the i18nKey attribute
+                    for (const attr of attributes) {
+                        if (
+                            attr.isJSXAttribute() &&
+                            attr.get('name').isJSXIdentifier() &&
+                            attr.node.name.name === 'i18nKey'
+                        ) {
+                            const value = attr.get('value');
+
+                            // Handle string literal value: i18nKey="text"
+                            if (value.isStringLiteral()) {
+                                const hardcodedText = value.node.value;
+
+                                if (isI18nKey(hardcodedText) || !isLikelyChinese(hardcodedText)) {
+                                    return;
+                                }
+
+                                const contextCode = generate(path.node).code;
+
+                                tasks.push(async () => {
+                                    const suggestion = await this.aiService.getAiSuggestions(
+                                        hardcodedText,
+                                        contextCode
+                                    );
+
+                                    if (suggestion && suggestion.i18nKey) {
+                                        console.error(`AI generated key for <Trans>: "${suggestion.i18nKey}"`);
+                                        // Replace the i18nKey attribute value
+                                        value.replaceWith(t.stringLiteral(suggestion.i18nKey));
+                                        suggestions.push({ ...suggestion, originalText: hardcodedText });
+                                        modified = true;
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
             }
         });
 

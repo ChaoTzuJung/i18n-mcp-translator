@@ -7,6 +7,7 @@ It scans your codebase for hardcoded Traditional Chinese text, generates i18n ke
 
 - Detects hardcoded Traditional Chinese text in source files.
 - Generates structured i18n keys and translations (English, Japanese, Simplified Chinese).
+- **Supports both `t()` function calls and `<Trans>` components** - works with `i18nKey` attribute in JSX
 - **Flexible translation file support** - works with any JSON file name (lang.json, lang-editor.json, etc.)
 - **Auto-discovery** - scans existing translation files to detect configured languages
 - **Local-first** - no external API dependencies for language management
@@ -381,7 +382,7 @@ If you're using Claude Code (claude.ai/code):
 ##### `claude code`
 
 ```shell
-claude mcp add --transport stdio i18n-mcp-translator --env GOOGLE_AI_API_KEY=your-google-api-key-here --env I18N_MCP_BASE_LANGUAGE=zh-TW --env I18N_MCP_TARGET_LANGUAGES=en-US,ja --env I18N_MCP_TRANSLATION_DIR=/absolute/path/to/your/translation/directory --env I18N_MCP_SRC_DIR=/absolute/path/to/your/project/src --env I18N_MCP_PROJECT_ROOT=/absolute/path/to/your/project -- npx -y i18n-mcp-translator
+claude mcp add --transport stdio i18n-mcp-translator --scope project --env GOOGLE_AI_API_KEY=your-google-api-key-here --env I18N_MCP_BASE_LANGUAGE=zh-TW --env I18N_MCP_TARGET_LANGUAGES=en-US,ja --env I18N_MCP_TRANSLATION_DIR=/absolute/path/to/your/translation/directory --env I18N_MCP_SRC_DIR=/absolute/path/to/your/project/src --env I18N_MCP_PROJECT_ROOT=/absolute/path/to/your/project -- npx -y i18n-mcp-translator
 ```
 
 2. **Test with a sample file**:
@@ -479,6 +480,9 @@ Expected output should replace Chinese text with i18n keys and generate translat
 - It parses the code, finds hardcoded Traditional Chinese, and uses Google Gemini AI to:
     - Generate i18n keys (dot.case, context-aware)
     - Translate to English, Japanese, Simplified Chinese, and other configured languages
+- Supports both function calls and JSX components:
+    - **Function calls**: `t('硬編碼文字')`, `i18n.t('硬編碼文字')`
+    - **Trans components**: `<Trans i18nKey="硬編碼文字" />`
 - Updates your translation JSON file(s) with all translations.
 - Returns the refactored code and a summary.
 - **On startup:**
