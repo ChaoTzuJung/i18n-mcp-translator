@@ -119,37 +119,46 @@ function getChangedLocaleFiles(localeDir: string, baseBranch: string, projectRoo
 function parseGitDiffChanges(diffOutput: string): DiffChange[] {
     const changes: DiffChange[] = [];
     const lines = diffOutput.split('\n');
-    
+    const processedKeys = new Set<string>();
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        
-        // Look for JSON key-value changes
+
+        // Look for JSON key-value changes (handle both + and - prefixes)
         if (line.startsWith('+"') || line.startsWith('-"')) {
             const isAdded = line.startsWith('+"');
             const isRemoved = line.startsWith('-"');
-            
-            // Extract key and value from JSON line
-            const match = line.match(/^[+-]\s*"([^"]+)":\s*"([^"]*)"[,]?$/);
+
+            // More flexible regex that handles escaped quotes and special characters
+            // Matches: +    "key": "value",  or  -    "key": "value"
+            const match = line.match(/^([+-])\s*"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
             if (match) {
-                const [, key, value] = match;
-                
+                const [, , key, value] = match;
+
+                // Skip if we've already processed this key
+                if (processedKeys.has(key)) {
+                    continue;
+                }
+
                 // Check if this is a modification (both + and - exist for same key)
-                const oppositePrefix = isAdded ? '-"' : '+"';
-                const oppositeLine = lines.find(l => 
-                    l.startsWith(oppositePrefix) && l.includes(`"${key}":`)
-                );
-                
+                const oppositePrefix = isAdded ? '-' : '+';
+                const oppositeLine = lines.find(l => {
+                    const oppositeMatch = l.match(/^([+-])\s*"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
+                    return oppositeMatch && oppositeMatch[1] === oppositePrefix && oppositeMatch[2] === key;
+                });
+
                 if (oppositeLine && isAdded) {
                     // This is a modification, get the old value
-                    const oldMatch = oppositeLine.match(/^-\s*"[^"]+": "([^"]*)"[,]?$/);
+                    const oldMatch = oppositeLine.match(/^-\s*"[^"]+":\ *"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
                     const oldValue = oldMatch ? oldMatch[1] : '';
-                    
+
                     changes.push({
                         type: 'modified',
                         key,
                         newValue: value,
                         oldValue
                     });
+                    processedKeys.add(key);
                 } else if (!oppositeLine) {
                     // This is a pure addition or deletion
                     changes.push({
@@ -158,11 +167,12 @@ function parseGitDiffChanges(diffOutput: string): DiffChange[] {
                         newValue: isAdded ? value : undefined,
                         oldValue: isRemoved ? value : undefined
                     });
+                    processedKeys.add(key);
                 }
             }
         }
     }
-    
+
     return changes;
 }
 
@@ -250,12 +260,12 @@ async function saveJsonFile(filePath: string, data: Record<string, any>): Promis
  */
 async function generateLanguageDiffContent(
     changes: DiffChange[],
-    language: string,
+    _language: string,
     originalFilePath: string,
     isMainLanguage: boolean
 ): Promise<Record<string, string>> {
     const diffContent: Record<string, string> = {};
-    
+
     if (isMainLanguage) {
         // For main language (zh-TW), use actual change values
         changes.forEach(change => {
