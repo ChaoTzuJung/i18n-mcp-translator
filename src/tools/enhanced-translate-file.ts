@@ -128,7 +128,7 @@ export async function handleEnhancedTranslateFile(args: unknown): Promise<any> {
       const cachedResponse = mcpCache.getCachedResponse(mcpCacheKey);
       
       if (cachedResponse) {
-        console.log(`📦 Using cached MCP response for ${fileName}`);
+        console.error(`📦 Using cached MCP response for ${fileName}`);
         
         // Still save to translation cache for future file-level checks
         translationCache.saveFileCache(file_path, cachedResponse.translatedStrings || []);

@@ -72,14 +72,14 @@ async function detectMainBranch(projectRoot: string): Promise<string> {
                         return 'origin/main';
                     } catch {
                         // Fallback to master as default
-                        console.warn('⚠️  Could not detect main branch, defaulting to master');
+                        console.error('⚠️  Could not detect main branch, defaulting to master');
                         return 'master';
                     }
                 }
             }
         }
     } catch (error) {
-        console.warn(`⚠️  Error detecting main branch: ${(error as Error).message}, defaulting to master`);
+        console.error(`⚠️  Error detecting main branch: ${(error as Error).message}, defaulting to master`);
         return 'master';
     }
 }
@@ -91,11 +91,11 @@ function getChangedLocaleFiles(localeDir: string, baseBranch: string, projectRoo
     try {
         const relativePath = path.relative(projectRoot, localeDir);
         const gitCommand = `git diff ${baseBranch} --name-only -- ${relativePath}/`;
-        
-        console.log(`🔍 Running: ${gitCommand}`);
-        const output = execSync(gitCommand, { 
-            cwd: projectRoot, 
-            encoding: 'utf8' 
+
+        console.error(`🔍 Running: ${gitCommand}`);
+        const output = execSync(gitCommand, {
+            cwd: projectRoot,
+            encoding: 'utf8'
         });
 
         const changedFiles = output
@@ -103,8 +103,8 @@ function getChangedLocaleFiles(localeDir: string, baseBranch: string, projectRoo
             .filter(file => file.trim() && file.endsWith('.json'))
             .map(file => path.resolve(projectRoot, file));
 
-        console.log(`📁 Found ${changedFiles.length} changed locale files`);
-        changedFiles.forEach(file => console.log(`   - ${path.basename(file)}`));
+        console.error(`📁 Found ${changedFiles.length} changed locale files`);
+        changedFiles.forEach(file => console.error(`   - ${path.basename(file)}`));
 
         return changedFiles;
     } catch (error) {
@@ -177,23 +177,23 @@ async function getLocaleFileDiff(
     try {
         const relativePath = path.relative(projectRoot, filePath);
         const gitCommand = `git diff ${baseBranch} -- "${relativePath}"`;
-        
-        console.log(`🔍 Getting diff for: ${path.basename(filePath)}`);
-        
-        const diffOutput = execSync(gitCommand, { 
-            cwd: projectRoot, 
-            encoding: 'utf8' 
+
+        console.error(`🔍 Getting diff for: ${path.basename(filePath)}`);
+
+        const diffOutput = execSync(gitCommand, {
+            cwd: projectRoot,
+            encoding: 'utf8'
         });
 
         if (!diffOutput.trim()) {
-            console.log(`   ℹ️  No changes found for ${path.basename(filePath)}`);
+            console.error(`   ℹ️  No changes found for ${path.basename(filePath)}`);
             return null;
         }
 
         const changes = parseGitDiffChanges(diffOutput);
         const language = path.basename(filePath, '.json');
-        
-        console.log(`   📊 Found ${changes.length} changes in ${language}`);
+
+        console.error(`   📊 Found ${changes.length} changes in ${language}`);
         
         return {
             filePath,
@@ -216,7 +216,7 @@ async function loadJsonFile(filePath: string): Promise<Record<string, any> | nul
             return JSON.parse(content);
         }
     } catch (error) {
-        console.warn(`Warning: Could not parse ${filePath}: ${(error as Error).message}`);
+        console.error(`Warning: Could not parse ${filePath}: ${(error as Error).message}`);
     }
     return null;
 }
@@ -306,8 +306,8 @@ export async function generateLocaleDiff({
             ? localeDir 
             : path.resolve(resolvedProjectRoot, localeDir);
 
-        console.log(`📁 Locale directory: ${resolvedLocaleDir}`);
-        console.log(`📁 Project root: ${resolvedProjectRoot}`);
+        console.error(`📁 Locale directory: ${resolvedLocaleDir}`);
+        console.error(`📁 Project root: ${resolvedProjectRoot}`);
 
         if (!existsSync(resolvedLocaleDir)) {
             throw new Error(`Locale directory not found: ${resolvedLocaleDir}`);
@@ -315,7 +315,7 @@ export async function generateLocaleDiff({
 
         // Detect main branch if not specified
         const baseBranch = customBaseBranch || await detectMainBranch(resolvedProjectRoot);
-        console.log(`🌿 Using base branch: ${baseBranch}`);
+        console.error(`🌿 Using base branch: ${baseBranch}`);
 
         // Get changed locale files
         const changedFiles = getChangedLocaleFiles(resolvedLocaleDir, baseBranch, resolvedProjectRoot);
@@ -368,13 +368,13 @@ export async function generateLocaleDiff({
 
         // Create diff directory
         const diffDirectory = path.join(resolvedLocaleDir, 'diff');
-        
+
         if (dryRun) {
-            console.log(`\n🔍 DRY RUN MODE - Preview of diff files to be generated:`);
-            console.log(`📁 Diff directory: ${diffDirectory}`);
+            console.error(`\n🔍 DRY RUN MODE - Preview of diff files to be generated:`);
+            console.error(`📁 Diff directory: ${diffDirectory}`);
         } else {
             await fs.mkdir(diffDirectory, { recursive: true });
-            console.log(`\n📁 Created diff directory: ${diffDirectory}`);
+            console.error(`\n📁 Created diff directory: ${diffDirectory}`);
         }
 
         // Generate diff files for all languages
@@ -383,7 +383,7 @@ export async function generateLocaleDiff({
             .filter(file => file.endsWith('.json'))
             .map(file => file.replace('.json', ''));
 
-        console.log(`\n🌐 Generating diff files for ${allLanguages.length} languages...`);
+        console.error(`\n🌐 Generating diff files for ${allLanguages.length} languages...`);
 
         for (const language of allLanguages) {
             const isMainLanguage = language === mainLanguage;
@@ -399,17 +399,17 @@ export async function generateLocaleDiff({
 
             if (Object.keys(diffContent).length > 0) {
                 if (dryRun) {
-                    console.log(`   📄 Would create: ${language}.json (${Object.keys(diffContent).length} keys)`);
+                    console.error(`   📄 Would create: ${language}.json (${Object.keys(diffContent).length} keys)`);
                 } else {
                     await saveJsonFile(diffFilePath, diffContent);
-                    console.log(`   ✅ Generated: ${language}.json (${Object.keys(diffContent).length} keys)`);
+                    console.error(`   ✅ Generated: ${language}.json (${Object.keys(diffContent).length} keys)`);
                 }
             }
         }
 
         // Perform git operations if requested
         if (gitOptions && totalChanges > 0) {
-            console.log('\n🔧 Performing git operations...');
+            console.error('\n🔧 Performing git operations...');
             
             // Prepare files for git operations
             const diffFiles = allLanguages.map(lang => path.join(diffDirectory, `${lang}.json`));
@@ -427,9 +427,9 @@ export async function generateLocaleDiff({
             );
             
             if (gitResult.success) {
-                console.log(`✅ ${gitResult.message}`);
+                console.error(`✅ ${gitResult.message}`);
             } else {
-                console.warn(`⚠️  Git operations failed: ${gitResult.message}`);
+                console.error(`⚠️  Git operations failed: ${gitResult.message}`);
             }
         }
 
@@ -475,7 +475,7 @@ export async function handleGenerateLocaleDiff({
 }) {
     try {
         if (dryRun) {
-            console.log('🔍 DRY RUN MODE - No files will be created\n');
+            console.error('🔍 DRY RUN MODE - No files will be created\n');
         }
 
         // Prepare git options
@@ -496,9 +496,9 @@ export async function handleGenerateLocaleDiff({
         });
 
         if (result.success) {
-            console.log(`\n✅ ${result.message}`);
+            console.error(`\n✅ ${result.message}`);
             if (result.totalChanges > 0) {
-                console.log('💡 Tip: Review the generated diff files and share them with your translation team');
+                console.error('💡 Tip: Review the generated diff files and share them with your translation team');
             }
         }
 

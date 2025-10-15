@@ -53,7 +53,7 @@ async function loadJsonFile(filePath: string): Promise<Record<string, any> | nul
             return JSON.parse(content);
         }
     } catch (error) {
-        console.warn(`Warning: Could not parse ${filePath}: ${(error as Error).message}`);
+        console.error(`Warning: Could not parse ${filePath}: ${(error as Error).message}`);
     }
     return null;
 }
@@ -76,7 +76,7 @@ async function saveJsonFile(filePath: string, data: Record<string, any>): Promis
  */
 function getTranslationFiles(dirPath: string): TranslationFile[] {
     if (!existsSync(dirPath)) {
-        console.warn(`Warning: Directory ${dirPath} does not exist`);
+        console.error(`Warning: Directory ${dirPath} does not exist`);
         return [];
     }
 
@@ -133,8 +133,8 @@ async function mergeSingleFile(
                 reviewedValue
             });
             if (verbose) {
-                console.log(`➕ NEW: "${key}"`);
-                console.log(`    Value: "${reviewedValue}"`);
+                console.error(`➕ NEW: "${key}"`);
+                console.error(`    Value: "${reviewedValue}"`);
             }
         } else if (originalValue !== reviewedValue) {
             // Updated key
@@ -147,19 +147,19 @@ async function mergeSingleFile(
                 reviewedValue
             });
             if (verbose) {
-                console.log(`🔄 UPDATED: "${key}"`);
-                console.log(`    Original: "${originalValue}"`);
-                console.log(`    Reviewed: "${reviewedValue}"`);
+                console.error(`🔄 UPDATED: "${key}"`);
+                console.error(`    Original: "${originalValue}"`);
+                console.error(`    Reviewed: "${reviewedValue}"`);
             }
         } else {
             // Unchanged key
             stats.unchangedKeys++;
             if (verbose) {
-                console.log(`✅ UNCHANGED: "${key}"`);
+                console.error(`✅ UNCHANGED: "${key}"`);
             }
         }
         if (verbose) {
-            console.log();
+            console.error();
         }
     }
 
@@ -188,8 +188,8 @@ export async function batchMergeTranslations(
     dryRun: boolean = false,
     verbose: boolean = false
 ): Promise<OverallStats> {
-    console.log(`📁 Scanning original directory: ${originalDir}`);
-    console.log(`📁 Scanning reviewed directory: ${reviewedDir}`);
+    console.error(`📁 Scanning original directory: ${originalDir}`);
+    console.error(`📁 Scanning reviewed directory: ${reviewedDir}`);
 
     const originalFiles = getTranslationFiles(originalDir);
     const reviewedFiles = getTranslationFiles(reviewedDir);
@@ -202,7 +202,7 @@ export async function batchMergeTranslations(
         throw new Error('No translation files found in reviewed directory');
     }
 
-    console.log(
+    console.error(
         `\n🔍 Found ${originalFiles.length} original files and ${reviewedFiles.length} reviewed files\n`
     );
 
@@ -220,17 +220,17 @@ export async function batchMergeTranslations(
         const originalFile = originalFiles.find(f => f.lang === reviewedFile.lang);
 
         if (!originalFile) {
-            console.log(`⏭️  Skipping ${reviewedFile.lang}: No corresponding original file found`);
+            console.error(`⏭️  Skipping ${reviewedFile.lang}: No corresponding original file found`);
             overallStats.filesSkipped++;
             continue;
         }
 
-        console.log(`🌐 Processing language: ${reviewedFile.lang}`);
-        console.log(`   📄 Original: ${originalFile.path}`);
-        console.log(`   📄 Reviewed: ${reviewedFile.path}`);
+        console.error(`🌐 Processing language: ${reviewedFile.lang}`);
+        console.error(`   📄 Original: ${originalFile.path}`);
+        console.error(`   📄 Reviewed: ${reviewedFile.path}`);
 
         if (verbose) {
-            console.log(`\n🔍 Comparing ${reviewedFile.lang} translations...\n`);
+            console.error(`\n🔍 Comparing ${reviewedFile.lang} translations...\n`);
         }
 
         try {
@@ -244,38 +244,38 @@ export async function batchMergeTranslations(
                 overallStats.processedLanguages.push(reviewedFile.lang);
 
                 if (result.stats.newKeys > 0 || result.stats.updatedKeys > 0) {
-                    console.log(
+                    console.error(
                         `   ✅ ${result.stats.newKeys} new, ${result.stats.updatedKeys} updated, ${result.stats.unchangedKeys} unchanged`
                     );
                 } else {
-                    console.log(`   ✨ No changes needed - all translations are up to date`);
+                    console.error(`   ✨ No changes needed - all translations are up to date`);
                 }
             } else {
-                console.log(`   ❌ Failed to process ${reviewedFile.lang}`);
+                console.error(`   ❌ Failed to process ${reviewedFile.lang}`);
             }
         } catch (error) {
-            console.log(`   ❌ Error processing ${reviewedFile.lang}: ${(error as Error).message}`);
+            console.error(`   ❌ Error processing ${reviewedFile.lang}: ${(error as Error).message}`);
         }
-        console.log();
+        console.error();
     }
 
     // Print overall summary
-    console.log('='.repeat(60));
-    console.log('📊 Overall Summary:');
-    console.log(`   Languages processed: ${overallStats.filesProcessed}`);
-    console.log(`   Languages skipped: ${overallStats.filesSkipped}`);
-    console.log(`   Total new keys: ${overallStats.totalNewKeys}`);
-    console.log(`   Total updated keys: ${overallStats.totalUpdatedKeys}`);
-    console.log(`   Total unchanged keys: ${overallStats.totalUnchangedKeys}`);
-    console.log(`   Processed languages: ${overallStats.processedLanguages.join(', ')}`);
+    console.error('='.repeat(60));
+    console.error('📊 Overall Summary:');
+    console.error(`   Languages processed: ${overallStats.filesProcessed}`);
+    console.error(`   Languages skipped: ${overallStats.filesSkipped}`);
+    console.error(`   Total new keys: ${overallStats.totalNewKeys}`);
+    console.error(`   Total updated keys: ${overallStats.totalUpdatedKeys}`);
+    console.error(`   Total unchanged keys: ${overallStats.totalUnchangedKeys}`);
+    console.error(`   Processed languages: ${overallStats.processedLanguages.join(', ')}`);
 
     if (!dryRun && (overallStats.totalNewKeys > 0 || overallStats.totalUpdatedKeys > 0)) {
-        console.log('\n🎉 Batch merge completed successfully!');
-        console.log('💡 Tip: Check the changes and commit them to your version control system');
+        console.error('\n🎉 Batch merge completed successfully!');
+        console.error('💡 Tip: Check the changes and commit them to your version control system');
     } else if (dryRun) {
-        console.log('\n🔍 DRY RUN MODE - No files were modified');
+        console.error('\n🔍 DRY RUN MODE - No files were modified');
     } else if (overallStats.totalNewKeys === 0 && overallStats.totalUpdatedKeys === 0) {
-        console.log('\n✨ All translations are already up to date!');
+        console.error('\n✨ All translations are already up to date!');
     }
 
     return overallStats;
@@ -287,23 +287,23 @@ export async function batchMergeTranslations(
 async function cleanupDiffDirectory(diffDir: string, dryRun: boolean = false): Promise<boolean> {
     try {
         if (!existsSync(diffDir)) {
-            console.log(`📁 Directory ${diffDir} does not exist, no cleanup needed`);
+            console.error(`📁 Directory ${diffDir} does not exist, no cleanup needed`);
             return true;
         }
 
         const files = readdirSync(diffDir);
         if (files.length === 0) {
-            console.log(`📁 Directory ${diffDir} is already empty`);
+            console.error(`📁 Directory ${diffDir} is already empty`);
             if (!dryRun) {
                 await fs.rmdir(diffDir);
-                console.log(`🗑️  Removed empty directory: ${diffDir}`);
+                console.error(`🗑️  Removed empty directory: ${diffDir}`);
             }
             return true;
         }
 
         if (dryRun) {
-            console.log(`🗑️  DRY RUN: Would remove ${files.length} files from ${diffDir}`);
-            console.log(`🗑️  DRY RUN: Would remove directory: ${diffDir}`);
+            console.error(`🗑️  DRY RUN: Would remove ${files.length} files from ${diffDir}`);
+            console.error(`🗑️  DRY RUN: Would remove directory: ${diffDir}`);
             return true;
         }
 
@@ -311,12 +311,12 @@ async function cleanupDiffDirectory(diffDir: string, dryRun: boolean = false): P
         for (const file of files) {
             const filePath = path.join(diffDir, file);
             await fs.unlink(filePath);
-            console.log(`🗑️  Removed file: ${filePath}`);
+            console.error(`🗑️  Removed file: ${filePath}`);
         }
 
         // Remove the directory itself
         await fs.rmdir(diffDir);
-        console.log(`🗑️  Removed directory: ${diffDir}`);
+        console.error(`🗑️  Removed directory: ${diffDir}`);
 
         return true;
     } catch (error) {
@@ -372,25 +372,25 @@ export async function handleMergeTranslations({
         }
 
         if (dryRun) {
-            console.log('🔍 DRY RUN MODE - No files will be modified\n');
+            console.error('🔍 DRY RUN MODE - No files will be modified\n');
         }
 
         const stats = await batchMergeTranslations(resolvedOriginalDir, resolvedReviewedDir, dryRun, verbose);
 
         // Clean up diff directory if requested and merge was successful
         if (shouldCleanup && stats.filesProcessed > 0) {
-            console.log('\n🧹 Cleaning up diff directory...');
+            console.error('\n🧹 Cleaning up diff directory...');
             const cleanupSuccess = await cleanupDiffDirectory(resolvedReviewedDir, dryRun);
             if (cleanupSuccess) {
-                console.log('✅ Diff directory cleanup completed');
+                console.error('✅ Diff directory cleanup completed');
             } else {
-                console.log('⚠️  Warning: Diff directory cleanup failed');
+                console.error('⚠️  Warning: Diff directory cleanup failed');
             }
         }
 
         // Perform git operations if requested and merge was successful
         if ((autoCommit || autoPush) && stats.filesProcessed > 0) {
-            console.log('\n🔧 Performing git operations...');
+            console.error('\n🔧 Performing git operations...');
             
             // Get list of merged files for git add
             const mergedFiles = stats.processedLanguages.map(lang => 
@@ -414,9 +414,9 @@ export async function handleMergeTranslations({
             );
             
             if (gitResult.success) {
-                console.log(`✅ ${gitResult.message}`);
+                console.error(`✅ ${gitResult.message}`);
             } else {
-                console.warn(`⚠️  Git operations failed: ${gitResult.message}`);
+                console.error(`⚠️  Git operations failed: ${gitResult.message}`);
             }
         }
 

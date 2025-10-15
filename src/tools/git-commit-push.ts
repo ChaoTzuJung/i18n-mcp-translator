@@ -33,7 +33,7 @@ export async function handleGitCommitPush({
         const resolvedProjectRoot = projectRoot || process.cwd();
         
         if (dryRun) {
-            console.log('🔍 DRY RUN MODE - Git operations preview\n');
+            console.error('🔍 DRY RUN MODE - Git operations preview\n');
         }
 
         const gitOptions: GitCommitOptions = {
@@ -53,14 +53,14 @@ export async function handleGitCommitPush({
         );
 
         if (result.success) {
-            console.log(`\n✅ ${result.message}`);
+            console.error(`\n✅ ${result.message}`);
             
             if (result.commitHash && !dryRun) {
-                console.log(`📝 Commit: ${result.commitHash}`);
+                console.error(`📝 Commit: ${result.commitHash}`);
             }
             
             if (result.pushedToBranch && !dryRun) {
-                console.log(`🚀 Pushed to: ${result.pushedToBranch}`);
+                console.error(`🚀 Pushed to: ${result.pushedToBranch}`);
             }
         }
 

@@ -39,16 +39,16 @@ export async function cleanupDiffDirectory(
         const files = readdirSync(resolvedDiffDir);
         const fileCount = files.length;
         
-        console.log(`📁 Found diff directory: ${resolvedDiffDir}`);
-        console.log(`📊 Files to remove: ${fileCount}`);
+        console.error(`📁 Found diff directory: ${resolvedDiffDir}`);
+        console.error(`📊 Files to remove: ${fileCount}`);
 
         if (fileCount === 0) {
-            console.log(`📁 Directory is already empty`);
+            console.error(`📁 Directory is already empty`);
             if (!dryRun) {
                 await fs.rmdir(resolvedDiffDir);
-                console.log(`🗑️  Removed empty directory: ${resolvedDiffDir}`);
+                console.error(`🗑️  Removed empty directory: ${resolvedDiffDir}`);
             } else {
-                console.log(`🗑️  DRY RUN: Would remove empty directory: ${resolvedDiffDir}`);
+                console.error(`🗑️  DRY RUN: Would remove empty directory: ${resolvedDiffDir}`);
             }
             return {
                 success: true,
@@ -58,11 +58,11 @@ export async function cleanupDiffDirectory(
         }
 
         if (dryRun) {
-            console.log(`\n🔍 DRY RUN MODE - Preview of files to be removed:`);
+            console.error(`\n🔍 DRY RUN MODE - Preview of files to be removed:`);
             files.forEach((file, index) => {
-                console.log(`  ${index + 1}. ${file}`);
+                console.error(`  ${index + 1}. ${file}`);
             });
-            console.log(`🗑️  DRY RUN: Would remove ${fileCount} files and directory ${resolvedDiffDir}`);
+            console.error(`🗑️  DRY RUN: Would remove ${fileCount} files and directory ${resolvedDiffDir}`);
             
             return {
                 success: true,
@@ -72,16 +72,16 @@ export async function cleanupDiffDirectory(
         }
 
         // Remove all files in the directory
-        console.log(`\n🧹 Removing files...`);
+        console.error(`\n🧹 Removing files...`);
         for (const file of files) {
             const filePath = path.join(resolvedDiffDir, file);
             await fs.unlink(filePath);
-            console.log(`🗑️  Removed file: ${file}`);
+            console.error(`🗑️  Removed file: ${file}`);
         }
 
         // Remove the directory itself
         await fs.rmdir(resolvedDiffDir);
-        console.log(`🗑️  Removed directory: ${resolvedDiffDir}`);
+        console.error(`🗑️  Removed directory: ${resolvedDiffDir}`);
 
         return {
             success: true,
@@ -114,15 +114,15 @@ export async function handleCleanupDiffDirectory({
 }) {
     try {
         if (dryRun) {
-            console.log('🔍 DRY RUN MODE - No files will be removed\n');
+            console.error('🔍 DRY RUN MODE - No files will be removed\n');
         }
 
         const result = await cleanupDiffDirectory(diffDir, dryRun, projectRoot);
 
         if (result.success) {
-            console.log(`\n✅ ${result.message}`);
+            console.error(`\n✅ ${result.message}`);
             if (result.filesRemoved > 0 && !dryRun) {
-                console.log('💡 Tip: Diff directory has been cleaned up successfully');
+                console.error('💡 Tip: Diff directory has been cleaned up successfully');
             }
         }
 
