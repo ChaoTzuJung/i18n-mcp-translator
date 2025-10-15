@@ -124,16 +124,16 @@ function parseGitDiffChanges(diffOutput: string): DiffChange[] {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
 
-        // Look for JSON key-value changes (handle both + and - prefixes)
-        if (line.startsWith('+"') || line.startsWith('-"')) {
-            const isAdded = line.startsWith('+"');
-            const isRemoved = line.startsWith('-"');
+        // Look for JSON key-value changes (handle both + and - prefixes with spaces)
+        if (line.match(/^[+-]\s+"/)) {
+            const isAdded = line.startsWith('+');
+            const isRemoved = line.startsWith('-');
 
-            // More flexible regex that handles escaped quotes and special characters
-            // Matches: +    "key": "value",  or  -    "key": "value"
-            const match = line.match(/^([+-])\s*"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
+            // Match: +    "key": "value",  or  -    "key": "value"
+            // Handle escaped quotes and special characters
+            const match = line.match(/^[+-]\s+"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
             if (match) {
-                const [, , key, value] = match;
+                const [, key, value] = match;
 
                 // Skip if we've already processed this key
                 if (processedKeys.has(key)) {
@@ -143,13 +143,13 @@ function parseGitDiffChanges(diffOutput: string): DiffChange[] {
                 // Check if this is a modification (both + and - exist for same key)
                 const oppositePrefix = isAdded ? '-' : '+';
                 const oppositeLine = lines.find(l => {
-                    const oppositeMatch = l.match(/^([+-])\s*"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
-                    return oppositeMatch && oppositeMatch[1] === oppositePrefix && oppositeMatch[2] === key;
+                    const oppositeMatch = l.match(/^[+-]\s+"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
+                    return oppositeMatch && l.startsWith(oppositePrefix) && oppositeMatch[1] === key;
                 });
 
                 if (oppositeLine && isAdded) {
                     // This is a modification, get the old value
-                    const oldMatch = oppositeLine.match(/^-\s*"[^"]+":\ *"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
+                    const oldMatch = oppositeLine.match(/^-\s+"[^"]+":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
                     const oldValue = oldMatch ? oldMatch[1] : '';
 
                     changes.push({
