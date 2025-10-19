@@ -42,32 +42,32 @@ async function detectMainBranch(projectRoot: string): Promise<string> {
     try {
         // Check if master branch exists
         try {
-            execSync('git show-ref --verify --quiet refs/heads/master', { 
-                cwd: projectRoot, 
-                stdio: 'ignore' 
+            execSync('git show-ref --verify --quiet refs/heads/master', {
+                cwd: projectRoot,
+                stdio: 'ignore'
             });
             return 'master';
         } catch {
             // master doesn't exist, check for main
             try {
-                execSync('git show-ref --verify --quiet refs/heads/main', { 
-                    cwd: projectRoot, 
-                    stdio: 'ignore' 
+                execSync('git show-ref --verify --quiet refs/heads/main', {
+                    cwd: projectRoot,
+                    stdio: 'ignore'
                 });
                 return 'main';
             } catch {
                 // Neither exists, check remote branches
                 try {
-                    execSync('git show-ref --verify --quiet refs/remotes/origin/master', { 
-                        cwd: projectRoot, 
-                        stdio: 'ignore' 
+                    execSync('git show-ref --verify --quiet refs/remotes/origin/master', {
+                        cwd: projectRoot,
+                        stdio: 'ignore'
                     });
                     return 'origin/master';
                 } catch {
                     try {
-                        execSync('git show-ref --verify --quiet refs/remotes/origin/main', { 
-                            cwd: projectRoot, 
-                            stdio: 'ignore' 
+                        execSync('git show-ref --verify --quiet refs/remotes/origin/main', {
+                            cwd: projectRoot,
+                            stdio: 'ignore'
                         });
                         return 'origin/main';
                     } catch {
@@ -79,7 +79,9 @@ async function detectMainBranch(projectRoot: string): Promise<string> {
             }
         }
     } catch (error) {
-        console.error(`⚠️  Error detecting main branch: ${(error as Error).message}, defaulting to master`);
+        console.error(
+            `⚠️  Error detecting main branch: ${(error as Error).message}, defaulting to master`
+        );
         return 'master';
     }
 }
@@ -87,7 +89,11 @@ async function detectMainBranch(projectRoot: string): Promise<string> {
 /**
  * Get list of changed locale files
  */
-function getChangedLocaleFiles(localeDir: string, baseBranch: string, projectRoot: string): string[] {
+function getChangedLocaleFiles(
+    localeDir: string,
+    baseBranch: string,
+    projectRoot: string
+): string[] {
     try {
         const relativePath = path.relative(projectRoot, localeDir);
         const gitCommand = `git diff ${baseBranch} --name-only -- ${relativePath}/`;
@@ -143,13 +149,19 @@ function parseGitDiffChanges(diffOutput: string): DiffChange[] {
                 // Check if this is a modification (both + and - exist for same key)
                 const oppositePrefix = isAdded ? '-' : '+';
                 const oppositeLine = lines.find(l => {
-                    const oppositeMatch = l.match(/^[+-]\s+"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
-                    return oppositeMatch && l.startsWith(oppositePrefix) && oppositeMatch[1] === key;
+                    const oppositeMatch = l.match(
+                        /^[+-]\s+"([^"]+)":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/
+                    );
+                    return (
+                        oppositeMatch && l.startsWith(oppositePrefix) && oppositeMatch[1] === key
+                    );
                 });
 
                 if (oppositeLine && isAdded) {
                     // This is a modification, get the old value
-                    const oldMatch = oppositeLine.match(/^-\s+"[^"]+":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/);
+                    const oldMatch = oppositeLine.match(
+                        /^-\s+"[^"]+":\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/
+                    );
                     const oldValue = oldMatch ? oldMatch[1] : '';
 
                     changes.push({
@@ -180,8 +192,8 @@ function parseGitDiffChanges(diffOutput: string): DiffChange[] {
  * Get file diff for a specific locale file
  */
 async function getLocaleFileDiff(
-    filePath: string, 
-    baseBranch: string, 
+    filePath: string,
+    baseBranch: string,
     projectRoot: string
 ): Promise<LocaleFileDiff | null> {
     try {
@@ -204,7 +216,7 @@ async function getLocaleFileDiff(
         const language = path.basename(filePath, '.json');
 
         console.error(`   📊 Found ${changes.length} changes in ${language}`);
-        
+
         return {
             filePath,
             language,
@@ -238,7 +250,7 @@ async function saveJsonFile(filePath: string, data: Record<string, any>): Promis
     try {
         // Ensure directory exists
         await fs.mkdir(path.dirname(filePath), { recursive: true });
-        
+
         // Sort keys alphabetically
         const sortedData: Record<string, any> = {};
         Object.keys(data)
@@ -246,7 +258,7 @@ async function saveJsonFile(filePath: string, data: Record<string, any>): Promis
             .forEach(key => {
                 sortedData[key] = data[key];
             });
-            
+
         await fs.writeFile(filePath, JSON.stringify(sortedData, null, 4) + '\n', 'utf8');
         return true;
     } catch (error) {
@@ -276,7 +288,7 @@ async function generateLanguageDiffContent(
     } else {
         // For other languages, follow the A1 logic
         const originalData = await loadJsonFile(originalFilePath);
-        
+
         changes.forEach(change => {
             if (originalData && originalData[change.key] !== undefined) {
                 // Key exists in target language - use original translation
@@ -287,7 +299,7 @@ async function generateLanguageDiffContent(
             }
         });
     }
-    
+
     return diffContent;
 }
 
@@ -312,8 +324,8 @@ export async function generateLocaleDiff({
     try {
         // Resolve paths
         const resolvedProjectRoot = projectRoot || process.cwd();
-        const resolvedLocaleDir = path.isAbsolute(localeDir) 
-            ? localeDir 
+        const resolvedLocaleDir = path.isAbsolute(localeDir)
+            ? localeDir
             : path.resolve(resolvedProjectRoot, localeDir);
 
         console.error(`📁 Locale directory: ${resolvedLocaleDir}`);
@@ -324,12 +336,16 @@ export async function generateLocaleDiff({
         }
 
         // Detect main branch if not specified
-        const baseBranch = customBaseBranch || await detectMainBranch(resolvedProjectRoot);
+        const baseBranch = customBaseBranch || (await detectMainBranch(resolvedProjectRoot));
         console.error(`🌿 Using base branch: ${baseBranch}`);
 
         // Get changed locale files
-        const changedFiles = getChangedLocaleFiles(resolvedLocaleDir, baseBranch, resolvedProjectRoot);
-        
+        const changedFiles = getChangedLocaleFiles(
+            resolvedLocaleDir,
+            baseBranch,
+            resolvedProjectRoot
+        );
+
         if (changedFiles.length === 0) {
             return {
                 success: true,
@@ -367,9 +383,10 @@ export async function generateLocaleDiff({
         }
 
         // Find main language changes
-        const mainLanguageDiff = languageDiffs.find(diff => 
-            diff.language === mainLanguage || 
-            path.basename(diff.filePath, '.json') === mainLanguage
+        const mainLanguageDiff = languageDiffs.find(
+            diff =>
+                diff.language === mainLanguage ||
+                path.basename(diff.filePath, '.json') === mainLanguage
         );
 
         if (!mainLanguageDiff) {
@@ -388,7 +405,13 @@ export async function generateLocaleDiff({
         }
 
         // Generate diff files for all languages
-        const allLanguageFiles = await fs.readdir(resolvedLocaleDir);
+        // Determine the actual directory containing the language files
+        // by extracting from the first changed file path
+        // 從實際變更的文件路徑中提取真實的語言文件目錄
+        const actualLocaleDir =
+            languageDiffs.length > 0 ? path.dirname(languageDiffs[0].filePath) : resolvedLocaleDir;
+
+        const allLanguageFiles = await fs.readdir(actualLocaleDir);
         const allLanguages = allLanguageFiles
             .filter(file => file.endsWith('.json'))
             .map(file => file.replace('.json', ''));
@@ -397,7 +420,7 @@ export async function generateLocaleDiff({
 
         for (const language of allLanguages) {
             const isMainLanguage = language === mainLanguage;
-            const originalFilePath = path.join(resolvedLocaleDir, `${language}.json`);
+            const originalFilePath = path.join(actualLocaleDir, `${language}.json`);
             const diffFilePath = path.join(diffDirectory, `${language}.json`);
 
             const diffContent = await generateLanguageDiffContent(
@@ -409,10 +432,14 @@ export async function generateLocaleDiff({
 
             if (Object.keys(diffContent).length > 0) {
                 if (dryRun) {
-                    console.error(`   📄 Would create: ${language}.json (${Object.keys(diffContent).length} keys)`);
+                    console.error(
+                        `   📄 Would create: ${language}.json (${Object.keys(diffContent).length} keys)`
+                    );
                 } else {
                     await saveJsonFile(diffFilePath, diffContent);
-                    console.error(`   ✅ Generated: ${language}.json (${Object.keys(diffContent).length} keys)`);
+                    console.error(
+                        `   ✅ Generated: ${language}.json (${Object.keys(diffContent).length} keys)`
+                    );
                 }
             }
         }
@@ -420,14 +447,14 @@ export async function generateLocaleDiff({
         // Perform git operations if requested
         if (gitOptions && totalChanges > 0) {
             console.error('\n🔧 Performing git operations...');
-            
+
             // Prepare files for git operations
             const diffFiles = allLanguages.map(lang => path.join(diffDirectory, `${lang}.json`));
             const gitOptionsWithFiles = {
                 ...gitOptions,
                 specificFiles: gitOptions.specificFiles || diffFiles
             };
-            
+
             const gitResult = await executeGitOperations(
                 gitOptionsWithFiles,
                 resolvedProjectRoot,
@@ -435,7 +462,7 @@ export async function generateLocaleDiff({
                 `${totalChanges} changes across ${allLanguages.length} languages`,
                 dryRun
             );
-            
+
             if (gitResult.success) {
                 console.error(`✅ ${gitResult.message}`);
             } else {
@@ -452,7 +479,6 @@ export async function generateLocaleDiff({
             diffDirectory,
             languageDiffs
         };
-
     } catch (error) {
         console.error(`❌ Error: ${(error as Error).message}`);
         throw error;
@@ -464,7 +490,7 @@ export async function generateLocaleDiff({
  */
 export async function handleGenerateLocaleDiff({
     localeDir,
-    projectRoot,
+    projectRoot = process.cwd(),
     baseBranch,
     mainLanguage = 'zh-TW',
     dryRun = false,
@@ -489,12 +515,15 @@ export async function handleGenerateLocaleDiff({
         }
 
         // Prepare git options
-        const gitOptions: GitCommitOptions | undefined = (autoCommit || autoPush) ? {
-            addFiles: autoCommit,
-            message: commitMessage,
-            push: autoPush,
-            branch: pushBranch
-        } : undefined;
+        const gitOptions: GitCommitOptions | undefined =
+            autoCommit || autoPush
+                ? {
+                      addFiles: autoCommit,
+                      message: commitMessage,
+                      push: autoPush,
+                      branch: pushBranch
+                  }
+                : undefined;
 
         const result = await generateLocaleDiff({
             localeDir,
@@ -508,12 +537,13 @@ export async function handleGenerateLocaleDiff({
         if (result.success) {
             console.error(`\n✅ ${result.message}`);
             if (result.totalChanges > 0) {
-                console.error('💡 Tip: Review the generated diff files and share them with your translation team');
+                console.error(
+                    '💡 Tip: Review the generated diff files and share them with your translation team'
+                );
             }
         }
 
         return result;
-
     } catch (error) {
         console.error(`❌ Error: ${(error as Error).message}`);
         throw error;
@@ -532,15 +562,43 @@ export function setupGenerateLocaleDiffTool(
         'generate_locale_diff',
         'A1 - Compare current branch with master/main branch and generate diff files for translation team',
         {
-            localeDir: z.string().describe('Path to the locale directory (e.g., "src/assets/locale")'),
-            projectRoot: z.string().optional().describe('Project root directory (defaults to current working directory)'),
-            baseBranch: z.string().optional().describe('Base branch to compare against (auto-detects master/main if not specified)'),
-            mainLanguage: z.string().default('zh-TW').describe('Main language code for diff generation'),
-            dryRun: z.boolean().default(false).describe('Preview mode - show what would be generated without creating files'),
-            autoCommit: z.boolean().default(false).describe('Automatically commit the generated diff files to git'),
-            commitMessage: z.string().optional().describe('Custom commit message (auto-generated if not provided)'),
-            autoPush: z.boolean().default(false).describe('Automatically push the commit to remote repository'),
-            pushBranch: z.string().optional().describe('Branch to push to (defaults to current branch)')
+            localeDir: z
+                .string()
+                .describe('Path to the locale directory (e.g., "src/assets/locale")'),
+            projectRoot: z
+                .string()
+                .default(process.cwd())
+                .describe('Project root directory (defaults to current working directory)'),
+            baseBranch: z
+                .string()
+                .optional()
+                .describe(
+                    'Base branch to compare against (auto-detects master/main if not specified)'
+                ),
+            mainLanguage: z
+                .string()
+                .default('zh-TW')
+                .describe('Main language code for diff generation'),
+            dryRun: z
+                .boolean()
+                .default(false)
+                .describe('Preview mode - show what would be generated without creating files'),
+            autoCommit: z
+                .boolean()
+                .default(false)
+                .describe('Automatically commit the generated diff files to git'),
+            commitMessage: z
+                .string()
+                .optional()
+                .describe('Custom commit message (auto-generated if not provided)'),
+            autoPush: z
+                .boolean()
+                .default(false)
+                .describe('Automatically push the commit to remote repository'),
+            pushBranch: z
+                .string()
+                .optional()
+                .describe('Branch to push to (defaults to current branch)')
         },
         handleGenerateLocaleDiff
     );
