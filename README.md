@@ -138,8 +138,7 @@ Example payload:
         "localeDir": "src/assets/locale",
         "projectRoot": "/path/to/your/project",
         "baseBranch": "master",
-        "mainLanguage": "zh-TW",
-        "dryRun": true
+        "mainLanguage": "zh-TW"
     }
 }
 ```
@@ -150,15 +149,16 @@ Example payload:
 - `projectRoot` - Project root directory (optional, defaults to current working directory)
 - `baseBranch` - Base branch to compare against (optional, auto-detects master/main)
 - `mainLanguage` - Main language code for diff generation (default: "zh-TW")
-- `dryRun` - Preview mode - show what would be generated without creating files (default: false)
 
 **Use Case:**
 
 1. Developer makes changes to locale files on feature branch
 2. Use `generate_locale_diff` to compare against master/main branch
-3. Tool generates diff files in `src/assets/locale/diff/` directory
-4. Share diff files with translation team for review
-5. After review, use `merge_translations` to integrate changes back
+3. Tool automatically detects and processes all subdirectories (e.g., `editor/`, `client/`)
+4. Tool generates diff files in `src/assets/locale/diff/` directory, preserving subdirectory structure
+5. Share diff files with translation team for review
+6. After review, use `merge_translations` to integrate changes back
+7. Use `git_commit_push` tool if you need to commit and push the diff files
 
 **Features:**
 
@@ -166,9 +166,9 @@ Example payload:
 - 🔍 **Git integration**: Uses `git diff` to identify exact changes between branches
 - 📊 **Change analysis**: Identifies added, modified, and deleted translation keys
 - 🌐 **Multi-language support**: Generates diff files for all language variants
+- 📁 **Multi-subdirectory support**: Automatically processes multiple subdirectories in one run (e.g., `editor/`, `client/`)
+- 🗂️ **Structure preservation**: Maintains subdirectory structure in generated diff files
 - 📝 **Intelligent content**: Main language shows actual changes, others show existing translations or empty strings
-- 🛡️ **Safe preview**: Dry-run mode to preview changes before generating files
-- 🔧 **Git integration**: Optional automatic commit and push of generated diff files
 
 #### 2. `merge_translations` - Merge Reviewed Translations
 

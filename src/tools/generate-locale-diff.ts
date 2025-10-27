@@ -10,7 +10,6 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { type ServerConfig } from '../types/config.js';
 import { type TranslationConfig } from '../types/i18n.js';
-import { executeGitOperations, type GitCommitOptions } from '../utils/git-operations.js';
 
 interface DiffChange {
     type: 'added' | 'modified' | 'deleted';
@@ -310,16 +309,12 @@ export async function generateLocaleDiff({
     localeDir,
     projectRoot,
     baseBranch: customBaseBranch,
-    mainLanguage = 'zh-TW',
-    dryRun = false,
-    gitOptions
+    mainLanguage = 'zh-TW'
 }: {
     localeDir: string;
     projectRoot?: string;
     baseBranch?: string;
     mainLanguage?: string;
-    dryRun?: boolean;
-    gitOptions?: GitCommitOptions;
 }): Promise<DiffGenerationResult> {
     try {
         // Resolve paths
@@ -395,84 +390,89 @@ export async function generateLocaleDiff({
 
         // Create diff directory
         const diffDirectory = path.join(resolvedLocaleDir, 'diff');
-
-        if (dryRun) {
-            console.error(`\n🔍 DRY RUN MODE - Preview of diff files to be generated:`);
-            console.error(`📁 Diff directory: ${diffDirectory}`);
-        } else {
-            await fs.mkdir(diffDirectory, { recursive: true });
-            console.error(`\n📁 Created diff directory: ${diffDirectory}`);
-        }
+        await fs.mkdir(diffDirectory, { recursive: true });
+        console.error(`\n📁 Created diff directory: ${diffDirectory}`);
 
         // Generate diff files for all languages
-        // Determine the actual directory containing the language files
-        // by extracting from the first changed file path
-        // 從實際變更的文件路徑中提取真實的語言文件目錄
-        const actualLocaleDir =
-            languageDiffs.length > 0 ? path.dirname(languageDiffs[0].filePath) : resolvedLocaleDir;
+        // Extract all unique directories from changed files to support multiple subdirectories
+        // 從所有變更文件中提取唯一的目錄，支援多個子目錄
+        const uniqueDirs = new Set<string>();
+        languageDiffs.forEach(diff => {
+            uniqueDirs.add(path.dirname(diff.filePath));
+        });
 
-        const allLanguageFiles = await fs.readdir(actualLocaleDir);
-        const allLanguages = allLanguageFiles
-            .filter(file => file.endsWith('.json'))
-            .map(file => file.replace('.json', ''));
+        const directories = Array.from(uniqueDirs);
+        console.error(`\n📂 Found ${directories.length} directory(ies) with changes`);
 
-        console.error(`\n🌐 Generating diff files for ${allLanguages.length} languages...`);
+        let totalFilesGenerated = 0;
 
-        for (const language of allLanguages) {
-            const isMainLanguage = language === mainLanguage;
-            const originalFilePath = path.join(actualLocaleDir, `${language}.json`);
-            const diffFilePath = path.join(diffDirectory, `${language}.json`);
+        // Process each directory separately
+        for (const actualLocaleDir of directories) {
+            const relativeDirPath = path.relative(resolvedLocaleDir, actualLocaleDir);
+            const dirName = relativeDirPath || 'root';
 
-            const diffContent = await generateLanguageDiffContent(
-                mainLanguageDiff.changes,
-                language,
-                originalFilePath,
-                isMainLanguage
+            console.error(`\n📁 Processing directory: ${dirName}`);
+
+            // Find main language diff for this specific directory
+            const dirMainLanguageDiff = languageDiffs.find(
+                diff =>
+                    path.dirname(diff.filePath) === actualLocaleDir &&
+                    (diff.language === mainLanguage ||
+                        path.basename(diff.filePath, '.json') === mainLanguage)
             );
 
-            if (Object.keys(diffContent).length > 0) {
-                if (dryRun) {
-                    console.error(
-                        `   📄 Would create: ${language}.json (${Object.keys(diffContent).length} keys)`
-                    );
-                } else {
+            if (!dirMainLanguageDiff) {
+                console.error(
+                    `   ⚠️  No changes found for main language (${mainLanguage}) in ${dirName}, skipping...`
+                );
+                continue;
+            }
+
+            // Read all language files in this directory
+            const allLanguageFiles = await fs.readdir(actualLocaleDir);
+            const allLanguages = allLanguageFiles
+                .filter(file => file.endsWith('.json'))
+                .map(file => file.replace('.json', ''));
+
+            console.error(`   🌐 Generating diff files for ${allLanguages.length} languages...`);
+
+            // Create subdirectory structure in diff directory if needed
+            const targetDiffDir = relativeDirPath
+                ? path.join(diffDirectory, relativeDirPath)
+                : diffDirectory;
+
+            await fs.mkdir(targetDiffDir, { recursive: true });
+
+            // Generate diff files for each language in this directory
+            for (const language of allLanguages) {
+                const isMainLanguage = language === mainLanguage;
+                const originalFilePath = path.join(actualLocaleDir, `${language}.json`);
+                const diffFilePath = path.join(targetDiffDir, `${language}.json`);
+
+                const diffContent = await generateLanguageDiffContent(
+                    dirMainLanguageDiff.changes,
+                    language,
+                    originalFilePath,
+                    isMainLanguage
+                );
+
+                if (Object.keys(diffContent).length > 0) {
                     await saveJsonFile(diffFilePath, diffContent);
                     console.error(
-                        `   ✅ Generated: ${language}.json (${Object.keys(diffContent).length} keys)`
+                        `      ✅ Generated: ${language}.json (${Object.keys(diffContent).length} keys)`
                     );
+                    totalFilesGenerated++;
                 }
             }
         }
 
-        // Perform git operations if requested
-        if (gitOptions && totalChanges > 0) {
-            console.error('\n🔧 Performing git operations...');
-
-            // Prepare files for git operations
-            const diffFiles = allLanguages.map(lang => path.join(diffDirectory, `${lang}.json`));
-            const gitOptionsWithFiles = {
-                ...gitOptions,
-                specificFiles: gitOptions.specificFiles || diffFiles
-            };
-
-            const gitResult = await executeGitOperations(
-                gitOptionsWithFiles,
-                resolvedProjectRoot,
-                'generate locale diff',
-                `${totalChanges} changes across ${allLanguages.length} languages`,
-                dryRun
-            );
-
-            if (gitResult.success) {
-                console.error(`✅ ${gitResult.message}`);
-            } else {
-                console.error(`⚠️  Git operations failed: ${gitResult.message}`);
-            }
-        }
+        console.error(
+            `\n📊 Summary: Generated ${totalFilesGenerated} diff files across ${directories.length} directory(ies)`
+        );
 
         return {
             success: true,
-            message: `Generated diff files for ${allLanguages.length} languages with ${totalChanges} total changes`,
+            message: `Generated ${totalFilesGenerated} diff files across ${directories.length} directory(ies) with ${totalChanges} total changes`,
             baseBranch,
             filesProcessed: changedFiles.length,
             totalChanges,
@@ -492,46 +492,19 @@ export async function handleGenerateLocaleDiff({
     localeDir,
     projectRoot = process.cwd(),
     baseBranch,
-    mainLanguage = 'zh-TW',
-    dryRun = false,
-    autoCommit = false,
-    commitMessage,
-    autoPush = false,
-    pushBranch
+    mainLanguage = 'zh-TW'
 }: {
     localeDir: string;
     projectRoot?: string;
     baseBranch?: string;
     mainLanguage?: string;
-    dryRun?: boolean;
-    autoCommit?: boolean;
-    commitMessage?: string;
-    autoPush?: boolean;
-    pushBranch?: string;
 }) {
     try {
-        if (dryRun) {
-            console.error('🔍 DRY RUN MODE - No files will be created\n');
-        }
-
-        // Prepare git options
-        const gitOptions: GitCommitOptions | undefined =
-            autoCommit || autoPush
-                ? {
-                      addFiles: autoCommit,
-                      message: commitMessage,
-                      push: autoPush,
-                      branch: pushBranch
-                  }
-                : undefined;
-
         const result = await generateLocaleDiff({
             localeDir,
             projectRoot,
             baseBranch,
-            mainLanguage,
-            dryRun,
-            gitOptions
+            mainLanguage
         });
 
         if (result.success) {
@@ -578,27 +551,7 @@ export function setupGenerateLocaleDiffTool(
             mainLanguage: z
                 .string()
                 .default('zh-TW')
-                .describe('Main language code for diff generation'),
-            dryRun: z
-                .boolean()
-                .default(false)
-                .describe('Preview mode - show what would be generated without creating files'),
-            autoCommit: z
-                .boolean()
-                .default(false)
-                .describe('Automatically commit the generated diff files to git'),
-            commitMessage: z
-                .string()
-                .optional()
-                .describe('Custom commit message (auto-generated if not provided)'),
-            autoPush: z
-                .boolean()
-                .default(false)
-                .describe('Automatically push the commit to remote repository'),
-            pushBranch: z
-                .string()
-                .optional()
-                .describe('Branch to push to (defaults to current branch)')
+                .describe('Main language code for diff generation')
         },
         handleGenerateLocaleDiff
     );
