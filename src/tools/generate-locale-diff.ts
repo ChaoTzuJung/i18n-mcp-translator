@@ -34,6 +34,19 @@ interface DiffGenerationResult {
     languageDiffs: LocaleFileDiff[];
 }
 
+interface DiffGenerationSummary {
+    success: boolean;
+    message: string;
+    baseBranch: string;
+    filesProcessed: number;
+    totalChanges: number;
+    diffDirectory: string;
+    languagesSummary: Array<{
+        language: string;
+        changesCount: number;
+    }>;
+}
+
 /**
  * Detect the main branch name (master or main)
  */
@@ -498,7 +511,7 @@ export async function handleGenerateLocaleDiff({
     projectRoot?: string;
     baseBranch?: string;
     mainLanguage?: string;
-}) {
+}): Promise<DiffGenerationSummary> {
     try {
         const result = await generateLocaleDiff({
             localeDir,
