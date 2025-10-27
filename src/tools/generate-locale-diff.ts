@@ -516,10 +516,35 @@ export async function handleGenerateLocaleDiff({
             }
         }
 
-        return result;
+        // Return a simplified summary instead of the full result with all language diffs
+        // This prevents the response from being too large when there are many changes
+        return {
+            success: result.success,
+            message: result.message,
+            baseBranch: result.baseBranch,
+            filesProcessed: result.filesProcessed,
+            totalChanges: result.totalChanges,
+            diffDirectory: result.diffDirectory,
+            // Only return summary information about languages, not all the detailed changes
+            languagesSummary: result.languageDiffs.map(diff => ({
+                language: diff.language,
+                changesCount: diff.changes.length
+            }))
+        };
     } catch (error) {
-        console.error(`❌ Error: ${(error as Error).message}`);
-        throw error;
+        const errorMessage = (error as Error).message;
+        console.error(`❌ Error: ${errorMessage}`);
+
+        // Return error result instead of throwing
+        return {
+            success: false,
+            message: `Failed to generate locale diff: ${errorMessage}`,
+            baseBranch: '',
+            filesProcessed: 0,
+            totalChanges: 0,
+            diffDirectory: '',
+            languagesSummary: []
+        };
     }
 }
 
