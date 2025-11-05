@@ -49,6 +49,8 @@ This is an MCP (Model Context Protocol) server for automatic i18n translation of
 - Graceful degradation when services are unavailable
 
 ### 8. Documentation & User Experience
+- **CRITICAL**: All specifications, plans, and user-facing documentation MUST be written in Traditional Chinese (zh-TW)
+- Code comments and technical implementation details may use English
 - Keep README and CLAUDE.md synchronized
 - Provide clear error messages with solutions
 - Include examples for all MCP tools
