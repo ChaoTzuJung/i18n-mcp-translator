@@ -82,7 +82,8 @@ export class FileProcessor {
                         tasks.push(async () => {
                             const suggestion = await this.aiService.getAiSuggestions(
                                 hardcodedText,
-                                contextCode
+                                contextCode,
+                                filePath  // Pass file path for context-aware key generation
                             );
 
                             if (suggestion && suggestion.i18nKey) {
@@ -126,7 +127,8 @@ export class FileProcessor {
                                 tasks.push(async () => {
                                     const suggestion = await this.aiService.getAiSuggestions(
                                         hardcodedText,
-                                        contextCode
+                                        contextCode,
+                                        filePath  // Pass file path for context-aware key generation
                                     );
 
                                     if (suggestion && suggestion.i18nKey) {
