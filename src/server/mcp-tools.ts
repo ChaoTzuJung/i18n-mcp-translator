@@ -6,6 +6,7 @@ import { setupTranslateFileTool } from '../tools/translate-file.js';
 import { setupMergeTranslationsTool } from '../tools/merge-translations.js';
 import { setupCleanupDiffDirectoryTool } from '../tools/cleanup-diff-directory.js';
 import { setupGenerateLocaleDiffTool } from '../tools/generate-locale-diff.js';
+import { setupSortJsonKeysTool } from '../tools/sort-json-keys.js';
 import { type ServerConfig } from '../types/config.js';
 import { type TranslationConfig } from '../types/i18n.js';
 
@@ -43,5 +44,8 @@ export class MCPTools {
 
         // Register generate locale diff tool (A1 functionality)
         setupGenerateLocaleDiffTool(refreshedServer, this.config, this.translationConfig);
+
+        // Register sort JSON keys tool
+        setupSortJsonKeysTool(refreshedServer, this.config, this.translationConfig);
     }
 }
