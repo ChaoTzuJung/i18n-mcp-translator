@@ -20,7 +20,11 @@
         "start": "tsx src/index.ts",
         "watch": "tsc --watch",
         "inspector": "dotenv -- npm run _inspector:run",
-        "_inspector:run": "npx @modelcontextprotocol/inspector -e GOOGLE_AI_API_KEY=$GOOGLE_AI_API_KEY node build/index.js"
+        "_inspector:run": "npx @modelcontextprotocol/inspector -e GOOGLE_AI_API_KEY=$GOOGLE_AI_API_KEY node build/index.js",
+        "test": "vitest run",
+        "test:watch": "vitest watch",
+        "test:ui": "vitest --ui",
+        "test:coverage": "vitest run --coverage"
     },
     "engines": {
         "node": ">=22.0.0"
@@ -55,9 +59,13 @@
         "@types/babel__traverse": "^7.20.7",
         "@types/node": "^24.0.4",
         "@types/prettier": "^2.7.3",
+        "@vitest/coverage-v8": "^4.0.8",
+        "@vitest/ui": "^4.0.8",
         "dotenv-cli": "^8.0.0",
+        "happy-dom": "^20.0.10",
         "ts-node": "^10.9.2",
         "tsx": "^4.20.3",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "vitest": "^4.0.8"
     }
 }
