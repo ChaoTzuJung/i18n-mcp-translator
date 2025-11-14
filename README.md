@@ -538,17 +538,6 @@ Configure separate MCP server instances for each project:
 ```json
 {
   "mcpServers": {
-    "i18n-fever-admin": {
-      "command": "npx",
-      "args": ["-y", "i18n-mcp-translator"],
-      "env": {
-        "GOOGLE_AI_API_KEY": "your-api-key",
-        "I18N_MCP_BASE_LANGUAGE": "zh-TW",
-        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja,zh-CN,pt-BR",
-        "I18N_MCP_TRANSLATION_DIR": "/path/to/fever-admin/src/assets/locale",
-        "I18N_MCP_PROJECT_ROOT": "/path/to/fever-admin"
-      }
-    },
     "i18n-new-canvas-admin": {
       "command": "npx",
       "args": ["-y", "i18n-mcp-translator"],
@@ -558,6 +547,28 @@ Configure separate MCP server instances for each project:
         "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja,zh-CN",
         "I18N_MCP_TRANSLATION_DIR": "/path/to/new-canvas-admin/src/assets/locale",
         "I18N_MCP_PROJECT_ROOT": "/path/to/new-canvas-admin"
+      }
+    },
+    "i18n-fever-tool": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-api-key",
+        "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US",
+        "I18N_MCP_TRANSLATION_DIR": "/path/to/fever-tool/src/locale",
+        "I18N_MCP_PROJECT_ROOT": "/path/to/fever-tool"
+      }
+    },
+    "i18n-form": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-api-key",
+        "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US",
+        "I18N_MCP_TRANSLATION_DIR": "/path/to/form/src/locale",
+        "I18N_MCP_PROJECT_ROOT": "/path/to/form"
       }
     }
   }

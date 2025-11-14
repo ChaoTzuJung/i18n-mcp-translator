@@ -155,34 +155,9 @@ For each project, ensure:
 
 ## Configuration Examples
 
-### Example 1: fever-admin
+### Example 1: new-canvas-admin
 
-```json
-"i18n-fever-admin": {
-  "command": "npx",
-  "args": ["-y", "i18n-mcp-translator"],
-  "env": {
-    "GOOGLE_AI_API_KEY": "AIza...",
-    "I18N_MCP_BASE_LANGUAGE": "zh-TW",
-    "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja,zh-CN,pt-BR,es-419,th-TH",
-    "I18N_MCP_TRANSLATION_DIR": "/Users/alan/fever/fever-admin/src/assets/locale",
-    "I18N_MCP_SRC_DIR": "/Users/alan/fever/fever-admin/src",
-    "I18N_MCP_PROJECT_ROOT": "/Users/alan/fever/fever-admin"
-  }
-}
-```
-
-**Naming Convention:**
-```
-{module}.{page}.{section}.{element}
-
-Examples:
-admin.users.table.header.name
-admin.users.button.add
-admin.settings.form.label.email
-```
-
-### Example 2: new-canvas-admin
+Comprehensive admin panel with achievement, campaign, point systems.
 
 ```json
 "i18n-new-canvas-admin": {
@@ -192,9 +167,9 @@ admin.settings.form.label.email
     "GOOGLE_AI_API_KEY": "AIza...",
     "I18N_MCP_BASE_LANGUAGE": "zh-TW",
     "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja,zh-CN",
-    "I18N_MCP_TRANSLATION_DIR": "/Users/alan/fever/new-canvas-admin/src/assets/locale",
-    "I18N_MCP_SRC_DIR": "/Users/alan/fever/new-canvas-admin/src",
-    "I18N_MCP_PROJECT_ROOT": "/Users/alan/fever/new-canvas-admin"
+    "I18N_MCP_TRANSLATION_DIR": "/path/to/new-canvas-admin/src/assets/locale",
+    "I18N_MCP_SRC_DIR": "/path/to/new-canvas-admin/src",
+    "I18N_MCP_PROJECT_ROOT": "/path/to/new-canvas-admin"
   }
 }
 ```
@@ -207,9 +182,15 @@ Examples:
 achievement.dashboard.title
 campaign.onsite.editor.message.placeholder
 point.mechanism.behavior.add
+promo.list.table.header.name
+common.button.save
 ```
 
-### Example 3: fever-tool
+**Documentation:** See [new-canvas-admin-naming-guide.md](../examples/new-canvas-admin-naming-guide.md)
+
+### Example 2: fever-tool
+
+OnSite assistant tool for staff operations.
 
 ```json
 "i18n-fever-tool": {
@@ -218,23 +199,65 @@ point.mechanism.behavior.add
   "env": {
     "GOOGLE_AI_API_KEY": "AIza...",
     "I18N_MCP_BASE_LANGUAGE": "zh-TW",
-    "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja",
-    "I18N_MCP_TRANSLATION_DIR": "/Users/alan/fever/fever-tool/src/locale",
-    "I18N_MCP_SRC_DIR": "/Users/alan/fever/fever-tool/src",
-    "I18N_MCP_PROJECT_ROOT": "/Users/alan/fever/fever-tool"
+    "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US",
+    "I18N_MCP_TRANSLATION_DIR": "/path/to/fever-tool/src/locale",
+    "I18N_MCP_SRC_DIR": "/path/to/fever-tool/src",
+    "I18N_MCP_PROJECT_ROOT": "/path/to/fever-tool"
   }
 }
 ```
 
 **Naming Convention:**
 ```
-{tool}.{feature}.{element}
+{feature}.{page}.{section}.{element}
 
 Examples:
-editor.toolbar.button.save
-editor.canvas.zoom.in
-preview.mode.toggle
+onSiteAssistant.promotions.title
+onSiteAssistant.missionReward.form.label.name
+onSiteAssistant.promoGenerator.button.generate
+camera.scanner.instruction
+common.button.save
 ```
+
+**Documentation:** See [fever-tool-naming-guide.md](../examples/fever-tool-naming-guide.md)
+
+### Example 3: form
+
+Form builder with Editor and Client modes.
+
+```json
+"i18n-form": {
+  "command": "npx",
+  "args": ["-y", "i18n-mcp-translator"],
+  "env": {
+    "GOOGLE_AI_API_KEY": "AIza...",
+    "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+    "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US",
+    "I18N_MCP_TRANSLATION_DIR": "/path/to/form/src/locale",
+    "I18N_MCP_SRC_DIR": "/path/to/form/src",
+    "I18N_MCP_PROJECT_ROOT": "/path/to/form"
+  }
+}
+```
+
+**Naming Convention:**
+```
+{mode}.{domain}.{component}.{element}.{property}
+
+Examples:
+editor.navbar.button.save
+editor.fieldSetting.singleLine.placeholder.label
+client.field.fileUpload.error.fileSize
+client.validation.required
+common.button.save
+```
+
+**Note:** Form project has dual-mode structure:
+- `editor.*` - Form builder (create/edit)
+- `client.*` - Form viewer (display/fill)
+- `common.*` - Shared components
+
+**Documentation:** See [form-naming-guide.md](../examples/form-naming-guide.md)
 
 ## Troubleshooting
 

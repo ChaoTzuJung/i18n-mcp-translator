@@ -205,12 +205,11 @@ when generating translation keys.
 
 ## Project Comparison Table
 
-| Project | Base Lang | Target Languages | Translation Dir | Structure Type |
-|---------|-----------|------------------|-----------------|----------------|
-| fever-admin | zh-TW | zh-TW, en-US, ja, zh-CN, pt-BR, es-419, th-TH | src/assets/locale | Per-language files |
-| new-canvas-admin | zh-TW | zh-TW, en-US, ja, zh-CN | src/assets/locale | Per-language files |
-| fever-tool | zh-TW | zh-TW, en-US, ja | src/locale | Per-language files |
-| form | zh-TW | zh-TW, en-US, ja, zh-CN | src/i18n | Legacy single file |
+| Project | Base Lang | Target Languages | Translation Dir | Structure Type | Naming Convention |
+|---------|-----------|------------------|-----------------|----------------|-------------------|
+| new-canvas-admin | zh-TW | zh-TW, en-US, ja, zh-CN | src/assets/locale | Per-language files | `{feature}.{page}.{component}.{element}.{action}` |
+| fever-tool | zh-TW | zh-TW, en-US | src/locale | Per-language files | `{feature}.{page}.{section}.{element}` |
+| form | zh-TW | zh-TW, en-US | src/locale/client, src/locale/editor | Per-language files (split by mode) | `{mode}.{domain}.{component}.{element}.{property}` |
 
 ## Workflow Examples
 
