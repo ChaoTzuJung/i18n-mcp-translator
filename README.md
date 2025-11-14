@@ -11,6 +11,7 @@ It scans your codebase for hardcoded Traditional Chinese text, generates i18n ke
 - **Flexible translation file support** - works with any JSON file name (lang.json, lang-editor.json, etc.)
 - **Auto-discovery** - scans existing translation files to detect configured languages
 - **Local-first** - no external API dependencies for language management
+- **Multi-project support** - configure and work with multiple projects simultaneously
 - Returns modified code with i18n keys.
 - Powered by Google Gemini AI.
 - Full language info mapping (code, local/english name, region, etc) for all configured languages.
@@ -525,6 +526,74 @@ The system automatically detects configured languages from existing translation 
 
 - Common language codes: `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, `ko-KR`, `pt-BR`, `es-419`, `th-TH`, etc.
 - Fallback generation for unknown language codes
+
+## Multi-Project Support
+
+The i18n MCP translator can work with multiple projects simultaneously. Each project can have its own configuration, naming conventions, and target languages.
+
+### Quick Setup
+
+Configure separate MCP server instances for each project:
+
+```json
+{
+  "mcpServers": {
+    "i18n-fever-admin": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-api-key",
+        "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja,zh-CN,pt-BR",
+        "I18N_MCP_TRANSLATION_DIR": "/path/to/fever-admin/src/assets/locale",
+        "I18N_MCP_PROJECT_ROOT": "/path/to/fever-admin"
+      }
+    },
+    "i18n-new-canvas-admin": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-api-key",
+        "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja,zh-CN",
+        "I18N_MCP_TRANSLATION_DIR": "/path/to/new-canvas-admin/src/assets/locale",
+        "I18N_MCP_PROJECT_ROOT": "/path/to/new-canvas-admin"
+      }
+    }
+  }
+}
+```
+
+### Benefits
+
+- ✅ **Project isolation** - Each project has independent configuration
+- ✅ **No conflicts** - Different naming conventions per project
+- ✅ **Flexible languages** - Each project can target different languages
+- ✅ **Auto-detection** - Claude Code automatically selects the right server
+
+### Documentation
+
+- **Quick Start**: [docs/quick-start-multi-project.md](docs/quick-start-multi-project.md) - 5-minute setup guide
+- **Full Guide**: [docs/multi-project-setup.md](docs/multi-project-setup.md) - Comprehensive documentation
+- **Naming Templates**: [docs/examples/](docs/examples/) - Templates and examples for i18n key naming conventions
+
+### Project-Specific Naming Conventions
+
+Create a naming guide in each project (e.g., `docs/i18n-naming-guide.md`):
+
+```markdown
+# i18n Key Naming Convention
+
+## Structure
+{feature}.{page}.{element}.{action}
+
+## Examples
+user.profile.button.save
+dashboard.analytics.chart.title
+common.error.network
+```
+
+Reference this guide when using the translator to ensure consistent key generation.
 
 ## License
 

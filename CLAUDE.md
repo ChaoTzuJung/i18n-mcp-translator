@@ -188,6 +188,69 @@ The server handles both absolute and relative paths:
 - `enhanced_translate_file` - Enhanced version with caching and optimization
 - `batch_translate_files` - Batch processing multiple files with parallel processing
 
+## Multi-Project Support
+
+The i18n MCP translator supports working with multiple projects simultaneously. Each project can have:
+- Different translation file structures
+- Different target languages
+- Different naming conventions
+- Independent configuration
+
+### Quick Setup
+
+Configure separate MCP server instances for each project in your MCP config file:
+
+```json
+{
+  "mcpServers": {
+    "i18n-project-a": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-api-key",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja",
+        "I18N_MCP_TRANSLATION_DIR": "/path/to/project-a/src/assets/locale",
+        "I18N_MCP_PROJECT_ROOT": "/path/to/project-a"
+      }
+    },
+    "i18n-project-b": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-api-key",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US",
+        "I18N_MCP_TRANSLATION_DIR": "/path/to/project-b/src/locale",
+        "I18N_MCP_PROJECT_ROOT": "/path/to/project-b"
+      }
+    }
+  }
+}
+```
+
+### Documentation
+
+- **Quick Start**: See `docs/quick-start-multi-project.md` for 5-minute setup
+- **Full Guide**: See `docs/multi-project-setup.md` for comprehensive documentation
+- **Naming Conventions**: See `docs/examples/` for naming guide templates and examples
+
+### Project-Specific Naming Conventions
+
+Create a `docs/i18n-naming-guide.md` in each project to guide AI in generating appropriate i18n keys:
+
+```markdown
+# i18n Key Naming Convention
+
+## Structure
+{feature}.{page}.{element}.{action}
+
+## Examples
+user.profile.button.save
+dashboard.analytics.chart.title
+common.error.network
+```
+
+When using the translator, reference your naming guide for consistent key generation.
+
 ## Development Notes
 
 - Built for Node.js v22+ with ES modules
@@ -197,3 +260,4 @@ The server handles both absolute and relative paths:
 - Local-first language management (no external API dependencies)
 - Automatic language detection from existing translation files
 - Robust fallback system for language configuration
+- **Multi-project support** - Work with multiple projects simultaneously
