@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "i18n-mcp-translator": {
+      "command": "npx",
+      "args": ["-y", "i18n-mcp-translator"],
+      "env": {
+        "GOOGLE_AI_API_KEY": "your-google-api-key-here",
+        "I18N_MCP_BASE_LANGUAGE": "zh-TW",
+        "I18N_MCP_TARGET_LANGUAGES": "zh-TW,en-US,ja",
+        "I18N_MCP_TRANSLATION_DIR": "/absolute/path/to/i18n-mcp-translator/examples/test-app/src/assets/locale",
+        "I18N_MCP_SRC_DIR": "/absolute/path/to/i18n-mcp-translator/examples/test-app/src",
+        "I18N_MCP_PROJECT_ROOT": "/absolute/path/to/i18n-mcp-translator/examples/test-app"
+      }
+    }
+  }
+}
