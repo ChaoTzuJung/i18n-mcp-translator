@@ -1,24 +1,24 @@
-# Multi-Project Setup Guide
+# 多專案設置指南
 
-This guide explains how to configure i18n MCP translator for multiple projects.
+本指南說明如何為多個專案配置 i18n MCP 翻譯器。
 
-## Overview
+## 概述
 
-The i18n MCP translator supports multiple projects through flexible configuration. Each project can have:
-- Different translation file structures
-- Different target languages
-- Different naming conventions
-- Different file locations
+i18n MCP 翻譯器透過靈活的配置支援多個專案。每個專案可以有：
+- 不同的翻譯檔案結構
+- 不同的目標語言
+- 不同的命名規範
+- 不同的檔案位置
 
-## Configuration Strategies
+## 配置策略
 
-### Strategy 1: Per-Project MCP Servers (Recommended)
+### 策略 1：為每個專案設置獨立的 MCP 伺服器（推薦）
 
-Create separate MCP server instances for each project in your MCP configuration file.
+在您的 MCP 配置檔案中為每個專案建立獨立的 MCP 伺服器實例。
 
-#### Example: Claude Code Configuration
+#### 範例：Claude Code 配置
 
-**Location:** `~/.config/claude/mcp.json` or `.cursor/mcp.json`
+**位置：** `~/.config/claude/mcp.json` 或 `.cursor/mcp.json`
 
 ```json
 {
@@ -75,23 +75,23 @@ Create separate MCP server instances for each project in your MCP configuration 
 }
 ```
 
-#### Benefits
-- ✅ **Clear separation** - Each project has its own configuration
-- ✅ **No confusion** - No risk of mixing project configs
-- ✅ **Project-specific settings** - Different languages, paths per project
-- ✅ **Auto-selection** - Claude Code automatically selects the right server based on working directory
+#### 優點
+- ✅ **清晰分離** - 每個專案都有自己的配置
+- ✅ **不會混淆** - 不會有混淆專案配置的風險
+- ✅ **專案特定設定** - 每個專案可以有不同的語言和路徑
+- ✅ **自動選擇** - Claude Code 會根據工作目錄自動選擇正確的伺服器
 
-#### How It Works
-1. When you open a project, Claude Code detects the working directory
-2. It matches the directory to the appropriate MCP server
-3. All i18n operations use that project's configuration
-4. Switching projects automatically switches MCP server context
+#### 運作原理
+1. 當您開啟一個專案時，Claude Code 會偵測工作目錄
+2. 它會將目錄與適當的 MCP 伺服器進行配對
+3. 所有 i18n 操作都會使用該專案的配置
+4. 切換專案會自動切換 MCP 伺服器上下文
 
-### Strategy 2: Single MCP Server with Dynamic Parameters
+### 策略 2：使用單一 MCP 伺服器並動態傳遞參數
 
-Use one MCP server and pass project-specific parameters in each tool call.
+使用一個 MCP 伺服器，並在每次工具呼叫時傳遞專案特定的參數。
 
-#### Example Usage
+#### 使用範例
 
 ```typescript
 // When working on fever-admin
@@ -115,25 +115,25 @@ await mcp.call('translate-file', {
 });
 ```
 
-#### Benefits
-- ✅ **Resource efficient** - Only one MCP server instance
-- ✅ **Maximum flexibility** - Can override any parameter per call
-- ✅ **Simpler setup** - One configuration entry
+#### 優點
+- ✅ **資源效率高** - 只有一個 MCP 伺服器實例
+- ✅ **最大靈活性** - 可以在每次呼叫時覆寫任何參數
+- ✅ **設置更簡單** - 只需一個配置項目
 
-#### Drawbacks
-- ❌ **More verbose** - Need to specify parameters each time
-- ❌ **Error-prone** - Easy to forget or mix up parameters
-- ❌ **No auto-detection** - Must manually specify project context
+#### 缺點
+- ❌ **更冗長** - 每次都需要指定參數
+- ❌ **容易出錯** - 容易忘記或混淆參數
+- ❌ **無自動偵測** - 必須手動指定專案上下文
 
-## Project-Specific Naming Conventions
+## 專案特定的命名規範
 
-### Context Files for AI Guidance
+### 用於 AI 指導的上下文檔案
 
-Create a naming convention guide in each project to help AI generate appropriate i18n keys.
+在每個專案中建立一個命名規範指南，以幫助 AI 生成適當的 i18n 鍵值。
 
-#### Example: fever-admin
+#### 範例：fever-admin
 
-**Location:** `fever-admin/docs/i18n-naming-guide.md`
+**位置：** `fever-admin/docs/i18n-naming-guide.md`
 
 ```markdown
 # i18n Key Naming Convention - fever-admin
@@ -162,9 +162,9 @@ Create a naming convention guide in each project to help AI generate appropriate
 - common.validation.required
 ```
 
-#### Example: new-canvas-admin
+#### 範例：new-canvas-admin
 
-**Location:** `new-canvas-admin/docs/i18n-naming-guide.md`
+**位置：** `new-canvas-admin/docs/i18n-naming-guide.md`
 
 ```markdown
 # i18n Key Naming Convention - new-canvas-admin
@@ -193,9 +193,9 @@ Create a naming convention guide in each project to help AI generate appropriate
 - common.upload.hint
 ```
 
-### Passing Context to AI
+### 將上下文傳遞給 AI
 
-When using the MCP translator, you can reference these guides:
+在使用 MCP 翻譯器時，您可以參考這些指南：
 
 ```bash
 # In your project's prompt or context
@@ -203,17 +203,17 @@ Please follow the i18n naming conventions specified in docs/i18n-naming-guide.md
 when generating translation keys.
 ```
 
-## Project Comparison Table
+## 專案比較表
 
-| Project | Base Lang | Target Languages | Translation Dir | Structure Type | Naming Convention |
+| 專案 | 基礎語言 | 目標語言 | 翻譯目錄 | 結構類型 | 命名規範 |
 |---------|-----------|------------------|-----------------|----------------|-------------------|
-| new-canvas-admin | zh-TW | zh-TW, en-US, ja, zh-CN | src/assets/locale | Per-language files | `{feature}.{page}.{component}.{element}.{action}` |
-| fever-tool | zh-TW | zh-TW, en-US | src/locale | Per-language files | `{feature}.{page}.{section}.{element}` |
-| form | zh-TW | zh-TW, en-US | src/locale/client, src/locale/editor | Per-language files (split by mode) | `{mode}.{domain}.{component}.{element}.{property}` |
+| new-canvas-admin | zh-TW | zh-TW, en-US, ja, zh-CN | src/assets/locale | 每種語言獨立檔案 | `{feature}.{page}.{component}.{element}.{action}` |
+| fever-tool | zh-TW | zh-TW, en-US | src/locale | 每種語言獨立檔案 | `{feature}.{page}.{section}.{element}` |
+| form | zh-TW | zh-TW, en-US | src/locale/client, src/locale/editor | 每種語言獨立檔案（依模式分割） | `{mode}.{domain}.{component}.{element}.{property}` |
 
-## Workflow Examples
+## 工作流程範例
 
-### Example 1: Translating a File in fever-admin
+### 範例 1：在 fever-admin 中翻譯檔案
 
 ```bash
 # Claude will automatically use i18n-fever-admin MCP server
@@ -225,7 +225,7 @@ when generating translation keys.
 5. Files updated: fever-admin/src/assets/locale/*.json
 ```
 
-### Example 2: Generating Locale Diff for new-canvas-admin
+### 範例 2：為 new-canvas-admin 生成語言差異檔
 
 ```bash
 # Working on feature branch in new-canvas-admin
@@ -237,7 +237,7 @@ when generating translation keys.
 5. Share diff files with translation team
 ```
 
-### Example 3: Merging Translations for fever-tool
+### 範例 3：為 fever-tool 合併翻譯
 
 ```bash
 # After translation team review
@@ -249,46 +249,46 @@ when generating translation keys.
 5. Optional: Auto-commit and push changes
 ```
 
-## Best Practices
+## 最佳實踐
 
-### 1. Use Absolute Paths
-Always use absolute paths in MCP configuration to avoid ambiguity:
+### 1. 使用絕對路徑
+在 MCP 配置中始終使用絕對路徑以避免歧義：
 
 ```json
 "I18N_MCP_PROJECT_ROOT": "/Users/alan/projects/fever-admin"
 ```
 
-Not:
+而不是：
 ```json
 "I18N_MCP_PROJECT_ROOT": "../fever-admin"  // ❌ Avoid relative paths
 ```
 
-### 2. Consistent Language Codes
-Use consistent language codes across all projects:
+### 2. 一致的語言代碼
+在所有專案中使用一致的語言代碼：
 - ✅ `zh-TW`, `en-US`, `ja-JP`, `zh-CN`
 - ❌ `zh-tw`, `en`, `ja`, `cn`
 
-### 3. Document Conventions
-Maintain i18n naming convention docs in each project:
+### 3. 文件化規範
+在每個專案中維護 i18n 命名規範文件：
 - `docs/i18n-naming-guide.md`
 - `docs/i18n-structure.md`
-- Link them in project README
+- 在專案 README 中連結這些文件
 
-### 4. Naming Convention Alignment
-While each project can have different conventions, try to align common patterns:
+### 4. 命名規範對齊
+雖然每個專案可以有不同的規範，但儘量對齊共用模式：
 
-**Common Elements (All Projects):**
+**共用元素（所有專案）：**
 - `common.button.save`
 - `common.button.cancel`
 - `common.error.network`
 - `common.validation.required`
 
-**Project-Specific (Can Differ):**
+**專案特定（可以不同）：**
 - fever-admin: `admin.users.table.header.name`
 - new-canvas-admin: `achievement.dashboard.title`
 
-### 5. Test Configuration
-Test each project's MCP configuration:
+### 5. 測試配置
+測試每個專案的 MCP 配置：
 
 ```bash
 # Test fever-admin config
@@ -300,8 +300,8 @@ cd /path/to/new-canvas-admin
 # Ask Claude to translate a small test file
 ```
 
-### 6. Version Control
-Add MCP configuration to version control (if appropriate):
+### 6. 版本控制
+將 MCP 配置加入版本控制（如果適合）：
 
 ```bash
 # In each project
@@ -309,49 +309,49 @@ Add MCP configuration to version control (if appropriate):
 .claude/mcp.json  # If using Claude Code
 ```
 
-Or document the required MCP configuration in project README.
+或在專案 README 中記錄所需的 MCP 配置。
 
-## Troubleshooting
+## 疑難排解
 
-### Issue: Wrong Project's Translation Files Updated
+### 問題：錯誤專案的翻譯檔案被更新
 
-**Cause:** MCP server selected wrong project configuration
+**原因：** MCP 伺服器選擇了錯誤的專案配置
 
-**Solution:**
-1. Check current working directory matches project
-2. Verify MCP server names are unique
-3. Restart Claude Code to reload MCP configuration
+**解決方案：**
+1. 檢查當前工作目錄是否與專案相符
+2. 驗證 MCP 伺服器名稱是否唯一
+3. 重新啟動 Claude Code 以重新載入 MCP 配置
 
-### Issue: Cannot Find Translation Directory
+### 問題：找不到翻譯目錄
 
-**Cause:** Incorrect path in configuration
+**原因：** 配置中的路徑不正確
 
-**Solution:**
-1. Use absolute paths in MCP configuration
-2. Verify directory exists: `ls /path/to/project/src/assets/locale`
-3. Check file permissions
+**解決方案：**
+1. 在 MCP 配置中使用絕對路徑
+2. 驗證目錄是否存在：`ls /path/to/project/src/assets/locale`
+3. 檢查檔案權限
 
-### Issue: AI Generates Wrong Key Format
+### 問題：AI 生成錯誤的鍵值格式
 
-**Cause:** AI not aware of project-specific naming conventions
+**原因：** AI 不知道專案特定的命名規範
 
-**Solution:**
-1. Create/update `docs/i18n-naming-guide.md` in project
-2. Reference the guide when asking Claude
-3. Provide examples of desired key format
-4. Consider adding naming conventions to project's CLAUDE.md
+**解決方案：**
+1. 在專案中建立/更新 `docs/i18n-naming-guide.md`
+2. 在詢問 Claude 時參考該指南
+3. 提供所需鍵值格式的範例
+4. 考慮將命名規範新增到專案的 CLAUDE.md
 
-### Issue: Mixed Languages from Different Projects
+### 問題：混合了來自不同專案的語言
 
-**Cause:** Using single MCP server without proper parameter isolation
+**原因：** 使用單一 MCP 伺服器而沒有適當的參數隔離
 
-**Solution:**
-1. Switch to per-project MCP server strategy (Strategy 1)
-2. Or ensure all tool calls include explicit project parameters
+**解決方案：**
+1. 切換到為每個專案設置獨立的 MCP 伺服器策略（策略 1）
+2. 或確保所有工具呼叫都包含明確的專案參數
 
-## Advanced: Shared Configuration
+## 進階：共用配置
 
-For projects that share similar i18n setups, you can use environment variables:
+對於共用相似 i18n 設置的專案，您可以使用環境變數：
 
 ```bash
 # In your shell profile (.bashrc, .zshrc)
@@ -372,17 +372,17 @@ export I18N_MCP_BASE_LANGUAGE="zh-TW"
 }
 ```
 
-## Summary
+## 總結
 
-**Recommended Setup:**
-1. ✅ Use Strategy 1 (Per-Project MCP Servers)
-2. ✅ Create i18n naming guides in each project
-3. ✅ Use absolute paths in configuration
-4. ✅ Test each project's setup independently
-5. ✅ Document project-specific conventions
+**推薦設置：**
+1. ✅ 使用策略 1（為每個專案設置獨立的 MCP 伺服器）
+2. ✅ 在每個專案中建立 i18n 命名指南
+3. ✅ 在配置中使用絕對路徑
+4. ✅ 獨立測試每個專案的設置
+5. ✅ 文件化專案特定的規範
 
-**Result:**
-- Clear project separation
-- No configuration conflicts
-- AI generates appropriate keys per project
-- Efficient multi-project workflow
+**結果：**
+- 清晰的專案分離
+- 沒有配置衝突
+- AI 為每個專案生成適當的鍵值
+- 高效的多專案工作流程

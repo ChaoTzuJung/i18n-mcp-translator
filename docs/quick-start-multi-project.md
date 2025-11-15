@@ -1,16 +1,16 @@
-# Quick Start: Multi-Project Setup
+# 快速上手：多專案設置
 
-This guide helps you quickly set up i18n MCP translator for multiple projects.
+本指南幫助您快速為多個專案設置 i18n MCP 翻譯器。
 
-## 5-Minute Setup
+## 5 分鐘設置
 
-### Step 1: Configure MCP for Each Project (2 mins)
+### 步驟 1：為每個專案配置 MCP（2 分鐘）
 
-Edit your MCP configuration file:
-- **Claude Code**: `~/.config/claude/mcp.json`
-- **Cursor**: `.cursor/mcp.json` or `~/.cursor/mcp.json`
+編輯您的 MCP 配置檔案：
+- **Claude Code**：`~/.config/claude/mcp.json`
+- **Cursor**：`.cursor/mcp.json` 或 `~/.cursor/mcp.json`
 
-Add separate servers for each project:
+為每個專案新增獨立的伺服器：
 
 ```json
 {
@@ -43,16 +43,16 @@ Add separate servers for each project:
 }
 ```
 
-**Key Points:**
-- Use unique names: `i18n-project-a`, `i18n-project-b`
-- Use **absolute paths** for all directories
-- Set appropriate target languages per project
+**重點提示：**
+- 使用唯一名稱：`i18n-project-a`、`i18n-project-b`
+- 所有目錄使用**絕對路徑**
+- 為每個專案設置適當的目標語言
 
-### Step 2: Create Naming Convention Guides (2 mins)
+### 步驟 2：建立命名規範指南（2 分鐘）
 
-In each project, create `docs/i18n-naming-guide.md`:
+在每個專案中建立 `docs/i18n-naming-guide.md`：
 
-**Minimal Template:**
+**最小範本：**
 ```markdown
 # i18n Key Naming Convention
 
@@ -72,92 +72,92 @@ common.button.cancel
 common.error.network
 ```
 
-**Copy from:**
-- Full template: `docs/examples/i18n-naming-guide-template.md`
-- new-canvas-admin example: `docs/examples/new-canvas-admin-naming-guide.md`
+**複製自：**
+- 完整範本：`docs/examples/i18n-naming-guide-template.md`
+- new-canvas-admin 範例：`docs/examples/new-canvas-admin-naming-guide.md`
 
-### Step 3: Test the Setup (1 min)
+### 步驟 3：測試設置（1 分鐘）
 
 ```bash
-# Open project A
+# 開啟專案 A
 cd /path/to/project-a
 
-# Ask Claude:
+# 詢問 Claude：
 # "Please translate this file using i18n MCP"
-# (on any file with hardcoded Chinese text)
+# （對任何包含硬編碼中文文字的檔案）
 
-# Verify:
-# 1. Correct language files updated
-# 2. Keys follow your naming convention
-# 3. No errors in translation
+# 驗證：
+# 1. 正確的語言檔案已更新
+# 2. 金鑰遵循您的命名規範
+# 3. 翻譯沒有錯誤
 
-# Repeat for project B
+# 對專案 B 重複相同步驟
 cd /path/to/project-b
 ```
 
-## Common Use Cases
+## 常見使用情境
 
-### Use Case 1: Translate a File
+### 使用情境 1：翻譯檔案
 
 ```bash
-# 1. Open file in your project
-# 2. Ask Claude:
+# 1. 在您的專案中開啟檔案
+# 2. 詢問 Claude：
 "Please use i18n MCP to translate the hardcoded Chinese text in this file"
 
-# Claude will:
-# - Detect which project you're in
-# - Use the correct MCP server
-# - Generate keys following your conventions
-# - Update the right translation files
+# Claude 會：
+# - 偵測您所在的專案
+# - 使用正確的 MCP 伺服器
+# - 依照您的規範生成金鑰
+# - 更新正確的翻譯檔案
 ```
 
-### Use Case 2: Generate Locale Diff
+### 使用情境 2：生成語言差異檔
 
 ```bash
-# After making locale changes on feature branch
-# Ask Claude:
+# 在功能分支上進行語言變更後
+# 詢問 Claude：
 "Generate locale diff comparing my current branch to main"
 
-# Claude will:
-# - Use generate_locale_diff tool
-# - Create diff files in locale/diff/
-# - Include all language variants
-# - Preserve subdirectory structure
+# Claude 會：
+# - 使用 generate_locale_diff 工具
+# - 在 locale/diff/ 建立差異檔案
+# - 包含所有語言變體
+# - 保留子目錄結構
 ```
 
-### Use Case 3: Merge Reviewed Translations
+### 使用情境 3：合併審核後的翻譯
 
 ```bash
-# After receiving reviewed translations
-# Ask Claude:
+# 收到審核後的翻譯後
+# 詢問 Claude：
 "Merge the reviewed translations from locale/diff/ back to the original files"
 
-# Claude will:
-# - Use merge_translations tool
-# - Show detailed statistics
-# - Update only changed keys
-# - Optionally auto-commit
+# Claude 會：
+# - 使用 merge_translations 工具
+# - 顯示詳細統計資訊
+# - 僅更新已變更的金鑰
+# - 可選自動提交
 ```
 
-## Project Configuration Checklist
+## 專案配置檢查清單
 
-For each project, ensure:
+對於每個專案，確保：
 
-- [ ] MCP server configured in mcp.json
-- [ ] Unique server name (e.g., `i18n-fever-admin`)
-- [ ] GOOGLE_AI_API_KEY set
-- [ ] All paths are absolute
-- [ ] TARGET_LANGUAGES set correctly
-- [ ] Translation directory exists
-- [ ] i18n naming guide created
-- [ ] Test translation on sample file
-- [ ] Verify correct files updated
+- [ ] 在 mcp.json 中配置 MCP 伺服器
+- [ ] 唯一的伺服器名稱（例如：`i18n-fever-admin`）
+- [ ] 已設置 GOOGLE_AI_API_KEY
+- [ ] 所有路徑都是絕對路徑
+- [ ] 正確設置 TARGET_LANGUAGES
+- [ ] 翻譯目錄存在
+- [ ] 已建立 i18n 命名指南
+- [ ] 在範例檔案上測試翻譯
+- [ ] 驗證正確的檔案已更新
 
-## Configuration Examples
+## 配置範例
 
-### Example 1: new-canvas-admin
+### 範例 1：new-canvas-admin
 
-Comprehensive admin panel with achievement, campaign, point systems.
+包含成就、活動、積分系統的綜合管理面板。
 
 ```json
 "i18n-new-canvas-admin": {
@@ -174,7 +174,7 @@ Comprehensive admin panel with achievement, campaign, point systems.
 }
 ```
 
-**Naming Convention:**
+**命名規範：**
 ```
 {feature}.{page}.{component}.{element}.{action}
 
@@ -186,11 +186,11 @@ promo.list.table.header.name
 common.button.save
 ```
 
-**Documentation:** See [new-canvas-admin-naming-guide.md](../examples/new-canvas-admin-naming-guide.md)
+**文件：** 參見 [new-canvas-admin-naming-guide.md](../examples/new-canvas-admin-naming-guide.md)
 
-### Example 2: fever-tool
+### 範例 2：fever-tool
 
-OnSite assistant tool for staff operations.
+用於員工操作的 OnSite 助手工具。
 
 ```json
 "i18n-fever-tool": {
@@ -207,7 +207,7 @@ OnSite assistant tool for staff operations.
 }
 ```
 
-**Naming Convention:**
+**命名規範：**
 ```
 {feature}.{page}.{section}.{element}
 
@@ -219,11 +219,11 @@ camera.scanner.instruction
 common.button.save
 ```
 
-**Documentation:** See [fever-tool-naming-guide.md](../examples/fever-tool-naming-guide.md)
+**文件：** 參見 [fever-tool-naming-guide.md](../examples/fever-tool-naming-guide.md)
 
-### Example 3: form
+### 範例 3：form
 
-Form builder with Editor and Client modes.
+具有編輯器和客戶端模式的表單建構器。
 
 ```json
 "i18n-form": {
@@ -240,7 +240,7 @@ Form builder with Editor and Client modes.
 }
 ```
 
-**Naming Convention:**
+**命名規範：**
 ```
 {mode}.{domain}.{component}.{element}.{property}
 
@@ -252,80 +252,80 @@ client.validation.required
 common.button.save
 ```
 
-**Note:** Form project has dual-mode structure:
-- `editor.*` - Form builder (create/edit)
-- `client.*` - Form viewer (display/fill)
-- `common.*` - Shared components
+**注意：** Form 專案具有雙模式結構：
+- `editor.*` - 表單建構器（建立/編輯）
+- `client.*` - 表單檢視器（顯示/填寫）
+- `common.*` - 共用元件
 
-**Documentation:** See [form-naming-guide.md](../examples/form-naming-guide.md)
+**文件：** 參見 [form-naming-guide.md](../examples/form-naming-guide.md)
 
-## Troubleshooting
+## 疑難排解
 
-### Problem: Claude updates wrong project's files
+### 問題：Claude 更新了錯誤專案的檔案
 
-**Solution:**
-1. Check current directory matches project
-2. Restart Claude Code
-3. Verify MCP server names are unique
+**解決方案：**
+1. 檢查當前目錄是否符合專案
+2. 重新啟動 Claude Code
+3. 驗證 MCP 伺服器名稱是唯一的
 
 ```bash
-# Check current directory
+# 檢查當前目錄
 pwd
 
-# Should output: /path/to/current-project
+# 應該輸出：/path/to/current-project
 ```
 
-### Problem: Keys don't follow naming convention
+### 問題：金鑰不遵循命名規範
 
-**Solution:**
-1. Ensure `docs/i18n-naming-guide.md` exists
-2. Reference it when asking Claude:
+**解決方案：**
+1. 確保 `docs/i18n-naming-guide.md` 存在
+2. 詢問 Claude 時參考它：
    ```
    "Please translate using the naming conventions in docs/i18n-naming-guide.md"
    ```
-3. Provide examples in your request
+3. 在您的請求中提供範例
 
-### Problem: Translation directory not found
+### 問題：找不到翻譯目錄
 
-**Solution:**
-1. Verify path is absolute (starts with `/`)
-2. Check directory exists:
+**解決方案：**
+1. 驗證路徑是絕對路徑（以 `/` 開頭）
+2. 檢查目錄是否存在：
    ```bash
    ls /absolute/path/to/project/src/assets/locale
    ```
-3. Check permissions:
+3. 檢查權限：
    ```bash
    ls -la /absolute/path/to/project/src/assets/
    ```
 
-### Problem: Wrong languages generated
+### 問題：生成了錯誤的語言
 
-**Solution:**
-1. Check `I18N_MCP_TARGET_LANGUAGES` in mcp.json
-2. Ensure languages are comma-separated (no spaces)
-3. Use correct language codes:
+**解決方案：**
+1. 檢查 mcp.json 中的 `I18N_MCP_TARGET_LANGUAGES`
+2. 確保語言以逗號分隔（無空格）
+3. 使用正確的語言代碼：
    - ✅ `zh-TW,en-US,ja`
    - ❌ `zh-tw, en, ja`
 
-## Best Practices
+## 最佳實踐
 
-### 1. Use Consistent Language Codes
+### 1. 使用一致的語言代碼
 
-Standardize across all projects:
+在所有專案中標準化：
 ```
-zh-TW (Traditional Chinese)
-zh-CN (Simplified Chinese)
-en-US (English - US)
-ja-JP or ja (Japanese)
-ko-KR (Korean)
-pt-BR (Portuguese - Brazil)
-es-419 (Spanish - Latin America)
-th-TH (Thai)
+zh-TW (繁體中文)
+zh-CN (簡體中文)
+en-US (英文 - 美國)
+ja-JP or ja (日文)
+ko-KR (韓文)
+pt-BR (葡萄牙文 - 巴西)
+es-419 (西班牙文 - 拉丁美洲)
+th-TH (泰文)
 ```
 
-### 2. Organize Translation Files
+### 2. 組織翻譯檔案
 
-**Recommended structure:**
+**建議的結構：**
 ```
 src/
 └── assets/
@@ -336,7 +336,7 @@ src/
         └── zh-CN.json
 ```
 
-Or with subdirectories:
+或使用子目錄：
 ```
 src/
 └── assets/
@@ -349,23 +349,23 @@ src/
             └── en-US.json
 ```
 
-### 3. Document Conventions
+### 3. 記錄規範
 
-In each project, maintain:
-- `docs/i18n-naming-guide.md` - Naming conventions
-- `docs/i18n-workflow.md` - Team workflow
-- `README.md` - Quick reference
+在每個專案中維護：
+- `docs/i18n-naming-guide.md` - 命名規範
+- `docs/i18n-workflow.md` - 團隊工作流程
+- `README.md` - 快速參考
 
-### 4. Version Control
+### 4. 版本控制
 
-**Include in git:**
-- Translation files (`*.json`)
-- Naming guides (`docs/*.md`)
-- Examples
+**包含在 git 中：**
+- 翻譯檔案（`*.json`）
+- 命名指南（`docs/*.md`）
+- 範例
 
-**Exclude from git:**
-- Diff directories (`locale/diff/`)
-- Temporary files
+**從 git 中排除：**
+- 差異目錄（`locale/diff/`）
+- 臨時檔案
 
 ```gitignore
 # .gitignore
@@ -373,35 +373,35 @@ In each project, maintain:
 **/locale/*.tmp
 ```
 
-### 5. Team Workflow
+### 5. 團隊工作流程
 
-1. **Developer**:
-   - Write code with hardcoded text
-   - Use i18n MCP to generate keys and translations
-   - Commit code + base language translations
+1. **開發人員**：
+   - 編寫包含硬編碼文字的程式碼
+   - 使用 i18n MCP 生成金鑰和翻譯
+   - 提交程式碼 + 基礎語言翻譯
 
-2. **Translation Team**:
-   - Generate diff using `generate_locale_diff`
-   - Review and modify translations
-   - Return reviewed files
+2. **翻譯團隊**：
+   - 使用 `generate_locale_diff` 生成差異檔
+   - 審核和修改翻譯
+   - 返回審核後的檔案
 
-3. **Developer**:
-   - Merge translations using `merge_translations`
-   - Verify and commit
-   - Push to repository
+3. **開發人員**：
+   - 使用 `merge_translations` 合併翻譯
+   - 驗證並提交
+   - 推送到儲存庫
 
-## Advanced Configuration
+## 進階配置
 
-### Environment Variables
+### 環境變數
 
-Set common variables in shell profile:
+在 shell 設定檔中設置通用變數：
 
 ```bash
 # ~/.bashrc or ~/.zshrc
 export GOOGLE_AI_API_KEY="your-api-key"
 export I18N_MCP_BASE_LANGUAGE="zh-TW"
 
-# Then in mcp.json, only set project-specific vars
+# 然後在 mcp.json 中，僅設置專案特定的變數
 {
   "i18n-project": {
     "env": {
@@ -412,38 +412,38 @@ export I18N_MCP_BASE_LANGUAGE="zh-TW"
 }
 ```
 
-### Conditional Configuration
+### 條件式配置
 
-For different environments:
+針對不同環境：
 
 ```bash
-# Development
+# 開發環境
 export I18N_MCP_TARGET_LANGUAGES="zh-TW,en-US"
 
-# Production (all languages)
+# 生產環境（所有語言）
 export I18N_MCP_TARGET_LANGUAGES="zh-TW,en-US,ja,zh-CN,pt-BR,es-419,th-TH"
 ```
 
-## Next Steps
+## 下一步
 
-1. **Read full documentation**: `docs/multi-project-setup.md`
-2. **Review examples**: `docs/examples/`
-3. **Join discussions**: [GitHub Issues](https://github.com/ChaoTzuJung/i18n-mcp-translator/issues)
-4. **Share feedback**: Help improve the tool!
+1. **閱讀完整文件**：`docs/multi-project-setup.md`
+2. **查看範例**：`docs/examples/`
+3. **加入討論**：[GitHub Issues](https://github.com/ChaoTzuJung/i18n-mcp-translator/issues)
+4. **分享回饋**：協助改進工具！
 
-## Resources
+## 資源
 
-- **Full Setup Guide**: [multi-project-setup.md](./multi-project-setup.md)
-- **Naming Guide Template**: [i18n-naming-guide-template.md](./examples/i18n-naming-guide-template.md)
-- **new-canvas-admin Example**: [new-canvas-admin-naming-guide.md](./examples/new-canvas-admin-naming-guide.md)
-- **Main README**: [../README.md](../README.md)
-- **CLAUDE.md**: [../CLAUDE.md](../CLAUDE.md)
+- **完整設置指南**：[multi-project-setup.md](./multi-project-setup.md)
+- **命名指南範本**：[i18n-naming-guide-template.md](./examples/i18n-naming-guide-template.md)
+- **new-canvas-admin 範例**：[new-canvas-admin-naming-guide.md](./examples/new-canvas-admin-naming-guide.md)
+- **主要 README**：[../README.md](../README.md)
+- **CLAUDE.md**：[../CLAUDE.md](../CLAUDE.md)
 
 ---
 
-**Questions or Issues?**
+**有問題或疑問？**
 
-- GitHub Issues: https://github.com/ChaoTzuJung/i18n-mcp-translator/issues
-- Documentation: https://github.com/ChaoTzuJung/i18n-mcp-translator/tree/main/docs
+- GitHub Issues：https://github.com/ChaoTzuJung/i18n-mcp-translator/issues
+- 文件：https://github.com/ChaoTzuJung/i18n-mcp-translator/tree/main/docs
 
-**Last Updated:** 2025-11-14
+**最後更新：** 2025-11-14

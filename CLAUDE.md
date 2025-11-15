@@ -1,204 +1,206 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件為 Claude Code (claude.ai/code) 在此儲存庫中工作時提供指引。
 
-## Project Overview
+## 專案概覽
 
-This is an MCP (Model Context Protocol) server for automatic i18n translation of source code files. It detects hardcoded Traditional Chinese text, generates i18n keys using Google Gemini AI, and updates language JSON files with translations.
+這是一個用於自動化原始碼檔案 i18n 翻譯的 MCP (Model Context Protocol) 伺服器。它會偵測硬編碼的繁體中文文字,使用 Google Gemini AI 生成 i18n 鍵值,並更新語言 JSON 檔案及翻譯內容。
 
-## Essential Commands
+## 基本指令
 
-### Development
-- `npm run build` - Compile TypeScript to build directory and set executable permissions
-- `npm run build:watch` - Watch mode compilation
-- `npm run typecheck` - Type checking without emitting files
-- `npm run start` - Run the server locally with tsx
-- `npm run watch` - Watch mode for development
+### 開發
 
-### Testing and Debugging
-- `npm run inspector` - Run with MCP inspector for debugging (requires GOOGLE_AI_API_KEY in .env)
+- `npm run build` - 將 TypeScript 編譯到 build 目錄並設定執行權限
+- `npm run build:watch` - 監看模式編譯
+- `npm run typecheck` - 類型檢查而不輸出檔案
+- `npm run start` - 使用 tsx 在本地執行伺服器
+- `npm run watch` - 開發監看模式
 
-## Architecture
+### 測試與除錯
 
-### Core Components
+- `npm run inspector` - 使用 MCP inspector 執行除錯(需要在 .env 中設定 GOOGLE_AI_API_KEY)
 
-**MCP Server Layer** (`src/server/`)
-- `mcp-server.ts` - Main MCP server implementation with STDIO transport
-- `mcp-tools.ts` - Registers and handles MCP tool definitions
+## 架構
 
-**Translation Engine** (`src/core/`)
-- `file-processor.ts` - Processes source files using Babel AST parsing
-- `ai-service.ts` - Google Gemini AI integration for key generation and translation
-- `lang-manager.ts` - Manages language JSON file operations
-- `language-discovery-service.ts` - Discovers languages from existing translation files
-- `translation-config-service.ts` - Builds and manages translation configuration
+### 核心元件
 
-**Tools** (`src/tools/`)
-- `translate-file.ts` - Main tool for processing individual files
-- `add-translations.ts` - Tool for adding translations to language files
-- `generate-locale-diff.ts` - A1 tool for comparing branch changes and generating diff files
-- `merge-translations.ts` - Tool for merging reviewed translations back into project files
-- `cleanup-diff-directory.ts` - Tool for cleaning up diff directories after merge operations
-- `git-commit-push.ts` - Standalone git commit and push operations for i18n workflows
+**MCP 伺服器層** (`src/server/`)
+- `mcp-server.ts` - 主要的 MCP 伺服器實作,使用 STDIO 傳輸
+- `mcp-tools.ts` - 註冊並處理 MCP 工具定義
 
-### Key Processing Flow
+**翻譯引擎** (`src/core/`)
+- `file-processor.ts` - 使用 Babel AST 解析處理原始檔案
+- `ai-service.ts` - Google Gemini AI 整合,用於鍵值生成和翻譯
+- `lang-manager.ts` - 管理語言 JSON 檔案操作
+- `language-discovery-service.ts` - 從現有翻譯檔案中探索語言
+- `translation-config-service.ts` - 建立並管理翻譯配置
 
-1. **Language Discovery**: Scans existing translation files to detect configured languages
-2. **File Analysis**: Uses Babel parser to create AST from source code
-3. **Text Detection**: Identifies hardcoded Traditional Chinese text in i18n function calls (`t()`, `i18n.t()`)
-4. **AI Processing**: Google Gemini generates contextual i18n keys and translations
-5. **Code Transformation**: Replaces hardcoded text with generated keys
-6. **File Updates**: Updates both source files and language JSON files
+**工具** (`src/tools/`)
+- `translate-file.ts` - 處理個別檔案的主要工具
+- `add-translations.ts` - 將翻譯新增到語言檔案的工具
+- `generate-locale-diff.ts` - A1 工具,用於比較分支變更並生成差異檔案
+- `merge-translations.ts` - 將審核過的翻譯合併回專案檔案的工具
+- `cleanup-diff-directory.ts` - 合併操作後清理差異目錄的工具
+- `git-commit-push.ts` - 用於 i18n 工作流程的獨立 git commit 和 push 操作
 
-### Configuration
+### 關鍵處理流程
 
-Environment variables (can also be passed as CLI args):
-- `GOOGLE_AI_API_KEY` - Required for AI translation
-- `I18N_MCP_BASE_LANGUAGE` - Source language (default: zh-TW)
-- `I18N_MCP_TARGET_LANGUAGES` - Comma-separated target languages
-- `I18N_MCP_TRANSLATION_DIR` - Directory for language files
-- `I18N_MCP_TRANSLATION_FILE` - Specific translation file name (optional)
-- `I18N_MCP_TRANSLATION_SUBDIRECTORY` - Subdirectory within translation dir (optional, auto-detected)
-- `I18N_MCP_SRC_DIR` - Source code directory
-- `I18N_MCP_PROJECT_ROOT` - Project root for path resolution
+1. **語言探索**: 掃描現有翻譯檔案以偵測已配置的語言
+2. **檔案分析**: 使用 Babel parser 從原始碼建立 AST
+3. **文字偵測**: 在 i18n 函數呼叫中識別硬編碼的繁體中文文字(`t()`, `i18n.t()`)
+4. **AI 處理**: Google Gemini 生成符合上下文的 i18n 鍵值和翻譯
+5. **程式碼轉換**: 用生成的鍵值替換硬編碼文字
+6. **檔案更新**: 更新原始檔案和語言 JSON 檔案
 
-### Translation File Management
+### 配置
 
-The MCP translator supports both legacy and new i18n file structures:
+環境變數(也可以透過 CLI 參數傳遞):
+- `GOOGLE_AI_API_KEY` - AI 翻譯必需
+- `I18N_MCP_BASE_LANGUAGE` - 來源語言(預設: zh-TW)
+- `I18N_MCP_TARGET_LANGUAGES` - 逗號分隔的目標語言
+- `I18N_MCP_TRANSLATION_DIR` - 語言檔案目錄
+- `I18N_MCP_TRANSLATION_FILE` - 特定翻譯檔案名稱(選用)
+- `I18N_MCP_TRANSLATION_SUBDIRECTORY` - 翻譯目錄內的子目錄(選用,自動偵測)
+- `I18N_MCP_SRC_DIR` - 原始碼目錄
+- `I18N_MCP_PROJECT_ROOT` - 專案根目錄,用於路徑解析
 
-**Legacy Structure (Single file):**
-- Single JSON file: `lang.json`
-- Nested language objects with optional "translation" wrappers
-- Example: `{"zh-TW": {"translation": {"key": "value"}}}`
+### 翻譯檔案管理
 
-**New Structure (Per-language files):**
-- Separate JSON files per language, either:
-  - Directly in translation directory: `zh-TW.json`, `en-US.json`
-  - In subdirectories: `client/zh-TW.json`, `editor/zh-TW.json`
-- Flat key-value structure per file: `{"key": "value"}`
+MCP 翻譯器支援舊版和新版 i18n 檔案結構:
 
-**Auto-Detection Logic:**
-1. Checks for per-language JSON files directly in translation directory (e.g., `zh-TW.json`)
-2. If found, uses new structure without subdirectories
-3. Otherwise, checks for subdirectories containing per-language files
-4. If found, uses new structure with subdirectories
-5. Otherwise, uses legacy structure with single nested file
+**舊版結構(單一檔案):**
+- 單一 JSON 檔案: `lang.json`
+- 巢狀語言物件,可選的 "translation" 包裝器
+- 範例: `{"zh-TW": {"translation": {"key": "value"}}}`
 
-**Configuration Priority:**
-1. Explicit subdirectory via `I18N_MCP_TRANSLATION_SUBDIRECTORY` or `--translation-subdirectory`
-2. Auto-detection of per-language files in translation directory (**most common**)
-3. Auto-detection of subdirectories containing per-language files
-4. Specific file via `I18N_MCP_TRANSLATION_FILE` or `--translation-file` (legacy)
-5. Auto-discovery of first valid translation file in directory
-6. Creates new files/structure as needed
+**新版結構(每語言獨立檔案):**
+- 每個語言分別的 JSON 檔案,可以是:
+  - 直接在翻譯目錄中: `zh-TW.json`, `en-US.json`
+  - 在子目錄中: `client/zh-TW.json`, `editor/zh-TW.json`
+- 每個檔案的扁平鍵值結構: `{"key": "value"}`
 
-**Recommended Setup:**
-For most projects, simply set `I18N_MCP_TRANSLATION_DIR="./src/assets/locale"` and let the system auto-detect your file structure. No additional configuration needed!
+**自動偵測邏輯:**
+1. 檢查翻譯目錄中是否直接有每語言的 JSON 檔案(例如 `zh-TW.json`)
+2. 若找到,使用新結構而不使用子目錄
+3. 否則,檢查是否有包含每語言檔案的子目錄
+4. 若找到,使用新結構與子目錄
+5. 否則,使用舊版結構的單一巢狀檔案
 
-### Path Resolution Strategy
+**配置優先順序:**
+1. 透過 `I18N_MCP_TRANSLATION_SUBDIRECTORY` 或 `--translation-subdirectory` 明確指定子目錄
+2. 自動偵測翻譯目錄中的每語言檔案(**最常見**)
+3. 自動偵測包含每語言檔案的子目錄
+4. 透過 `I18N_MCP_TRANSLATION_FILE` 或 `--translation-file` 指定特定檔案(舊版)
+5. 自動探索目錄中第一個有效的翻譯檔案
+6. 根據需要建立新檔案/結構
 
-The server handles both absolute and relative paths:
-- Uses `projectRoot` as base for all path resolution
-- Resolves translation directory relative to project root if not absolute
-- Handles cross-platform path differences
+**建議設定:**
+對於大多數專案,只需設定 `I18N_MCP_TRANSLATION_DIR="./src/assets/locale"` 並讓系統自動偵測您的檔案結構。不需要額外配置!
 
-## Available MCP Tools
+### 路徑解析策略
 
-### 1. `translate-file` - Source Code Translation
-- Scans source files for hardcoded Traditional Chinese text
-- Generates contextual i18n keys using AI
-- Updates language JSON files with translations
-- Returns refactored code with i18n keys
+伺服器處理絕對路徑和相對路徑:
+- 使用 `projectRoot` 作為所有路徑解析的基礎
+- 如果翻譯目錄不是絕對路徑,則相對於專案根目錄解析
+- 處理跨平台路徑差異
 
-### 1.5. `generate_locale_diff` - Compare Branch Changes (A1)
-- Compares current branch with master/main branch to generate diff files for translation team
-- **Use Case**: Generate diff files after making locale changes, for translation team review
-- **Parameters**:
-  - `localeDir`: Path to locale directory (e.g., "src/assets/locale")
-  - `projectRoot`: Project root directory (optional, defaults to current working directory)
-  - `baseBranch`: Base branch to compare against (optional, auto-detects master/main)
-  - `mainLanguage`: Main language code for diff generation (default: "zh-TW")
-  - `dryRun`: Preview mode without creating files (default: false)
-  - `autoCommit`: Automatically commit generated diff files (default: false)
-  - `commitMessage`: Custom commit message (optional, auto-generated)
-  - `autoPush`: Automatically push commits to remote (default: false)
-  - `pushBranch`: Branch to push to (optional, defaults to current branch)
-- **Features**:
-  - Smart detection of master vs main branch
-  - Git integration to identify exact changes between branches
-  - Identifies added, modified, and deleted translation keys
-  - Generates diff files for all language variants
-  - Main language shows actual changes, other languages show existing translations or empty strings
-  - Creates organized diff directory structure for team review
+## 可用的 MCP 工具
 
-### 2. `merge_translations` - Merge Reviewed Translations
-- Merges reviewed translation files back into project translation files
-- **Use Case**: After stakeholders/boss review translations, integrate approved changes
-- **Parameters**:
-  - `originalDir`: Path to project's translation directory (files to be updated)
-  - `reviewedDir`: Path to reviewed translations directory (reviewed files from stakeholders)
-  - `dryRun`: Preview changes without modifying files (default: false)
-  - `verbose`: Show detailed changes for each translation key (default: false) 
-  - `projectRoot`: Project root for path resolution (optional)
-  - `cleanupDiffDirectory`: Automatically clean up diff directory after successful merge (default: false)
-  - `autoCommit`: Automatically commit merged files (default: false)
-  - `commitMessage`: Custom commit message (optional, auto-generated)
-  - `autoPush`: Automatically push commits to remote (default: false)
-  - `pushBranch`: Branch to push to (optional, defaults to current branch)
-- **Features**:
-  - Smart file matching by language code (en-US.json ↔ en-US.json)
-  - Detailed statistics (new, updated, unchanged keys)
-  - Safe dry-run mode for previewing changes
-  - Only updates keys that have actually changed
-  - Preserves existing translations not present in reviewed files
-  - Optional automatic cleanup of diff directory after merge
+### 1. `translate-file` - 原始碼翻譯
+- 掃描原始檔案中的硬編碼繁體中文文字
+- 使用 AI 生成符合上下文的 i18n 鍵值
+- 更新語言 JSON 檔案及翻譯
+- 返回包含 i18n 鍵值的重構程式碼
 
-### 3. `cleanup_diff_directory` - Clean Up Diff Directory
-- Removes diff directory and all its contents after translation merge
-- **Use Case**: Clean up temporary diff files after merge operations or manual review
-- **Parameters**:
-  - `diffDir`: Path to diff directory to be removed (e.g., "src/assets/locale/diff")
-  - `dryRun`: Preview what would be removed without deleting (default: false)
-  - `projectRoot`: Project root for path resolution (optional)
-- **Features**:
-  - Safe removal of all files in diff directory
-  - Preview mode to see what would be removed
-  - Detailed logging of removal process
-  - Graceful error handling for missing directories
+### 1.5. `generate_locale_diff` - 比較分支變更 (A1)
+- 比較當前分支與 master/main 分支,為翻譯團隊生成差異檔案
+- **使用情境**: 在進行語言檔案變更後生成差異檔案,供翻譯團隊審核
+- **參數**:
+  - `localeDir`: 語言檔案目錄的路徑(例如 "src/assets/locale")
+  - `projectRoot`: 專案根目錄(選用,預設為當前工作目錄)
+  - `baseBranch`: 要比較的基礎分支(選用,自動偵測 master/main)
+  - `mainLanguage`: 用於生成差異的主要語言代碼(預設: "zh-TW")
+  - `dryRun`: 預覽模式,不建立檔案(預設: false)
+  - `autoCommit`: 自動提交生成的差異檔案(預設: false)
+  - `commitMessage`: 自訂提交訊息(選用,自動生成)
+  - `autoPush`: 自動推送提交到遠端(預設: false)
+  - `pushBranch`: 要推送到的分支(選用,預設為當前分支)
+- **功能**:
+  - 智慧偵測 master 與 main 分支
+  - Git 整合以識別分支之間的精確變更
+  - 識別新增、修改和刪除的翻譯鍵值
+  - 為所有語言變體生成差異檔案
+  - 主要語言顯示實際變更,其他語言顯示現有翻譯或空字串
+  - 建立組織化的差異目錄結構供團隊審核
 
-### 4. `git_commit_push` - Git Operations
-- Standalone git commit and push operations for i18n workflows
-- **Use Case**: Commit and push translation files with standardized messages
-- **Parameters**:
-  - `files`: Array of file paths to commit (optional, uses staged files if not provided)
-  - `commitMessage`: Custom commit message (optional, auto-generated)
-  - `operationType`: Operation type for auto-generated message (default: "i18n update")
-  - `operationDetails`: Additional details for auto-generated message (optional)
-  - `push`: Push commit to remote repository (default: false)
-  - `branch`: Branch to push to (optional, defaults to current branch)
-  - `projectRoot`: Project root directory (optional)
-  - `dryRun`: Preview mode without executing commands (default: false)
-- **Features**:
-  - Auto-generates standardized i18n commit messages
-  - Supports selective file commits or staged file commits
-  - Integrated push functionality with branch detection
-  - Comprehensive error handling and validation
+### 2. `merge_translations` - 合併審核過的翻譯
+- 將審核過的翻譯檔案合併回專案翻譯檔案
+- **使用情境**: 在利害關係人/主管審核翻譯後,整合核准的變更
+- **參數**:
+  - `originalDir`: 專案翻譯目錄的路徑(要更新的檔案)
+  - `reviewedDir`: 審核過的翻譯目錄的路徑(來自利害關係人的審核檔案)
+  - `dryRun`: 預覽變更而不修改檔案(預設: false)
+  - `verbose`: 顯示每個翻譯鍵值的詳細變更(預設: false)
+  - `projectRoot`: 用於路徑解析的專案根目錄(選用)
+  - `cleanupDiffDirectory`: 成功合併後自動清理差異目錄(預設: false)
+  - `autoCommit`: 自動提交合併的檔案(預設: false)
+  - `commitMessage`: 自訂提交訊息(選用,自動生成)
+  - `autoPush`: 自動推送提交到遠端(預設: false)
+  - `pushBranch`: 要推送到的分支(選用,預設為當前分支)
+- **功能**:
+  - 透過語言代碼智慧檔案配對(en-US.json ↔ en-US.json)
+  - 詳細統計(新增、更新、未變更的鍵值)
+  - 安全的預演模式以預覽變更
+  - 只更新實際變更的鍵值
+  - 保留審核檔案中不存在的現有翻譯
+  - 可選的合併後自動清理差異目錄
 
-### 5. Enhanced Translation Tools
-- `enhanced_translate_file` - Enhanced version with caching and optimization
-- `batch_translate_files` - Batch processing multiple files with parallel processing
+### 3. `cleanup_diff_directory` - 清理差異目錄
+- 在翻譯合併後移除差異目錄及其所有內容
+- **使用情境**: 在合併操作或手動審核後清理臨時差異檔案
+- **參數**:
+  - `diffDir`: 要移除的差異目錄路徑(例如 "src/assets/locale/diff")
+  - `dryRun`: 預覽將被移除的內容而不刪除(預設: false)
+  - `projectRoot`: 用於路徑解析的專案根目錄(選用)
+- **功能**:
+  - 安全移除差異目錄中的所有檔案
+  - 預覽模式以查看將被移除的內容
+  - 詳細的移除過程記錄
+  - 對於缺少的目錄有優雅的錯誤處理
 
-## Multi-Project Support
+### 4. `git_commit_push` - Git 操作
+- 用於 i18n 工作流程的獨立 git commit 和 push 操作
+- **使用情境**: 使用標準化訊息提交和推送翻譯檔案
+- **參數**:
+  - `files`: 要提交的檔案路徑陣列(選用,若未提供則使用已暫存的檔案)
+  - `commitMessage`: 自訂提交訊息(選用,自動生成)
+  - `operationType`: 用於自動生成訊息的操作類型(預設: "i18n update")
+  - `operationDetails`: 自動生成訊息的額外詳細資訊(選用)
+  - `push`: 推送提交到遠端儲存庫(預設: false)
+  - `branch`: 要推送到的分支(選用,預設為當前分支)
+  - `projectRoot`: 專案根目錄(選用)
+  - `dryRun`: 預覽模式,不執行命令(預設: false)
+- **功能**:
+  - 自動生成標準化的 i18n 提交訊息
+  - 支援選擇性檔案提交或已暫存檔案提交
+  - 整合推送功能與分支偵測
+  - 全面的錯誤處理和驗證
 
-The i18n MCP translator supports working with multiple projects simultaneously. Each project can have:
-- Different translation file structures
-- Different target languages
-- Different naming conventions
-- Independent configuration
+### 5. 增強型翻譯工具
+- `enhanced_translate_file` - 具有快取和最佳化的增強版本
+- `batch_translate_files` - 批次處理多個檔案,支援並行處理
 
-### Quick Setup
+## 多專案支援
 
-Configure separate MCP server instances for each project in your MCP config file:
+i18n MCP 翻譯器支援同時處理多個專案。每個專案可以有:
+- 不同的翻譯檔案結構
+- 不同的目標語言
+- 不同的命名規範
+- 獨立的配置
+
+### 快速設定
+
+在您的 MCP 配置檔案中為每個專案配置獨立的 MCP 伺服器實例:
 
 ```json
 {
@@ -227,15 +229,15 @@ Configure separate MCP server instances for each project in your MCP config file
 }
 ```
 
-### Documentation
+### 文件
 
-- **Quick Start**: See `docs/quick-start-multi-project.md` for 5-minute setup
-- **Full Guide**: See `docs/multi-project-setup.md` for comprehensive documentation
-- **Naming Conventions**: See `docs/examples/` for naming guide templates and examples
+- **快速入門**: 參見 `docs/quick-start-multi-project.md` 以進行 5 分鐘設定
+- **完整指南**: 參見 `docs/multi-project-setup.md` 以獲取完整文件
+- **命名規範**: 參見 `docs/examples/` 以獲取命名指南範本和範例
 
-### Project-Specific Naming Conventions
+### 專案特定的命名規範
 
-Create a `docs/i18n-naming-guide.md` in each project to guide AI in generating appropriate i18n keys:
+在每個專案中建立 `docs/i18n-naming-guide.md` 以指導 AI 生成適當的 i18n 鍵值:
 
 ```markdown
 # i18n Key Naming Convention
@@ -249,15 +251,15 @@ dashboard.analytics.chart.title
 common.error.network
 ```
 
-When using the translator, reference your naming guide for consistent key generation.
+使用翻譯器時,參考您的命名指南以生成一致的鍵值。
 
-## Development Notes
+## 開發注意事項
 
-- Built for Node.js v22+ with ES modules
-- Uses TypeScript with strict mode enabled
-- Babel AST manipulation for precise code transformation
-- Prettier integration for code formatting after transformation
-- Local-first language management (no external API dependencies)
-- Automatic language detection from existing translation files
-- Robust fallback system for language configuration
-- **Multi-project support** - Work with multiple projects simultaneously
+- 為 Node.js v22+ 建置,使用 ES modules
+- 使用啟用嚴格模式的 TypeScript
+- Babel AST 操作以實現精確的程式碼轉換
+- Prettier 整合以在轉換後進行程式碼格式化
+- 本地優先的語言管理(無外部 API 依賴)
+- 從現有翻譯檔案自動偵測語言
+- 強健的語言配置回退系統
+- **多專案支援** - 同時處理多個專案

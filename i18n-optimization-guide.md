@@ -1,17 +1,17 @@
-# i18n 翻譯流程優化指南
+# i18n 翻譯流程最佳化指南
 
 ## 當前問題分析
 
 ### 時間消耗瓶頸
-1. **串行處理** - 逐一處理文件，無法並行執行
+1. **串行處理** - 逐一處理文件,無法並行執行
 2. **重複操作** - 每個文件都需要完整的讀取→翻譯→確認流程
 3. **文件搜尋耗時** - 需要多次嘗試定位正確文件路徑
 4. **MCP 工具延遲** - 每次調用翻譯工具都有網絡和處理延遲
 5. **狀態管理開銷** - Todo 更新增加了額外操作次數
 
-## 優化策略
+## 最佳化策略
 
-### 1. 預處理優化
+### 1. 預處理最佳化
 
 #### 批量文件掃描
 ```bash
@@ -45,7 +45,7 @@ const filesToTranslate = [
 
 // 並行處理（如果 MCP 工具支持）
 await Promise.all(
-  filesToTranslate.map(file => 
+  filesToTranslate.map(file =>
     translateFile(file)
   )
 );
@@ -55,16 +55,16 @@ await Promise.all(
 ```javascript
 // 按文件大小或複雜度分組
 const smallFiles = [...];  // < 10 個字符串
-const mediumFiles = [...]; // 10-50 個字符串  
+const mediumFiles = [...]; // 10-50 個字符串
 const largeFiles = [...];  // > 50 個字符串
 
 // 分批處理
 await processFilesBatch(smallFiles);
-await processFilesBatch(mediumFiles); 
+await processFilesBatch(mediumFiles);
 await processFilesBatch(largeFiles);
 ```
 
-### 3. 工具優化建議
+### 3. 工具最佳化建議
 
 #### 自定義批量翻譯腳本
 ```bash
@@ -121,24 +121,24 @@ graph TD
 2. **中優先級**: UI 組件、表單
 3. **低優先級**: 配置文件、工具函數
 
-### 5. 性能基準測試
+### 5. 效能基準測試
 
-#### 當前性能
+#### 當前效能
 - **文件數量**: 8 個
 - **翻譯字符串**: 22 個
 - **總耗時**: ~5-8 分鐘
 - **平均每文件**: ~1 分鐘
 
 #### 預期改進目標
-- **Cache 優化**: 減少 80% 時間 (已翻譯文件)
+- **快取最佳化**: 減少 80% 時間 (已翻譯文件)
 - **批量處理**: 減少 60% 時間
 - **並行執行**: 減少 40% 時間
-- **預處理優化**: 減少 30% 時間
+- **預處理最佳化**: 減少 30% 時間
 - **總體目標**: 首次翻譯 2-3 分鐘，後續增量翻譯 < 30 秒
 
-### 6. Cache 優化策略
+### 6. 快取最佳化策略
 
-#### 文件內容 Hash Cache
+#### 文件內容 Hash 快取
 ```javascript
 // translation-cache.js
 const crypto = require('crypto');
@@ -160,20 +160,20 @@ class TranslationCache {
   needsTranslation(filePath) {
     const currentHash = this.generateFileHash(filePath);
     const cacheFile = `${this.cacheDir}/${filePath.replace(/\//g, '_')}.cache`;
-    
+
     if (!fs.existsSync(cacheFile)) {
-      return true; // 沒有 cache，需要翻譯
+      return true; // 沒有快取，需要翻譯
     }
 
     const cachedData = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
     return cachedData.hash !== currentHash; // hash 不同，需要重新翻譯
   }
 
-  // 保存翻譯結果到 cache
+  // 保存翻譯結果到快取
   saveCache(filePath, translationResult) {
     const hash = this.generateFileHash(filePath);
     const cacheFile = `${this.cacheDir}/${filePath.replace(/\//g, '_')}.cache`;
-    
+
     const cacheData = {
       hash,
       timestamp: Date.now(),
@@ -185,7 +185,7 @@ class TranslationCache {
     fs.writeFileSync(cacheFile, JSON.stringify(cacheData, null, 2));
   }
 
-  // 獲取 cache 數據
+  // 獲取快取數據
   getCache(filePath) {
     const cacheFile = `${this.cacheDir}/${filePath.replace(/\//g, '_')}.cache`;
     if (fs.existsSync(cacheFile)) {
@@ -194,25 +194,25 @@ class TranslationCache {
     return null;
   }
 
-  // 清理舊的 cache (超過30天)
+  // 清理舊的快取 (超過30天)
   cleanOldCache() {
     const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
     const cacheFiles = fs.readdirSync(this.cacheDir);
-    
+
     cacheFiles.forEach(file => {
       const cachePath = `${this.cacheDir}/${file}`;
       const cacheData = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-      
+
       if (cacheData.timestamp < thirtyDaysAgo) {
         fs.unlinkSync(cachePath);
-        console.log(`🗑️ 清理舊 cache: ${file}`);
+        console.log(`🗑️ 清理舊快取: ${file}`);
       }
     });
   }
 }
 ```
 
-#### Git-based Cache
+#### Git-based 快取
 ```javascript
 // git-cache.js
 const { execSync } = require('child_process');
@@ -223,16 +223,16 @@ class GitBasedCache {
     try {
       // 檢查文件的最後 commit hash
       const lastCommit = execSync(`git log -1 --format="%H" -- ${filePath}`, { encoding: 'utf8' }).trim();
-      
+
       const cacheFile = `.translation-cache/${filePath.replace(/\//g, '_')}.git-cache`;
-      
+
       if (!fs.existsSync(cacheFile)) {
         return true;
       }
 
       const cachedCommit = fs.readFileSync(cacheFile, 'utf8').trim();
       return lastCommit !== cachedCommit;
-      
+
     } catch (error) {
       return true; // 如果出錯，保險起見重新翻譯
     }
@@ -243,16 +243,16 @@ class GitBasedCache {
     try {
       const lastCommit = execSync(`git log -1 --format="%H" -- ${filePath}`, { encoding: 'utf8' }).trim();
       const cacheFile = `.translation-cache/${filePath.replace(/\//g, '_')}.git-cache`;
-      
+
       fs.writeFileSync(cacheFile, lastCommit);
     } catch (error) {
-      console.warn(`無法保存 Git cache: ${error.message}`);
+      console.warn(`無法保存 Git 快取: ${error.message}`);
     }
   }
 }
 ```
 
-#### 翻譯結果 Cache
+#### 翻譯結果快取
 ```javascript
 // translation-result-cache.js
 class TranslationResultCache {
@@ -267,7 +267,7 @@ class TranslationResultCache {
         return JSON.parse(fs.readFileSync(this.cacheFile, 'utf8'));
       }
     } catch (error) {
-      console.warn('無法載入翻譯結果 cache');
+      console.warn('無法載入翻譯結果快取');
     }
     return {};
   }
@@ -287,7 +287,7 @@ class TranslationResultCache {
       translation: englishText,
       timestamp: Date.now()
     };
-    
+
     fs.writeFileSync(this.cacheFile, JSON.stringify(this.cache, null, 2));
   }
 
@@ -305,64 +305,64 @@ class TranslationResultCache {
 }
 ```
 
-#### 智能 Cache 管理
+#### 智能快取管理
 ```bash
 #!/bin/bash
 # cache-manager.sh
 
 CACHE_DIR=".translation-cache"
 
-# 創建 cache 目錄
+# 創建快取目錄
 mkdir -p "$CACHE_DIR"
 
-# 檢查 cache 統計
+# 檢查快取統計
 cache_stats() {
-    echo "📊 Cache 統計信息:"
-    echo "   Cache 文件數量: $(find $CACHE_DIR -name "*.cache" | wc -l)"
-    echo "   Cache 目錄大小: $(du -sh $CACHE_DIR | cut -f1)"
-    echo "   最舊的 cache: $(find $CACHE_DIR -name "*.cache" -exec stat -f "%Sm %N" -t "%Y-%m-%d %H:%M" {} \; | sort | head -1)"
-    echo "   最新的 cache: $(find $CACHE_DIR -name "*.cache" -exec stat -f "%Sm %N" -t "%Y-%m-%d %H:%M" {} \; | sort | tail -1)"
+    echo "📊 快取統計信息:"
+    echo "   快取文件數量: $(find $CACHE_DIR -name "*.cache" | wc -l)"
+    echo "   快取目錄大小: $(du -sh $CACHE_DIR | cut -f1)"
+    echo "   最舊的快取: $(find $CACHE_DIR -name "*.cache" -exec stat -f "%Sm %N" -t "%Y-%m-%d %H:%M" {} \; | sort | head -1)"
+    echo "   最新的快取: $(find $CACHE_DIR -name "*.cache" -exec stat -f "%Sm %N" -t "%Y-%m-%d %H:%M" {} \; | sort | tail -1)"
 }
 
-# 清理 cache
+# 清理快取
 clean_cache() {
-    echo "🧹 清理 30 天前的 cache..."
+    echo "🧹 清理 30 天前的快取..."
     find "$CACHE_DIR" -name "*.cache" -mtime +30 -delete
-    echo "✅ Cache 清理完成"
+    echo "✅ 快取清理完成"
 }
 
-# 驗證 cache 完整性
+# 驗證快取完整性
 validate_cache() {
-    echo "🔍 驗證 cache 完整性..."
-    
+    echo "🔍 驗證快取完整性..."
+
     for cache_file in "$CACHE_DIR"/*.cache; do
         if [ -f "$cache_file" ]; then
             if ! jq empty "$cache_file" 2>/dev/null; then
-                echo "❌ 損壞的 cache 文件: $cache_file"
+                echo "❌ 損壞的快取文件: $cache_file"
                 rm "$cache_file"
             fi
         fi
     done
-    
-    echo "✅ Cache 驗證完成"
+
+    echo "✅ 快取驗證完成"
 }
 
 case "$1" in
     stats) cache_stats ;;
     clean) clean_cache ;;
     validate) validate_cache ;;
-    *) 
+    *)
         echo "用法: $0 {stats|clean|validate}"
-        echo "  stats    - 顯示 cache 統計"
-        echo "  clean    - 清理舊 cache"
-        echo "  validate - 驗證 cache 完整性"
+        echo "  stats    - 顯示快取統計"
+        echo "  clean    - 清理舊快取"
+        echo "  validate - 驗證快取完整性"
         ;;
 esac
 ```
 
 ### 7. 實用工具腳本
 
-#### 帶 Cache 的快速翻譯腳本
+#### 帶快取的快速翻譯腳本
 ```bash
 #!/bin/bash
 # i18n-cached-translate.sh
@@ -381,30 +381,30 @@ echo "📝 找到 $total_files 個文件需要檢查"
 
 echo "🚀 開始智能翻譯（跳過未修改文件）..."
 while IFS= read -r file; do
-  # 生成 cache key
+  # 生成快取 key
   cache_key="${CACHE_DIR}/${file//\//_}.cache"
-  
+
   # 檢查文件是否需要翻譯
   needs_translation=true
-  
+
   if [ -f "$cache_key" ]; then
     # 比較文件 hash
     current_hash=$(md5 -q "$file" 2>/dev/null || md5sum "$file" | cut -d' ' -f1)
     cached_hash=$(jq -r '.hash // empty' "$cache_key" 2>/dev/null)
-    
+
     if [ "$current_hash" = "$cached_hash" ]; then
       needs_translation=false
       echo "⏭️  跳過 (已緩存): $file"
       ((skipped_count++))
     fi
   fi
-  
+
   if [ "$needs_translation" = true ]; then
     echo "🔄 翻譯: $file"
-    
+
     # 執行翻譯
     if claude-code translate-file "$file"; then
-      # 保存 cache
+      # 保存快取
       current_hash=$(md5 -q "$file" 2>/dev/null || md5sum "$file" | cut -d' ' -f1)
       echo "{\"hash\":\"$current_hash\",\"timestamp\":$(date +%s),\"file\":\"$file\"}" > "$cache_key"
       ((translated_count++))
@@ -412,12 +412,12 @@ while IFS= read -r file; do
       echo "❌ 翻譯失敗: $file"
     fi
   fi
-  
+
   # 顯示進度
   current=$((translated_count + skipped_count))
   progress=$((current * 100 / total_files))
   echo "進度: $progress% ($current/$total_files) [翻譯:$translated_count 跳過:$skipped_count]"
-  
+
 done < files-to-translate.txt
 
 echo "✅ 翻譯完成!"
@@ -426,11 +426,11 @@ echo "📊 統計: 翻譯 $translated_count 個文件，跳過 $skipped_count �
 # 顯示節省的時間
 if [ $skipped_count -gt 0 ]; then
   saved_time=$((skipped_count * 60)) # 假設每個文件節省1分鐘
-  echo "⚡ 透過 Cache 節省約 $saved_time 秒"
+  echo "⚡ 透過快取節省約 $saved_time 秒"
 fi
 ```
 
-#### MCP 工具 Cache 增強
+#### MCP 工具快取增強
 ```javascript
 // mcp-cache-wrapper.js
 class MCPCacheWrapper {
@@ -440,7 +440,7 @@ class MCPCacheWrapper {
     this.loadResponseCache();
   }
 
-  // 載入 MCP 回應 cache
+  // 載入 MCP 回應快取
   loadResponseCache() {
     try {
       if (fs.existsSync(this.cacheFile)) {
@@ -448,21 +448,21 @@ class MCPCacheWrapper {
         this.responseCache = new Map(Object.entries(data));
       }
     } catch (error) {
-      console.warn('載入 MCP cache 失敗:', error.message);
+      console.warn('載入 MCP 快取失敗:', error.message);
     }
   }
 
-  // 保存 MCP 回應 cache
+  // 保存 MCP 回應快取
   saveResponseCache() {
     try {
       const data = Object.fromEntries(this.responseCache);
       fs.writeFileSync(this.cacheFile, JSON.stringify(data, null, 2));
     } catch (error) {
-      console.warn('保存 MCP cache 失敗:', error.message);
+      console.warn('保存 MCP 快取失敗:', error.message);
     }
   }
 
-  // 生成請求的 cache key
+  // 生成請求的快取 key
   generateCacheKey(filePath, fileContent) {
     const contentHash = crypto.createHash('md5').update(fileContent).digest('hex');
     return `${filePath}:${contentHash}`;
@@ -484,7 +484,7 @@ class MCPCacheWrapper {
     this.saveResponseCache();
   }
 
-  // 清理過期的 cache (7天)
+  // 清理過期的快取 (7天)
   cleanExpiredCache() {
     const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
     let cleaned = 0;
@@ -498,7 +498,7 @@ class MCPCacheWrapper {
 
     if (cleaned > 0) {
       this.saveResponseCache();
-      console.log(`🧹 清理了 ${cleaned} 個過期的 MCP cache`);
+      console.log(`🧹 清理了 ${cleaned} 個過期的 MCP 快取`);
     }
   }
 }
@@ -520,11 +520,11 @@ class TranslationMonitor {
     if (!success) {
       this.errors.push({ file, error });
     }
-    
+
     const progress = (this.completed / this.totalFiles * 100).toFixed(1);
     const elapsed = (Date.now() - this.startTime) / 1000;
     const eta = elapsed * (this.totalFiles - this.completed) / this.completed;
-    
+
     console.log(`進度: ${progress}% (${this.completed}/${this.totalFiles})`);
     console.log(`預計剩餘時間: ${eta.toFixed(1)}秒`);
   }
@@ -555,15 +555,15 @@ class TranslationMonitor {
 - [ ] 測試 i18next 功能正常
 - [ ] 驗證 UI 顯示無異常
 
-#### 持續優化
+#### 持續最佳化
 - [ ] 記錄每次翻譯的時間消耗
 - [ ] 收集常見問題和解決方案
 - [ ] 建立翻譯模板和規範
-- [ ] 定期更新優化腳本
+- [ ] 定期更新最佳化腳本
 
 ## 結論
 
-通過實施上述優化措施，預計可以將 i18n 翻譯任務的執行時間減少 50-70%，同時提高翻譯質量和一致性。建議優先實施文件批量掃描和並行處理，這兩項改進將帶來最顯著的性能提升。
+通過實施上述最佳化措施，預計可以將 i18n 翻譯任務的執行時間減少 50-70%，同時提高翻譯質量和一致性。建議優先實施文件批量掃描和並行處理，這兩項改進將帶來最顯著的效能提升。
 
 ---
 

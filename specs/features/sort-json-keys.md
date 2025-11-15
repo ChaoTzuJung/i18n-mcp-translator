@@ -1,65 +1,65 @@
-# Specification: Sort JSON Keys Tool
+# 規格說明：Sort JSON Keys 工具
 
-## Summary
+## 摘要
 
-Add a new MCP tool `sort_json_keys` that alphabetically sorts JSON object keys in i18n translation files. This ensures consistent key ordering across all translation files, improving maintainability and readability of translation structures.
+新增新的 MCP 工具 `sort_json_keys`，可以按字母順序排序 i18n 翻譯文件中的 JSON 物件 key。這確保所有翻譯文件的 key 排序一致，提高翻譯結構的可維護性和可讀性。
 
-## Problem Statement
+## 問題陳述
 
-Translation files often grow organically with keys added in the order they're discovered or needed, rather than in alphabetical order. This makes it harder to:
-- Find specific translation keys visually
-- Review diffs when keys are modified
-- Maintain consistency across multiple translation files
-- Organize translation structure logically
+翻譯文件通常會隨著發現或需要的 key 被加入的順序而有機成長，而不是按字母順序。這使得：
+- 難以視覺化找到特定的翻譯 key
+- 修改 key 時難以審查差異
+- 難以維護多個翻譯文件之間的一致性
+- 難以邏輯化組織翻譯結構
 
-## Goals
+## 目標
 
-1. **Recursive Key Sorting**: Sort JSON keys alphabetically at all nesting levels while preserving structure
-2. **Flexible Input**: Support single files, multiple files, or entire directories (with recursive scanning)
-3. **Safe Operations**: Create backups, validate JSON, and restore on failure
-4. **Preview Mode**: Allow users to see what would change without modifying files
-5. **Detailed Logging**: Provide clear feedback on processing progress and results
+1. **遞迴 Key 排序**：在所有巢狀層級按字母順序排序 JSON key，同時保留結構
+2. **彈性輸入**：支援單一文件、多個文件或整個目錄（帶遞迴掃描）
+3. **安全操作**：建立備份、驗證 JSON，並在失敗時還原
+4. **預覽模式**：允許使用者在不修改文件的情況下查看會發生什麼變更
+5. **詳細日誌**：提供清晰的處理進度和結果回饋
 
-## Success Criteria
+## 成功標準
 
-- [x] Tool successfully sorts JSON keys alphabetically
-- [x] Supports single file input
-- [x] Supports multiple file input (array of paths)
-- [x] Supports directory input with recursive file discovery
-- [x] Creates timestamped backups before modification
-- [x] Validates JSON syntax before processing
-- [x] Restores from backup on failure
-- [x] Provides dry-run mode for preview
-- [x] Counts and reports keys before/after sorting
-- [x] Integrates with existing MCP server infrastructure
-- [x] TypeScript compilation succeeds without errors
-- [x] No breaking changes to existing functionality
+- [x] 工具成功按字母順序排序 JSON key
+- [x] 支援單一文件輸入
+- [x] 支援多個文件輸入（路徑陣列）
+- [x] 支援帶遞迴文件探索的目錄輸入
+- [x] 修改前建立時間戳備份
+- [x] 處理前驗證 JSON 語法
+- [x] 失敗時從備份還原
+- [x] 提供預覽的 dry-run 模式
+- [x] 計算並報告排序前後的 key 數量
+- [x] 與現有 MCP 伺服器基礎設施整合
+- [x] TypeScript 編譯成功無錯誤
+- [x] 對現有功能無破壞性變更
 
-## Technical Details
+## 技術細節
 
-### Implementation
+### 實作
 
-**File**: `src/tools/sort-json-keys.ts`
+**文件**：`src/tools/sort-json-keys.ts`
 
-Key functions:
-- `sortJsonKeys()`: Recursively sorts JSON object keys
-- `countKeys()`: Counts total keys in JSON structure
-- `sortJsonFile()`: Processes a single file with backup/restore
-- `findJsonFiles()`: Recursively discovers JSON files in directories
-- `sortJsonKeysInFiles()`: Main orchestration function
-- `handleSortJsonKeys()`: MCP tool handler
-- `setupSortJsonKeysTool()`: Tool registration
+主要函數：
+- `sortJsonKeys()`：遞迴排序 JSON 物件 key
+- `countKeys()`：計算 JSON 結構中的總 key 數
+- `sortJsonFile()`：使用備份/還原處理單一文件
+- `findJsonFiles()`：在目錄中遞迴發現 JSON 文件
+- `sortJsonKeysInFiles()`：主要編排函數
+- `handleSortJsonKeys()`：MCP 工具處理器
+- `setupSortJsonKeysTool()`：工具註冊
 
-### MCP Tool Definition
+### MCP 工具定義
 
-**Name**: `sort_json_keys`
+**名稱**：`sort_json_keys`
 
-**Parameters**:
-- `targets` (string | string[]): Path(s) to JSON file(s) or directory/directories
-- `dryRun` (boolean, default: false): Preview mode without modifications
-- `projectRoot` (string, optional): Project root for path resolution
+**參數**：
+- `targets`（string | string[]）：JSON 文件或目錄的路徑
+- `dryRun`（boolean，預設：false）：預覽模式，不修改
+- `projectRoot`（string，可選）：用於路徑解析的專案根目錄
 
-**Return Type**:
+**返回類型**：
 ```typescript
 {
   success: boolean;
@@ -72,69 +72,69 @@ Key functions:
 }
 ```
 
-### Usage Examples
+### 使用範例
 
 ```javascript
-// Sort a single file
+// 排序單一文件
 sort_json_keys({
   targets: "src/locale/zh-TW.json"
 })
 
-// Sort multiple files
+// 排序多個文件
 sort_json_keys({
   targets: ["src/locale/zh-TW.json", "src/locale/en-US.json"]
 })
 
-// Sort entire directory (recursive)
+// 排序整個目錄（遞迴）
 sort_json_keys({
   targets: "src/locale"
 })
 
-// Preview without modifying
+// 預覽而不修改
 sort_json_keys({
   targets: "src/locale",
   dryRun: true
 })
 ```
 
-## Changes Made
+## 已完成的變更
 
-### New Files
-- `src/tools/sort-json-keys.ts` - Complete tool implementation (350+ lines)
+### 新文件
+- `src/tools/sort-json-keys.ts` - 完整的工具實作（350+ 行）
 
-### Modified Files
-- `src/server/mcp-tools.ts` - Register `setupSortJsonKeysTool` in MCPTools class
+### 修改的文件
+- `src/server/mcp-tools.ts` - 在 MCPTools 類別中註冊 `setupSortJsonKeysTool`
 
-### Build Results
-- ✅ TypeScript compilation successful
-- ✅ No type errors or warnings
-- ✅ Tool executable generated at `build/tools/sort-json-keys.js`
+### 建置結果
+- ✅ TypeScript 編譯成功
+- ✅ 無類型錯誤或警告
+- ✅ 在 `build/tools/sort-json-keys.js` 生成工具執行檔
 
-## Feature Flags
+## 功能標誌
 
-Not applicable - tool is fully enabled by default.
+不適用 - 工具預設完全啟用。
 
-## Testing
+## 測試
 
-- [x] Compilation test: `npm run build` passes
-- [x] Type checking: `npm run typecheck` passes
-- [x] Git integration: Changes committed and pushed successfully
+- [x] 編譯測試：`npm run build` 通過
+- [x] 類型檢查：`npm run typecheck` 通過
+- [x] Git 整合：變更已成功提交和推送
 
-## Rollout Plan
+## 推出計劃
 
-1. **Merge**: Integrate into main branch via PR
-2. **Release**: Include in next version bump (v1.2.3 or later)
-3. **Documentation**: Update CLAUDE.md with tool description
-4. **Usage**: Available immediately in MCP server after deployment
+1. **合併**：透過 PR 整合到主分支
+2. **發布**：包含在下一個版本升級中（v1.2.3 或更高版本）
+3. **文件**：使用工具描述更新 CLAUDE.md
+4. **使用**：部署後立即在 MCP 伺服器中可用
 
-## Migration/Breaking Changes
+## 遷移/破壞性變更
 
-None - this is a new feature with no impact on existing functionality.
+無 - 這是新功能，對現有功能無影響。
 
-## Future Enhancements
+## 未來增強功能
 
-- Option to preserve existing key order (non-destructive)
-- Custom sort functions (e.g., sort by value, case-sensitive)
-- Integration with translation validation pipeline
-- Output statistics on key ordering before/after
-- Support for nested key sorting (e.g., sort only top-level keys)
+- 保留現有 key 順序的選項（非破壞性）
+- 自定義排序函數（例如，按值排序、大小寫敏感）
+- 與翻譯驗證管道整合
+- 輸出排序前後的 key 排序統計資訊
+- 支援巢狀 key 排序（例如，只排序頂層 key）

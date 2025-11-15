@@ -1,40 +1,40 @@
-# i18n Key Naming Convention - fever-tool
+# i18n Key 命名規範 - fever-tool
 
-This document provides i18n key naming guidelines for the fever-tool project.
+本文件提供 fever-tool 專案的 i18n key 命名指南。
 
-## Project Context
+## 專案概述
 
-fever-tool is a utility application focused on OnSite Assistant functionality. It provides tools for staff to manage promotions, mission rewards, and generate promotional materials on-site.
+fever-tool 是一個專注於現場助理功能的工具應用程式。它為工作人員提供管理促銷活動、任務獎勵和生成現場促銷素材的工具。
 
-**Main Features:**
-- OnSite Assistant - Staff tools for on-site operations
-- Mission Reward Management - Handle mission-based rewards
-- Promo Generator - Generate promotional codes and materials
-- Promo Link & QR Code - Share promotion links
-- Camera Scanner - Scan QR codes for redemption
+**主要功能：**
+- 現場助理 - 現場操作的工作人員工具
+- 任務獎勵管理 - 處理基於任務的獎勵
+- 促銷碼生成器 - 生成促銷碼和素材
+- 促銷連結與 QR Code - 分享促銷連結
+- 相機掃描器 - 掃描 QR codes 進行兌換
 
-**Target Languages:**
-- Traditional Chinese (zh-TW) - Primary
-- English (en-US) - Secondary
+**目標語言：**
+- 繁體中文 (zh-TW) - 主要
+- 英文 (en-US) - 次要
 
-## Naming Structure
+## 命名結構
 
 ```
 {feature}.{page}.{section}.{element}
 ```
 
-### Structure Components
+### 結構元件
 
-- **feature**: Top-level feature (onSiteAssistant, login, common)
-- **page**: Specific page within feature (promotions, missionReward, promoGenerator, tools)
-- **section**: Section or component within page (form, list, dialog, header)
-- **element**: UI element (button, title, label, input, message)
+- **feature**: 頂層功能 (onSiteAssistant, login, common)
+- **page**: 功能內的特定頁面 (promotions, missionReward, promoGenerator, tools)
+- **section**: 頁面內的區塊或元件 (form, list, dialog, header)
+- **element**: UI 元素 (button, title, label, input, message)
 
-## Feature-Based Examples
+## 基於功能的範例
 
-### OnSite Assistant Module
+### 現場助理模組
 
-#### Promotions Page
+#### 促銷活動頁面
 ```
 onSiteAssistant.promotions.title
 onSiteAssistant.promotions.subtitle
@@ -51,9 +51,9 @@ onSiteAssistant.promotions.filter.active
 onSiteAssistant.promotions.filter.expired
 ```
 
-#### Mission Reward Pages
+#### 任務獎勵頁面
 
-**Mission Reward List:**
+**任務獎勵列表：**
 ```
 onSiteAssistant.missionReward.title
 onSiteAssistant.missionReward.subtitle
@@ -65,7 +65,7 @@ onSiteAssistant.missionReward.item.button.edit
 onSiteAssistant.missionReward.item.button.view
 ```
 
-**Mission Reward Edit:**
+**任務獎勵編輯：**
 ```
 onSiteAssistant.missionRewardEdit.title
 onSiteAssistant.missionRewardEdit.form.label.name
@@ -79,7 +79,7 @@ onSiteAssistant.missionRewardEdit.success.saved
 onSiteAssistant.missionRewardEdit.error.saveFailed
 ```
 
-**Mission Reward Record:**
+**任務獎勵記錄：**
 ```
 onSiteAssistant.missionRewardRecord.title
 onSiteAssistant.missionRewardRecord.table.header.name
@@ -94,7 +94,7 @@ onSiteAssistant.missionRewardRecord.button.approve
 onSiteAssistant.missionRewardRecord.button.reject
 ```
 
-#### Promo Generator
+#### 促銷碼生成器
 
 ```
 onSiteAssistant.promoGenerator.title
@@ -111,7 +111,7 @@ onSiteAssistant.promoGenerator.validation.quantityRequired
 onSiteAssistant.promoGenerator.validation.maxQuantity
 ```
 
-#### Promo Generate Record
+#### 促銷碼生成記錄
 
 ```
 onSiteAssistant.promoGenerateRecord.title
@@ -127,7 +127,7 @@ onSiteAssistant.promoGenerateRecord.confirm.delete.title
 onSiteAssistant.promoGenerateRecord.confirm.delete.message
 ```
 
-#### Promo Link & QR Code
+#### 促銷連結與 QR Code
 
 ```
 onSiteAssistant.promoLink.title
@@ -142,7 +142,7 @@ onSiteAssistant.promoLink.info.scanToJoin
 onSiteAssistant.promoLink.info.validUntil
 ```
 
-#### Tools Page
+#### 工具頁面
 
 ```
 onSiteAssistant.tools.title
@@ -156,7 +156,7 @@ onSiteAssistant.tools.section.record.description
 onSiteAssistant.tools.card.button.open
 ```
 
-### Camera & Scanner Components
+### 相機與掃描器元件
 
 ```
 camera.scanner.title
@@ -174,23 +174,23 @@ camera.openExternal.message
 camera.openExternal.button.open
 ```
 
-### Dialog Components
+### 對話框元件
 
-**Info Dialog:**
+**資訊對話框：**
 ```
 dialog.info.title
 dialog.info.button.confirm
 dialog.info.button.close
 ```
 
-**Message Dialog:**
+**訊息對話框：**
 ```
 dialog.message.title
 dialog.message.button.ok
 dialog.message.button.cancel
 ```
 
-**System Error Dialog:**
+**系統錯誤對話框：**
 ```
 dialog.systemError.title
 dialog.systemError.message
@@ -198,7 +198,7 @@ dialog.systemError.button.retry
 dialog.systemError.button.close
 ```
 
-**Controller Dialog:**
+**控制器對話框：**
 ```
 dialog.controller.title
 dialog.controller.message
@@ -206,7 +206,7 @@ dialog.controller.button.confirm
 dialog.controller.button.cancel
 ```
 
-### Login Module
+### 登入模組
 
 ```
 login.title
@@ -222,9 +222,9 @@ login.dev.title
 login.dev.button.testLogin
 ```
 
-### Common Components
+### 通用元件
 
-#### Buttons
+#### 按鈕
 ```
 common.button.save
 common.button.cancel
@@ -242,7 +242,7 @@ common.button.scan
 common.button.generate
 ```
 
-#### Loading
+#### 載入
 ```
 common.loading.message
 common.loading.pleaseWait
@@ -251,7 +251,7 @@ common.loading.uploading
 common.loading.downloading
 ```
 
-#### Empty States
+#### 空狀態
 ```
 common.empty.noData
 common.empty.noResults
@@ -259,7 +259,7 @@ common.empty.noRecords
 common.empty.message
 ```
 
-#### Messages
+#### 訊息
 ```
 common.success.saved
 common.success.deleted
@@ -274,7 +274,7 @@ common.error.invalidInput
 common.error.operationFailed
 ```
 
-#### Validation
+#### 驗證
 ```
 common.validation.required
 common.validation.email
@@ -287,7 +287,7 @@ common.validation.minValue
 common.validation.maxValue
 ```
 
-#### Time & Date
+#### 時間與日期
 ```
 common.time.now
 common.time.today
@@ -299,7 +299,7 @@ common.date.startDate
 common.date.endDate
 ```
 
-#### Status
+#### 狀態
 ```
 common.status.active
 common.status.inactive
@@ -310,7 +310,7 @@ common.status.approved
 common.status.rejected
 ```
 
-#### Actions
+#### 動作
 ```
 common.action.view
 common.action.edit
@@ -322,7 +322,7 @@ common.action.share
 common.action.copy
 ```
 
-### Widget Components
+### 小工具元件
 
 ```
 widget.countdown.title
@@ -331,7 +331,7 @@ widget.countdown.expired
 widget.closeIcon.tooltip
 ```
 
-### Header Components
+### 標頭元件
 
 ```
 header.title.default
@@ -341,7 +341,7 @@ header.button.logout
 header.user.greeting
 ```
 
-### Footer Components
+### 頁尾元件
 
 ```
 footer.button.home
@@ -350,7 +350,7 @@ footer.button.profile
 footer.text.copyright
 ```
 
-### Error Pages
+### 錯誤頁面
 
 ```
 error.notFound.title
@@ -361,36 +361,36 @@ error.forbidden.message
 error.forbidden.button.back
 ```
 
-## Naming Guidelines
+## 命名指南
 
 ### DO ✅
 
-1. **Use hierarchical naming:**
+1. **使用階層式命名：**
    ```
    ✅ onSiteAssistant.promotions.list.empty.message
    ❌ promotionsListEmptyMessage
    ```
 
-2. **Be specific about features:**
+2. **明確指定功能：**
    ```
    ✅ onSiteAssistant.missionReward.form.label.name
    ❌ form.name
    ```
 
-3. **Group related items:**
+3. **將相關項目分組：**
    ```
    ✅ camera.scanner.title
    ✅ camera.scanner.instruction
    ✅ camera.scanner.button.scan
    ```
 
-4. **Use semantic names:**
+4. **使用語意化名稱：**
    ```
    ✅ onSiteAssistant.promoGenerator.success.generated
    ❌ onSiteAssistant.promoGenerator.msg1
    ```
 
-5. **Keep common items consistent:**
+5. **保持通用項目一致：**
    ```
    ✅ common.button.save (used everywhere)
    ❌ Different keys for same action in different places
@@ -398,34 +398,34 @@ error.forbidden.button.back
 
 ### DON'T ❌
 
-1. **Don't use abbreviations excessively:**
+1. **不要過度使用縮寫：**
    ```
    ❌ osa.promo.gen.btn
    ✅ onSiteAssistant.promoGenerator.button
    ```
 
-2. **Don't mix naming styles:**
+2. **不要混用命名風格：**
    ```
    ❌ onSiteAssistant.promo_generator.ButtonSave
    ✅ onSiteAssistant.promoGenerator.button.save
    ```
 
-3. **Don't create overly deep nesting:**
+3. **不要建立過深的巢狀結構：**
    ```
    ❌ onSiteAssistant.page.section.subsection.component.element.button.primary
    ✅ onSiteAssistant.promoGenerator.button.generate
    ```
 
-4. **Don't duplicate common keys:**
+4. **不要重複通用 keys：**
    ```
    ❌ onSiteAssistant.promotions.button.save
    ❌ onSiteAssistant.missionReward.button.save
    ✅ common.button.save (use this in both places)
    ```
 
-## Special Patterns
+## 特殊模式
 
-### Success Messages
+### 成功訊息
 
 Format: `{feature}.{page}.success.{action}`
 
@@ -435,7 +435,7 @@ onSiteAssistant.promoGenerator.success.generated
 onSiteAssistant.promoLink.success.copied
 ```
 
-### Error Messages
+### 錯誤訊息
 
 Format: `{feature}.{page}.error.{errorType}`
 
@@ -445,7 +445,7 @@ onSiteAssistant.promoGenerator.error.generateFailed
 camera.scanner.error.invalidQR
 ```
 
-### Validation Messages
+### 驗證訊息
 
 Format: `{feature}.{page}.validation.{rule}` or `common.validation.{rule}`
 
@@ -456,9 +456,9 @@ common.validation.required
 common.validation.email
 ```
 
-### Empty States
+### 空狀態
 
-Format: `{feature}.{page}.empty.{context}` or `common.empty.{type}`
+格式： `{feature}.{page}.empty.{context}` 或 `common.empty.{type}`
 
 ```
 onSiteAssistant.promotions.list.empty.message
@@ -466,9 +466,9 @@ onSiteAssistant.missionRewardRecord.table.empty
 common.empty.noData
 ```
 
-### Status Labels
+### 狀態標籤
 
-Format: `{feature}.{page}.status.{statusName}` or `common.status.{statusName}`
+格式： `{feature}.{page}.status.{statusName}` 或 `common.status.{statusName}`
 
 ```
 onSiteAssistant.promotions.card.status.active
@@ -476,102 +476,102 @@ onSiteAssistant.missionRewardRecord.status.pending
 common.status.completed
 ```
 
-## Context for AI Translation
+## AI 翻譯的上下文參考
 
-When generating i18n keys, consider:
+生成 i18n keys 時，請考慮：
 
-1. **File Location Context:**
+1. **檔案位置上下文：**
    - `src/features/OnSiteAssistant/pages/Promotions.js` → `onSiteAssistant.promotions.*`
    - `src/features/OnSiteAssistant/pages/MissionRewardEdit.js` → `onSiteAssistant.missionRewardEdit.*`
    - `src/components/Camera/CameraScanQRCode.js` → `camera.scanner.*`
    - `src/components/Dialog/DialogInfo.js` → `dialog.info.*`
 
-2. **Component Type:**
+2. **元件類型：**
    - Button → `.button.*`
    - Form input → `.form.input.*` or `.input.*`
    - Form label → `.form.label.*`
    - Table header → `.table.header.*`
    - Dialog → `dialog.*`
 
-3. **Action Context:**
+3. **動作上下文：**
    - Save action → `.button.save` or `.success.saved`
    - Delete action → `.button.delete` or `.confirm.delete.*`
    - Generate action → `.button.generate` or `.success.generated`
 
-4. **Reuse Common Keys:**
+4. **重用通用 Keys：**
    - Standard buttons → Use `common.button.*`
    - Standard messages → Use `common.success.*` or `common.error.*`
    - Standard validations → Use `common.validation.*`
 
-## Examples by File Location
+## 依檔案位置的範例
 
-**File:** `src/features/OnSiteAssistant/pages/Promotions.js`
-**Generated keys:**
+**檔案：** `src/features/OnSiteAssistant/pages/Promotions.js`
+**生成的 keys：**
 ```
 onSiteAssistant.promotions.title
 onSiteAssistant.promotions.list.empty.message
 onSiteAssistant.promotions.card.button.view
 ```
 
-**File:** `src/features/OnSiteAssistant/pages/PromoGenerator.js`
-**Generated keys:**
+**檔案：** `src/features/OnSiteAssistant/pages/PromoGenerator.js`
+**生成的 keys：**
 ```
 onSiteAssistant.promoGenerator.title
 onSiteAssistant.promoGenerator.input.label.quantity
 onSiteAssistant.promoGenerator.button.generate
 ```
 
-**File:** `src/components/Camera/CameraScanQRCode.js`
-**Generated keys:**
+**檔案：** `src/components/Camera/CameraScanQRCode.js`
+**生成的 keys：**
 ```
 camera.scanner.title
 camera.scanner.instruction
 camera.scanner.button.scan
 ```
 
-**File:** `src/components/Dialog/DialogCameraPermissionDeny.js`
-**Generated keys:**
+**檔案：** `src/components/Dialog/DialogCameraPermissionDeny.js`
+**生成的 keys：**
 ```
 camera.permission.deny.title
 camera.permission.deny.message
 camera.permission.deny.button.settings
 ```
 
-**File:** `src/components/Common/LoadingWrapper.js`
-**Generated keys:**
+**檔案：** `src/components/Common/LoadingWrapper.js`
+**生成的 keys：**
 ```
 common.loading.message
 common.loading.pleaseWait
 ```
 
-## Project-Specific Rules
+## 專案特定規則
 
-1. **OnSiteAssistant prefix:**
-   - All OnSite Assistant features use `onSiteAssistant.*` prefix
-   - Page names match file names: `MissionRewardEdit` → `missionRewardEdit`
+1. **OnSiteAssistant 前綴：**
+   - 所有現場助理功能使用 `onSiteAssistant.*` 前綴
+   - 頁面名稱匹配檔案名稱：`MissionRewardEdit` → `missionRewardEdit`
 
-2. **Camera components:**
-   - All camera-related components use `camera.*` prefix
-   - Scanner: `camera.scanner.*`
-   - Permissions: `camera.permission.*`
+2. **相機元件：**
+   - 所有相機相關元件使用 `camera.*` 前綴
+   - 掃描器：`camera.scanner.*`
+   - 權限：`camera.permission.*`
 
-3. **Common components:**
-   - Truly common elements use `common.*`
-   - Reuse common keys whenever possible
-   - Don't create duplicate keys for same functionality
+3. **通用元件：**
+   - 真正通用的元素使用 `common.*`
+   - 盡可能重用通用 keys
+   - 不要為相同功能建立重複的 keys
 
-4. **Dialog components:**
-   - All dialogs use `dialog.*` prefix
-   - Dialog type determines the second level: `dialog.info.*`, `dialog.systemError.*`
+4. **對話框元件：**
+   - 所有對話框使用 `dialog.*` 前綴
+   - 對話框類型決定第二層級：`dialog.info.*`、`dialog.systemError.*`
 
-5. **Page naming:**
-   - Use camelCase for page names
-   - Match the component file name pattern
+5. **頁面命名：**
+   - 頁面名稱使用駝峰式命名
+   - 匹配元件檔案名稱模式
    - `MissionRewardRecord` → `missionRewardRecord`
 
-## Translation File Structure
+## 翻譯檔案結構
 
-fever-tool uses per-language files:
+fever-tool 使用每種語言單獨的檔案：
 
 ```
 src/locale/
@@ -579,7 +579,7 @@ src/locale/
 └── en-US.json  (English)
 ```
 
-Each file has flat key-value structure:
+每個檔案都有扁平的 key-value 結構：
 ```json
 {
   "onSiteAssistant.promotions.title": "促銷活動",
@@ -588,25 +588,25 @@ Each file has flat key-value structure:
 }
 ```
 
-## Summary
+## 總結
 
-**Key Characteristics of fever-tool i18n:**
-- Feature-first naming: `onSiteAssistant.*`
-- Page-specific keys: `.missionReward.*`, `.promoGenerator.*`
-- Component-specific keys: `camera.*`, `dialog.*`
-- Heavy use of common keys: `common.*`
-- Semantic and hierarchical structure
-- Simple two-language support (zh-TW, en-US)
+**fever-tool i18n 的主要特點：**
+- 功能優先命名：`onSiteAssistant.*`
+- 頁面特定 keys：`.missionReward.*`、`.promoGenerator.*`
+- 元件特定 keys：`camera.*`、`dialog.*`
+- 大量使用通用 keys：`common.*`
+- 語意化和階層式結構
+- 簡單的雙語言支援 (zh-TW, en-US)
 
-**When in doubt:**
-- Check if common key exists first
-- Use feature name as first level
-- Use page/component name as second level
-- Keep it simple and semantic
+**如有疑問：**
+- 首先檢查是否存在通用 key
+- 使用功能名稱作為第一層級
+- 使用頁面/元件名稱作為第二層級
+- 保持簡單和語意化
 
 ---
 
-**Last Updated:** 2025-11-14
-**Version:** 1.0.0
-**Project:** fever-tool
-**Languages:** zh-TW (primary), en-US (secondary)
+**最後更新：** 2025-11-14
+**版本：** 1.0.0
+**專案：** fever-tool
+**語言：** zh-TW (主要), en-US (次要)

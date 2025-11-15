@@ -1,37 +1,37 @@
-# i18n Key Naming Convention - new-canvas-admin
+# i18n Key 命名規範 - new-canvas-admin
 
-This document provides i18n key naming guidelines for the new-canvas-admin project.
+本文件提供 new-canvas-admin 專案的 i18n key 命名指南。
 
-## Project Context
+## 專案概述
 
-new-canvas-admin is a comprehensive admin panel with multiple feature modules including:
-- Achievement system
-- Campaign management (Chat, Onsite)
-- Point system
-- Promo management
-- Form builder
-- Webhook management
-- And more...
+new-canvas-admin 是一個綜合性的管理面板，包含多個功能模組：
+- 成就系統
+- 活動管理 (聊天、站內)
+- 點數系統
+- 促銷管理
+- 表單建立器
+- Webhook 管理
+- 以及更多...
 
-## Naming Structure
+## 命名結構
 
 ```
 {feature}.{page}.{component}.{element}.{action}
 ```
 
-### Structure Components
+### 結構元件
 
-- **feature**: Top-level feature module (achievement, campaign, point, etc.)
-- **page**: Specific page within feature (dashboard, create, setting, etc.)
-- **component**: Component name if applicable
-- **element**: UI element type (button, title, label, input, etc.)
-- **action**: Action or state (save, cancel, edit, loading, error, etc.)
+- **feature**: 頂層功能模組 (achievement, campaign, point, 等)
+- **page**: 功能內的特定頁面 (dashboard, create, setting, 等)
+- **component**: 元件名稱 (如果適用)
+- **element**: UI 元素類型 (button, title, label, input, 等)
+- **action**: 動作或狀態 (save, cancel, edit, loading, error, 等)
 
-## Feature-Based Examples
+## 基於功能的範例
 
-### Achievement Module
+### 成就模組
 
-**Dashboard:**
+**儀表板：**
 ```
 achievement.dashboard.title
 achievement.dashboard.subtitle
@@ -41,7 +41,7 @@ achievement.dashboard.table.header.status
 achievement.dashboard.empty.message
 ```
 
-**Create Page:**
+**建立頁面：**
 ```
 achievement.create.title
 achievement.create.form.label.name
@@ -53,7 +53,7 @@ achievement.create.error.saveFailed
 achievement.create.success.created
 ```
 
-**Level Settings:**
+**等級設定：**
 ```
 achievement.level.title
 achievement.level.visual.upload.hint
@@ -63,16 +63,16 @@ achievement.level.points.label
 achievement.level.points.validation.required
 ```
 
-**Status:**
+**狀態：**
 ```
 achievement.status.draft
 achievement.status.published
 achievement.status.archived
 ```
 
-### Campaign Module
+### 活動模組
 
-**Onsite Campaign:**
+**站內活動：**
 ```
 campaign.onsite.editor.message.placeholder
 campaign.onsite.editor.button.addMessage
@@ -86,7 +86,7 @@ campaign.onsite.setting.trigger.timing.label
 campaign.onsite.analytics.chart.label
 ```
 
-**Chat Campaign:**
+**聊天活動：**
 ```
 campaign.chat.dashboard.title
 campaign.chat.editor.message.label
@@ -95,7 +95,7 @@ campaign.chat.analytics.overview
 campaign.chat.members.table.header.name
 ```
 
-**Common Campaign:**
+**通用活動：**
 ```
 campaign.list.table.header.name
 campaign.list.table.header.type
@@ -105,9 +105,9 @@ campaign.create.dialog.title
 campaign.create.type.select.label
 ```
 
-### Point System
+### 點數系統
 
-**Mechanism:**
+**機制：**
 ```
 point.mechanism.title
 point.mechanism.behavior.title
@@ -119,7 +119,7 @@ point.mechanism.campaign.title
 point.mechanism.expire.title
 ```
 
-**Statistics:**
+**統計：**
 ```
 point.statistical.title
 point.statistical.chart.label
@@ -129,7 +129,7 @@ point.statistical.info.totalPoints
 point.statistical.info.activeUsers
 ```
 
-**Settings:**
+**設定：**
 ```
 point.setting.info.label.name
 point.setting.info.label.unit
@@ -138,9 +138,9 @@ point.setting.style.background.label
 point.setting.style.button.label
 ```
 
-### Promo Module
+### 促銷模組
 
-**List:**
+**列表：**
 ```
 promo.list.table.header.name
 promo.list.table.header.type
@@ -153,7 +153,7 @@ promo.list.filter.type
 promo.list.empty.message
 ```
 
-**Create/Edit:**
+**建立/編輯：**
 ```
 promo.create.title
 promo.create.section.info.title
@@ -164,7 +164,7 @@ promo.create.button.save
 promo.create.button.preview
 ```
 
-**Game Types:**
+**遊戲類型：**
 ```
 promo.game.comment.title
 promo.game.contest.title
@@ -173,7 +173,7 @@ promo.game.photoUpload.title
 promo.game.vote.title
 ```
 
-**Prize Management:**
+**獎品管理：**
 ```
 promo.prize.draw.title
 promo.prize.draw.button.random
@@ -182,7 +182,7 @@ promo.prize.participate.table.header.name
 promo.prize.redemption.title
 ```
 
-**Analytics:**
+**分析：**
 ```
 promo.analytics.overview.title
 promo.analytics.chart.views
@@ -190,9 +190,9 @@ promo.analytics.chart.participants
 promo.analytics.export.button
 ```
 
-### Form Module
+### 表單模組
 
-**Editor:**
+**編輯器：**
 ```
 form.editor.title
 form.editor.field.add
@@ -203,7 +203,7 @@ form.editor.preview.button
 form.editor.publish.button
 ```
 
-**Field Types:**
+**欄位類型：**
 ```
 form.field.singleLine.label
 form.field.multiLine.label
@@ -221,7 +221,7 @@ form.setting.success.title
 form.setting.webhook.title
 ```
 
-### Webhook Module
+### Webhook 模組
 
 ```
 webhook.list.table.header.name
@@ -235,7 +235,7 @@ webhook.test.success.message
 webhook.test.error.message
 ```
 
-### Allocation Point Module
+### 分配點數模組
 
 ```
 allocationPoint.console.title
@@ -248,7 +248,7 @@ allocationPoint.addition.button.add
 allocationPoint.dialog.permission.title
 ```
 
-### Login Module
+### 登入模組
 
 ```
 login.email.label
@@ -264,7 +264,7 @@ login.signup.link
 login.forgotPassword.link
 ```
 
-### Sponsor Settings
+### 贊助商設定
 
 ```
 sponsor.setting.info.title
@@ -277,11 +277,11 @@ sponsor.admin.table.header.role
 sponsor.admin.button.invite
 ```
 
-## Common Components
+## 通用元件
 
-These keys are used across multiple features and should be consistent:
+這些 keys 在多個功能中使用，應保持一致：
 
-### Buttons
+### 按鈕
 ```
 common.button.save
 common.button.cancel
@@ -297,7 +297,7 @@ common.button.download
 common.button.upload
 ```
 
-### Dialogs
+### 對話框
 ```
 common.dialog.confirm.title
 common.dialog.confirm.message
@@ -307,7 +307,7 @@ common.dialog.unsaved.title
 common.dialog.unsaved.message
 ```
 
-### Tables
+### 表格
 ```
 common.table.noData
 common.table.loading
@@ -317,7 +317,7 @@ common.table.rowsPerPage
 common.table.pagination
 ```
 
-### Forms
+### 表單
 ```
 common.form.required
 common.form.invalid
@@ -325,7 +325,7 @@ common.form.success
 common.form.error
 ```
 
-### Validation
+### 驗證
 ```
 common.validation.required
 common.validation.email
@@ -336,7 +336,7 @@ common.validation.maxLength
 common.validation.pattern
 ```
 
-### Messages
+### 訊息
 ```
 common.success.created
 common.success.updated
@@ -349,7 +349,7 @@ common.error.serverError
 common.loading.message
 ```
 
-### Upload
+### 上傳
 ```
 common.upload.hint
 common.upload.dragHere
@@ -359,7 +359,7 @@ common.upload.error.type
 common.upload.success
 ```
 
-### Status Labels
+### 狀態標籤
 ```
 common.status.active
 common.status.inactive
@@ -369,9 +369,9 @@ common.status.archived
 common.status.pending
 ```
 
-## Special Patterns
+## 特殊模式
 
-### Error Messages
+### 錯誤訊息
 
 Format: `{feature}.{page}.error.{errorType}`
 
@@ -382,7 +382,7 @@ campaign.onsite.error.noMessage
 promo.create.error.invalidDateRange
 ```
 
-### Success Messages
+### 成功訊息
 
 Format: `{feature}.{page}.success.{action}`
 
@@ -393,7 +393,7 @@ campaign.publish.success.published
 promo.delete.success.deleted
 ```
 
-### Loading States
+### 載入狀態
 
 Format: `{feature}.{page}.loading.{action}`
 
@@ -403,7 +403,7 @@ campaign.analytics.loading.chart
 promo.list.loading.promos
 ```
 
-### Empty States
+### 空狀態
 
 Format: `{feature}.{page}.empty.{context}`
 
@@ -414,29 +414,29 @@ promo.list.empty.noPromos
 form.editor.empty.noFields
 ```
 
-## Naming Guidelines
+## 命名指南
 
 ### DO ✅
 
-1. **Use descriptive names:**
+1. **使用描述性名稱：**
    ```
    ✅ campaign.onsite.editor.message.placeholder
    ❌ campaign.msg.ph
    ```
 
-2. **Follow the hierarchy:**
+2. **遵循層級結構：**
    ```
    ✅ point.mechanism.behavior.add
    ❌ pointMechanismBehaviorAdd
    ```
 
-3. **Be consistent with naming:**
+3. **保持命名一致性：**
    ```
    ✅ button.save, button.cancel (all lowercase)
    ❌ button.Save, button.cancel (mixed case)
    ```
 
-4. **Use semantic names:**
+4. **使用語意化名稱：**
    ```
    ✅ achievement.create.error.nameTooLong
    ❌ achievement.create.error1
@@ -444,71 +444,71 @@ form.editor.empty.noFields
 
 ### DON'T ❌
 
-1. **Don't use abbreviations excessively:**
+1. **不要過度使用縮寫：**
    ```
    ❌ achv.crt.btn.sv
    ✅ achievement.create.button.save
    ```
 
-2. **Don't include language-specific terms:**
+2. **不要包含語言相關的詞彙：**
    ```
    ❌ achievement.create.button.儲存
    ✅ achievement.create.button.save
    ```
 
-3. **Don't use ambiguous names:**
+3. **不要使用模糊不清的名稱：**
    ```
    ❌ campaign.thing.stuff
    ✅ campaign.onsite.message.content
    ```
 
-4. **Don't create deep nesting unnecessarily:**
+4. **不要建立不必要的深層巢狀：**
    ```
    ❌ achievement.dashboard.page.section.subsection.component.element.button
    ✅ achievement.dashboard.button.create
    ```
 
-## Context for AI Translation
+## AI 翻譯的上下文參考
 
-When generating i18n keys, consider:
+生成 i18n keys 時，請考慮：
 
-1. **File Location**: Extract feature/module from file path
+1. **檔案位置**：從檔案路徑中提取功能/模組
    - `src/features/achievement/` → `achievement.*`
    - `src/features/campaign/onsite/` → `campaign.onsite.*`
 
-2. **Component Name**: Use component name as context
+2. **元件名稱**：使用元件名稱作為上下文
    - `AchievementDashboard.tsx` → `achievement.dashboard.*`
    - `CampaignEditor.tsx` → `campaign.*.editor.*`
 
-3. **UI Context**: Identify element type
+3. **UI 上下文**：識別元素類型
    - Button → `.button.*`
    - Input field → `.input.*` or `.form.*`
    - Table header → `.table.header.*`
 
-4. **Action Context**: Include action if applicable
+4. **動作上下文**：如果適用，包含動作
    - Save button → `.button.save`
    - Delete confirm → `.delete.confirm`
 
-## Examples by File Location
+## 依檔案位置的範例
 
-**File:** `src/features/achievement/pages/AchievementDashboard.js`
-**Generated keys:**
+**檔案：** `src/features/achievement/pages/AchievementDashboard.js`
+**生成的 keys：**
 ```
 achievement.dashboard.title
 achievement.dashboard.button.create
 achievement.dashboard.table.header.name
 ```
 
-**File:** `src/features/campaign/CampaignOnsite/Editor/OnsiteEditor.js`
-**Generated keys:**
+**檔案：** `src/features/campaign/CampaignOnsite/Editor/OnsiteEditor.js`
+**生成的 keys：**
 ```
 campaign.onsite.editor.title
 campaign.onsite.editor.message.placeholder
 campaign.onsite.editor.button.save
 ```
 
-**File:** `src/features/point/pages/Statistical.js`
-**Generated keys:**
+**檔案：** `src/features/point/pages/Statistical.js`
+**生成的 keys：**
 ```
 point.statistical.title
 point.statistical.chart.label
@@ -517,6 +517,6 @@ point.statistical.export.button
 
 ---
 
-**Last Updated:** 2025-11-14
-**Version:** 1.0.0
-**Project:** new-canvas-admin
+**最後更新：** 2025-11-14
+**版本：** 1.0.0
+**專案：** new-canvas-admin
