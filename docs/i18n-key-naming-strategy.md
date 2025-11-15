@@ -1,34 +1,34 @@
-# i18n Key Naming Strategy - Enhanced AI Key Generation
+# i18n Key 命名策略 - 增強的 AI Key 生成
 
-## Executive Summary
+## 執行摘要
 
-This document proposes an enhanced i18n key naming strategy for the MCP Translator to generate context-aware, hierarchical keys based on file structure and code context, rather than simple element-type-based naming.
+本文件提出 MCP Translator 的增強 i18n key 命名策略，基於文件結構和程式碼上下文生成上下文感知的階層式 key，而不是簡單的基於元素類型的命名。
 
-**Current Problem:**
-- AI generates keys like `label.xxx_aaa_sss_ddd` based only on element type
-- No consideration of file path, component hierarchy, or namespace
-- Results in flat, non-semantic key names that don't reflect project architecture
+**當前問題：**
+- AI 僅根據元素類型生成像 `label.xxx_aaa_sss_ddd` 這樣的 key
+- 不考慮文件路徑、元件階層或命名空間
+- 導致平坦、非語義的 key 名稱，無法反映專案架構
 
-**Proposed Solution:**
-- Context-aware key generation using file path analysis
-- Hierarchical structure: `{namespace}.{module}.{component}.{element}.{state}`
-- Maximum depth of 4-5 levels for optimal balance
-- Namespace-first approach aligning with project architecture
+**提議解決方案：**
+- 使用文件路徑分析進行上下文感知的 key 生成
+- 階層結構：`{namespace}.{module}.{component}.{element}.{state}`
+- 最大深度為 4-5 層以達到最佳平衡
+- 命名空間優先方法，與專案架構保持一致
 
 ---
 
-## Research Findings: Industry Best Practices
+## 研究發現：行業最佳實踐
 
-### 1. Namespace by Feature/Domain ⭐ (Most Important)
-**Source:** Locize, DEV Community, React i18next docs
+### 1. 按功能/領域命名空間 ⭐（最重要）
+**來源：** Locize、DEV Community、React i18next 文件
 
-The most robust strategy is to **namespace by feature or domain** (e.g., `checkout`, `adminDashboard`, `userProfile`). This approach:
-- Aligns i18n structure with application architecture
-- Resilient to UI refactoring
-- Enables code-splitting and lazy loading
-- Improves team collaboration (developers work on feature-specific files)
+最穩健的策略是**按功能或領域命名空間**（例如，`checkout`、`adminDashboard`、`userProfile`）。這種方法：
+- 使 i18n 結構與應用程式架構保持一致
+- 對 UI 重構具有彈性
+- 支援程式碼分割和懶載入
+- 改善團隊協作（開發者處理特定功能的文件）
 
-**Example:**
+**範例：**
 ```json
 {
   "checkout": {
@@ -48,57 +48,57 @@ The most robust strategy is to **namespace by feature or domain** (e.g., `checko
 }
 ```
 
-### 2. Hierarchical Nesting (2-3 Levels Optimal)
-**Source:** Tolgee, Lokalise, Phrase
+### 2. 階層巢狀（2-3 層最佳）
+**來源：** Tolgee、Lokalise、Phrase
 
-**Optimal depth:** 2-3 levels provides the best balance of organization and simplicity.
+**最佳深度：** 2-3 層提供最佳的組織性和簡單性平衡。
 
-**Good Examples:**
+**良好範例：**
 ```
 ✅ checkout.paymentForm.submitButton
 ✅ user.profile.editButton
 ✅ errors.validation.emailInvalid
 ```
 
-**Avoid Over-nesting:**
+**避免過度巢狀：**
 ```
-❌ app.pages.checkout.forms.payment.fields.card.number.label (too deep)
+❌ app.pages.checkout.forms.payment.fields.card.number.label（過深）
 ```
 
-### 3. Use Descriptive and Semantic Names
-**Source:** POEditor, Transifex, Stack Overflow
+### 3. 使用描述性和語義化名稱
+**來源：** POEditor、Transifex、Stack Overflow
 
-Keys should clearly describe **content or purpose**, not just location or element type.
+Key 應清楚描述**內容或目的**，而不僅僅是位置或元素類型。
 
-**Good:**
+**良好：**
 ```
 ✅ user.login.welcomeMessage
 ✅ product.addToCart.button
 ✅ error.networkTimeout
 ```
 
-**Bad:**
+**不良：**
 ```
 ❌ label_1, text123, key_abc
 ❌ button.click.here
 ```
 
-### 4. Consistent Naming Convention
-**Source:** Phrase, Lokalise
+### 4. 一致的命名慣例
+**來源：** Phrase、Lokalise
 
-Choose one convention and stick to it:
-- **camelCase:** `userLoginForm`
-- **snake_case:** `user_login_form`
-- **dot.notation:** `user.login.form`
+選擇一種慣例並堅持使用：
+- **camelCase：** `userLoginForm`
+- **snake_case：** `user_login_form`
+- **dot.notation：** `user.login.form`
 
-**Recommendation:** Use **dot.notation** for hierarchy + **camelCase** within segments.
+**建議：** 使用**點標記法**作為階層 + 段落內使用 **camelCase**。
 
-Example: `user.loginForm.submitButton`
+範例：`user.loginForm.submitButton`
 
-### 5. Common Translations File
-**Source:** React i18next, ButterCMS
+### 5. 通用翻譯文件
+**來源：** React i18next、ButterCMS
 
-Maintain a `common.json` namespace for frequently reused strings:
+維護一個 `common.json` 命名空間用於頻繁重複使用的字串：
 ```json
 {
   "button": {
@@ -114,21 +114,21 @@ Maintain a `common.json` namespace for frequently reused strings:
 }
 ```
 
-### 6. Include Context When Needed
-**Source:** Tolgee, DEV Community
+### 6. 需要時包含上下文
+**來源：** Tolgee、DEV Community
 
-If a term has multiple meanings, include context:
+如果術語有多種含義，請包含上下文：
 ```
-✅ address.user (user's address)
-✅ address.shipping (shipping address)
-✅ date.created (creation date)
-✅ date.modified (modification date)
+✅ address.user（使用者地址）
+✅ address.shipping（送貨地址）
+✅ date.created（建立日期）
+✅ date.modified（修改日期）
 ```
 
-### 7. Plan for Pluralization and Gender
-**Source:** i18next documentation
+### 7. 規劃複數和性別
+**來源：** i18next 文件
 
-Use ICU message format or specific keys for pluralization:
+使用 ICU 訊息格式或特定 key 處理複數：
 ```json
 {
   "item": {
@@ -140,211 +140,211 @@ Use ICU message format or specific keys for pluralization:
 
 ---
 
-## Fever Admin Project Analysis
+## Fever Admin 專案分析
 
-### Project Architecture Overview
+### 專案架構概述
 
-**Three Main Flows:**
-1. **Editor Flow** - Admin backend (activity editor)
-2. **Client Flow** - User frontend (activity participation)
-3. **UGC Flow** - UGC content display and voting
+**三個主要流程：**
+1. **Editor Flow** - 管理後台（活動編輯器）
+2. **Client Flow** - 使用者前台（活動參與）
+3. **UGC Flow** - UGC 內容展示和投票
 
-**Current i18n Structure:**
+**當前 i18n 結構：**
 ```
 src/locale/
 ├── i18n.js
-├── client/          # Frontend namespace
+├── client/          # 前端命名空間
 │   ├── zh-TW.json
 │   ├── en-US.json
-│   └── ... (7 languages)
-└── editor/          # Backend namespace
+│   └── ...（7 種語言）
+└── editor/          # 後端命名空間
     ├── zh-TW.json
     ├── en-US.json
-    └── ... (7 languages)
+    └── ...（7 種語言）
 ```
 
-### Key Characteristics
+### 主要特徵
 
-1. **Clear Namespace Separation:** Editor vs Client
-2. **25+ Game Types:** Each needs distinct i18n keys
-3. **Modular Architecture:** Clear flow > module > component hierarchy
-4. **Shared Components:** Components used across both editor and client
+1. **清晰的命名空間分離：** Editor vs Client
+2. **25+ 種遊戲類型：** 每種都需要獨特的 i18n key
+3. **模組化架構：** 清晰的流程 > 模組 > 元件階層
+4. **共享元件：** 在 editor 和 client 之間使用的元件
 
-### Example File Paths
+### 範例文件路徑
 
 ```
-src/client/game_aiWebGame/...                    # Client flow
-src/editor/game_aiWebGame/...                    # Editor flow
-src/components/AIWebGame/...                     # Shared components
-src/editor/components/SideBar/Prize/...          # Editor-specific
-src/client/components/Result/Actions/...         # Client-specific
+src/client/game_aiWebGame/...                    # Client 流程
+src/editor/game_aiWebGame/...                    # Editor 流程
+src/components/AIWebGame/...                     # 共享元件
+src/editor/components/SideBar/Prize/...          # Editor 專用
+src/client/components/Result/Actions/...         # Client 專用
 ```
 
 ---
 
-## Proposed i18n Key Naming Strategy for Fever Admin
+## Fever Admin 提議的 i18n Key 命名策略
 
-### Format Structure
+### 格式結構
 
 ```
 {namespace}.{module}.{component}.{element}.{variant}
 ```
 
-**Maximum Depth:** 4-5 levels
+**最大深度：** 4-5 層
 
-### Naming Rules by Hierarchy Level
+### 階層層級的命名規則
 
-#### Level 1: Namespace (Required)
-- `editor` - Editor flow (admin backend)
-- `client` - Client flow (user frontend)
-- `ugc` - UGC flow
-- `common` - Shared across all flows
+#### 層級 1：命名空間（必需）
+- `editor` - Editor 流程（管理後台）
+- `client` - Client 流程（使用者前台）
+- `ugc` - UGC 流程
+- `common` - 所有流程共享
 
-#### Level 2: Module (Required)
-Based on functional area or game type:
-- **Game Types:** `aiWebGame`, `quiz`, `vote`, `checkIn`, `lottery`, etc.
-- **Feature Areas:** `prize`, `qualify`, `result`, `task`, `mgm`, etc.
-- **Shared Modules:** `auth`, `navigation`, `dialog`, etc.
+#### 層級 2：模組（必需）
+基於功能區域或遊戲類型：
+- **遊戲類型：** `aiWebGame`、`quiz`、`vote`、`checkIn`、`lottery` 等
+- **功能區域：** `prize`、`qualify`、`result`、`task`、`mgm` 等
+- **共享模組：** `auth`、`navigation`、`dialog` 等
 
-#### Level 3: Component/Context (Required)
-- Component name in camelCase: `gameConfig`, `settingPanel`, `prizeList`
-- Or functional context: `validation`, `error`, `success`
+#### 層級 3：元件/上下文（必需）
+- camelCase 的元件名稱：`gameConfig`、`settingPanel`、`prizeList`
+- 或功能上下文：`validation`、`error`、`success`
 
-#### Level 4: Element/Purpose (Required)
-- Descriptive element identifier: `title`, `description`, `submitButton`
-- Or specific purpose: `placeholder`, `tooltip`, `errorMessage`
+#### 層級 4：元素/目的（必需）
+- 描述性元素識別符：`title`、`description`、`submitButton`
+- 或特定目的：`placeholder`、`tooltip`、`errorMessage`
 
-#### Level 5: Variant/State (Optional)
-- State variations: `loading`, `success`, `error`
-- UI variants: `primary`, `secondary`, `disabled`
-- Plurality: `singular`, `plural`
+#### 層級 5：變體/狀態（可選）
+- 狀態變化：`loading`、`success`、`error`
+- UI 變體：`primary`、`secondary`、`disabled`
+- 複數：`singular`、`plural`
 
-### Examples Based on Fever Admin Structure
+### 基於 Fever Admin 結構的範例
 
-#### Editor Flow Examples
+#### Editor Flow 範例
 
-**File:** `src/editor/game_aiWebGame/SettingPanel/Panels/GameConfigPanel.jsx`
+**文件：** `src/editor/game_aiWebGame/SettingPanel/Panels/GameConfigPanel.jsx`
 
 ```javascript
-// Title
+// 標題
 t('editor.aiWebGame.gameConfig.title')
 // "AI 網頁遊戲配置"
 
-// Description field
+// 描述欄位
 t('editor.aiWebGame.gameConfig.description.label')
 t('editor.aiWebGame.gameConfig.description.placeholder')
 
-// Sandbox mode checkbox
+// 沙盒模式核取方塊
 t('editor.aiWebGame.settingPanel.sandbox.label')
 t('editor.aiWebGame.settingPanel.sandbox.tooltip')
 
-// Full screen toggle
+// 全螢幕切換
 t('editor.aiWebGame.display.fullscreen.label')
 t('editor.aiWebGame.display.fullscreen.description')
 ```
 
-**File:** `src/editor/components/SideBar/Prize/Dialog/PrizeInfoDialog.jsx`
+**文件：** `src/editor/components/SideBar/Prize/Dialog/PrizeInfoDialog.jsx`
 
 ```javascript
-// Dialog title
+// 對話框標題
 t('editor.prize.infoDialog.title')
 
-// Prize name field
+// 獎品名稱欄位
 t('editor.prize.infoDialog.prizeName.label')
 t('editor.prize.infoDialog.prizeName.placeholder')
 
-// Prize image upload
+// 獎品圖片上傳
 t('editor.prize.infoDialog.image.uploadButton')
 t('editor.prize.infoDialog.image.requirement')
 
-// Actions
+// 動作
 t('editor.prize.infoDialog.saveButton')
 t('editor.prize.infoDialog.cancelButton')
 ```
 
-**File:** `src/editor/components/SideBar/Qualify/limitQualify/index.jsx`
+**文件：** `src/editor/components/SideBar/Qualify/limitQualify/index.jsx`
 
 ```javascript
-// Section title
+// 區塊標題
 t('editor.qualify.limitQualify.title')
 
-// Member level restriction
+// 會員等級限制
 t('editor.qualify.limitQualify.memberLevel.label')
 t('editor.qualify.limitQualify.memberLevel.placeholder')
 
-// Tag qualification
+// 標籤資格
 t('editor.qualify.limitQualify.tags.label')
 t('editor.qualify.limitQualify.tags.addButton')
 t('editor.qualify.limitQualify.tags.emptyState')
 ```
 
-#### Client Flow Examples
+#### Client Flow 範例
 
-**File:** `src/client/game_aiWebGame/GameContainer.jsx`
+**文件：** `src/client/game_aiWebGame/GameContainer.jsx`
 
 ```javascript
-// Loading state
+// 載入狀態
 t('client.aiWebGame.loading')
 t('client.aiWebGame.loading.message')
 
-// Error states
+// 錯誤狀態
 t('client.aiWebGame.error.loadFailed')
 t('client.aiWebGame.error.networkTimeout')
 t('client.aiWebGame.error.notFound')
 
-// Fullscreen controls
+// 全螢幕控制
 t('client.aiWebGame.fullscreen.enterButton')
 t('client.aiWebGame.fullscreen.exitButton')
 ```
 
-**File:** `src/client/components/Result/Actions/ShareButton.jsx`
+**文件：** `src/client/components/Result/Actions/ShareButton.jsx`
 
 ```javascript
-// Share button
+// 分享按鈕
 t('client.result.actions.shareButton')
 t('client.result.actions.shareButton.tooltip')
 
-// Share success
+// 分享成功
 t('client.result.actions.share.success')
 t('client.result.actions.share.error')
 ```
 
-**File:** `src/client/game_checkIn/CheckInCard.jsx`
+**文件：** `src/client/game_checkIn/CheckInCard.jsx`
 
 ```javascript
-// Card title
+// 卡片標題
 t('client.checkIn.card.title')
 
-// Check-in button states
+// 簽到按鈕狀態
 t('client.checkIn.card.button.checkIn')
 t('client.checkIn.card.button.checkedIn')
 t('client.checkIn.card.button.disabled')
 
-// Status messages
+// 狀態訊息
 t('client.checkIn.card.status.success')
 t('client.checkIn.card.status.alreadyCheckedIn')
 t('client.checkIn.card.status.notQualified')
 ```
 
-**File:** `src/client/fever_form/FeverForm/DatePicker/index.jsx`
+**文件：** `src/client/fever_form/FeverForm/DatePicker/index.jsx`
 
 ```javascript
-// Date picker labels
+// 日期選擇器標籤
 t('client.form.datePicker.label')
 t('client.form.datePicker.placeholder')
 
-// Validation
+// 驗證
 t('client.form.datePicker.validation.required')
 t('client.form.datePicker.validation.invalid')
 t('client.form.datePicker.validation.pastDate')
 ```
 
-#### Common (Shared) Examples
+#### Common（共享）範例
 
-**File:** Reusable across all flows
+**文件：** 所有流程中可重複使用
 
 ```javascript
-// Buttons
+// 按鈕
 t('common.button.save')
 t('common.button.cancel')
 t('common.button.delete')
@@ -353,7 +353,7 @@ t('common.button.close')
 t('common.button.edit')
 t('common.button.submit')
 
-// Dialog
+// 對話框
 t('common.dialog.confirm.title')
 t('common.dialog.confirm.message')
 t('common.dialog.delete.title')
@@ -361,7 +361,7 @@ t('common.dialog.delete.message')
 t('common.dialog.unsavedChanges.title')
 t('common.dialog.unsavedChanges.message')
 
-// Form validation
+// 表單驗證
 t('common.validation.required')
 t('common.validation.emailInvalid')
 t('common.validation.phoneInvalid')
@@ -369,63 +369,63 @@ t('common.validation.urlInvalid')
 t('common.validation.minLength')
 t('common.validation.maxLength')
 
-// Status messages
+// 狀態訊息
 t('common.message.saveSuccess')
 t('common.message.saveFailed')
 t('common.message.deleteSuccess')
 t('common.message.deleteFailed')
 t('common.message.networkError')
 
-// Date/Time
+// 日期/時間
 t('common.date.today')
 t('common.date.yesterday')
 t('common.date.tomorrow')
 ```
 
-#### UGC Flow Examples
+#### UGC Flow 範例
 
-**File:** `src/ugc/components/ugcGallery/waterfall/index.jsx`
+**文件：** `src/ugc/components/ugcGallery/waterfall/index.jsx`
 
 ```javascript
-// Gallery title
+// 畫廊標題
 t('ugc.gallery.waterfall.title')
 
-// Filter options
+// 篩選選項
 t('ugc.gallery.filter.latest')
 t('ugc.gallery.filter.popular')
 t('ugc.gallery.filter.myWorks')
 
-// Actions
+// 動作
 t('ugc.gallery.uploadButton')
 t('ugc.gallery.voteButton')
 ```
 
 ---
 
-## Key Generation Algorithm for AI Service
+## AI Service 的 Key 生成演算法
 
-### Input Data Required
+### 所需輸入數據
 
-1. **File Path:** Absolute path to the source file
-2. **Code Context:** Surrounding JSX/TSX code
-3. **Text Content:** The hardcoded text to translate
-4. **Project Root:** Base directory for relative path calculation
+1. **文件路徑：** 源文件的絕對路徑
+2. **程式碼上下文：** 周圍的 JSX/TSX 程式碼
+3. **文字內容：** 要翻譯的硬編碼文字
+4. **專案根目錄：** 相對路徑計算的基礎目錄
 
-### Path Analysis Algorithm
+### 路徑分析演算法
 
 ```typescript
 interface PathContext {
   namespace: 'editor' | 'client' | 'ugc' | 'common' | 'shared';
-  module: string;        // e.g., 'aiWebGame', 'prize', 'checkIn'
-  component: string;     // e.g., 'gameConfig', 'settingPanel'
-  subpath: string[];     // Additional path segments
+  module: string;        // 例如，'aiWebGame'、'prize'、'checkIn'
+  component: string;     // 例如，'gameConfig'、'settingPanel'
+  subpath: string[];     // 額外的路徑段落
 }
 
 function analyzeFilePath(filePath: string, projectRoot: string): PathContext {
   const relativePath = path.relative(projectRoot, filePath);
   const segments = relativePath.split(path.sep);
 
-  // Determine namespace
+  // 決定命名空間
   let namespace: PathContext['namespace'] = 'common';
   let startIdx = 0;
 
@@ -443,21 +443,21 @@ function analyzeFilePath(filePath: string, projectRoot: string): PathContext {
     startIdx = segments.indexOf('components') + 1;
   }
 
-  // Extract module from game_xxx or feature directories
+  // 從 game_xxx 或功能目錄提取模組
   let module = '';
   let componentStartIdx = startIdx;
 
   for (let i = startIdx; i < segments.length; i++) {
     const segment = segments[i];
 
-    // Check for game types
+    // 檢查遊戲類型
     if (segment.startsWith('game_')) {
       module = segment.replace('game_', '');
       componentStartIdx = i + 1;
       break;
     }
 
-    // Check for known feature modules
+    // 檢查已知的功能模組
     const knownModules = [
       'prize', 'qualify', 'task', 'mgm', 'achievement',
       'point', 'rewards', 'collected', 'login', 'fever_form'
@@ -468,14 +468,14 @@ function analyzeFilePath(filePath: string, projectRoot: string): PathContext {
       break;
     }
 
-    // Check for component directories
+    // 檢查元件目錄
     if (segment === 'components') {
       componentStartIdx = i + 1;
       break;
     }
   }
 
-  // Extract component and subpath
+  // 提取元件和子路徑
   const remainingSegments = segments.slice(componentStartIdx);
   const component = remainingSegments[0] || '';
   const subpath = remainingSegments.slice(1).filter(s => s !== 'index.jsx' && s !== 'index.tsx');
@@ -495,17 +495,17 @@ function toCamelCase(str: string): string {
 }
 ```
 
-### Element Type Detection
+### 元素類型偵測
 
 ```typescript
 interface ElementContext {
   type: 'button' | 'title' | 'label' | 'placeholder' | 'tooltip' | 'error' | 'message';
-  parent: string;        // Parent element type (e.g., 'Dialog', 'Form')
-  attributes: Record<string, string>;  // Element attributes
+  parent: string;        // 父元素類型（例如，'Dialog'、'Form'）
+  attributes: Record<string, string>;  // 元素屬性
 }
 
 function detectElementContext(codeContext: string): ElementContext {
-  // Analyze JSX structure
+  // 分析 JSX 結構
   const buttonRegex = /<button|<Button|onClick=/;
   const titleRegex = /<h[1-6]|<Title|<Typography variant="h/;
   const placeholderRegex = /placeholder=|placeholder:/;
@@ -528,46 +528,46 @@ function detectElementContext(codeContext: string): ElementContext {
 }
 ```
 
-### Key Construction
+### Key 建構
 
 ```typescript
 function constructI18nKey(
   pathContext: PathContext,
   elementContext: ElementContext,
-  semanticName: string  // AI-generated semantic name from text
+  semanticName: string  // AI 從文字生成的語義名稱
 ): string {
   const parts: string[] = [];
 
-  // 1. Namespace (required)
+  // 1. 命名空間（必需）
   parts.push(pathContext.namespace);
 
-  // 2. Module (if present)
+  // 2. 模組（如果存在）
   if (pathContext.module) {
     parts.push(pathContext.module);
   }
 
-  // 3. Component (if present)
+  // 3. 元件（如果存在）
   if (pathContext.component) {
     parts.push(pathContext.component);
   }
 
-  // 4. Subpath (if present and meaningful)
+  // 4. 子路徑（如果存在且有意義）
   if (pathContext.subpath.length > 0 && pathContext.subpath.length <= 2) {
     parts.push(...pathContext.subpath);
   }
 
-  // 5. Semantic name + element type
-  // If element type is generic (label), just use semantic name
-  // Otherwise append element type (button, title, etc.)
+  // 5. 語義名稱 + 元素類型
+  // 如果元素類型是通用的（label），只使用語義名稱
+  // 否則附加元素類型（button、title 等）
   if (elementContext.type === 'label' || elementContext.type === 'message') {
     parts.push(semanticName);
   } else {
     parts.push(`${semanticName}.${elementContext.type}`);
   }
 
-  // Ensure maximum depth of 5 levels
+  // 確保最大深度為 5 層
   if (parts.length > 5) {
-    // Keep namespace, module, and last 3 parts
+    // 保留命名空間、模組和最後 3 個部分
     parts.splice(2, parts.length - 5);
   }
 
@@ -575,9 +575,9 @@ function constructI18nKey(
 }
 ```
 
-### AI Prompt Enhancement
+### AI Prompt 增強
 
-**Updated Prompt Template:**
+**更新的 Prompt 範本：**
 
 ```
 You are an expert i18n (internationalization) assistant for a React project.
@@ -662,116 +662,116 @@ Output Key: common.button.cancel
 
 ---
 
-## Implementation Plan
+## 實施計劃
 
-### Phase 1: Enhance AI Service with Path Analysis
+### 階段 1：使用路徑分析增強 AI Service
 
-**Files to Modify:**
-- `src/core/ai-service.ts` - Add path analysis logic
-- `src/types/i18n.ts` - Add new type definitions
+**要修改的文件：**
+- `src/core/ai-service.ts` - 新增路徑分析邏輯
+- `src/types/i18n.ts` - 新增新的類型定義
 
-**New Parameters:**
-- Add `filePath: string` to `getAiSuggestions()` method
-- Add `projectRoot: string` to AiService constructor
+**新參數：**
+- 將 `filePath: string` 新增到 `getAiSuggestions()` 方法
+- 將 `projectRoot: string` 新增到 AiService 建構函數
 
-**Changes:**
-1. Implement `analyzeFilePath()` function
-2. Implement `detectElementContext()` function
-3. Implement `constructI18nKey()` function
-4. Update AI prompt with path context
+**變更：**
+1. 實作 `analyzeFilePath()` 函數
+2. 實作 `detectElementContext()` 函數
+3. 實作 `constructI18nKey()` 函數
+4. 使用路徑上下文更新 AI prompt
 
-### Phase 2: Update File Processor
+### 階段 2：更新 File Processor
 
-**Files to Modify:**
-- `src/core/file-processor.ts` - Pass file path to AI service
+**要修改的文件：**
+- `src/core/file-processor.ts` - 將文件路徑傳遞給 AI service
 
-**Changes:**
-1. Pass `filePath` to `aiService.getAiSuggestions()`
-2. Pass `projectRoot` when initializing AiService
+**變更：**
+1. 將 `filePath` 傳遞給 `aiService.getAiSuggestions()`
+2. 初始化 AiService 時傳遞 `projectRoot`
 
-### Phase 3: Testing
+### 階段 3：測試
 
-**Test Cases:**
-1. Editor flow files → Keys start with `editor.`
-2. Client flow files → Keys start with `client.`
-3. Shared components → Keys start with `common.`
-4. Game-specific files → Include game module name
-5. Deep nested components → Respect max depth of 5 levels
+**測試案例：**
+1. Editor flow 文件 → Key 以 `editor.` 開頭
+2. Client flow 文件 → Key 以 `client.` 開頭
+3. 共享元件 → Key 以 `common.` 開頭
+4. 遊戲特定文件 → 包含遊戲模組名稱
+5. 深度巢狀元件 → 遵守最大深度 5 層
 
-### Phase 4: Documentation
+### 階段 4：文件
 
-**Files to Create/Update:**
-- Update `CLAUDE.md` with new key naming conventions
-- Create examples in `docs/examples/`
-- Update MCP tool descriptions
-
----
-
-## Benefits of This Approach
-
-### 1. Semantic and Maintainable
-- Keys reflect application structure and meaning
-- Easy to understand and locate
-- Survives refactoring (if structure maintained)
-
-### 2. Scalable
-- Works for projects of any size
-- Supports code-splitting by namespace/module
-- Team members can work independently on different modules
-
-### 3. Consistent
-- Automated generation ensures consistency
-- Clear rules reduce human error
-- AI follows project conventions
-
-### 4. Context-Aware
-- File path provides natural hierarchy
-- Module and component context included
-- Element type adds semantic clarity
-
-### 5. Developer-Friendly
-- Intuitive key structure
-- Easy to predict key names
-- Auto-completion friendly in IDEs
+**要建立/更新的文件：**
+- 使用新的 key 命名慣例更新 `CLAUDE.md`
+- 在 `docs/examples/` 中建立範例
+- 更新 MCP 工具描述
 
 ---
 
-## Migration Guide (For Existing Projects)
+## 這種方法的優點
 
-### Option 1: Gradual Migration
-- New translations use new format
-- Keep existing keys as-is
-- Migrate incrementally during refactoring
+### 1. 語義化且可維護
+- Key 反映應用程式結構和含義
+- 易於理解和定位
+- 在重構中存活（如果結構得以維護）
 
-### Option 2: Automated Migration
-- Create migration script to analyze and rename keys
-- Update all references in codebase
-- Validate with tests
+### 2. 可擴展
+- 適用於任何規模的專案
+- 支援按命名空間/模組進行程式碼分割
+- 團隊成員可以獨立處理不同的模組
 
-### Option 3: Dual Format Support
-- Support both old and new formats
-- Deprecate old format over time
-- Show warnings for old-style keys
+### 3. 一致
+- 自動生成確保一致性
+- 清晰的規則減少人為錯誤
+- AI 遵循專案慣例
+
+### 4. 上下文感知
+- 文件路徑提供自然階層
+- 包含模組和元件上下文
+- 元素類型增加語義清晰度
+
+### 5. 對開發者友善
+- 直觀的 key 結構
+- 易於預測 key 名稱
+- IDE 中的自動完成友善
 
 ---
 
-## Appendix: Comparison Table
+## 遷移指南（對於現有專案）
 
-| Aspect | Current Approach | Proposed Approach |
+### 選項 1：逐步遷移
+- 新翻譯使用新格式
+- 保持現有 key 不變
+- 在重構期間逐步遷移
+
+### 選項 2：自動化遷移
+- 建立遷移腳本以分析和重新命名 key
+- 更新程式碼庫中的所有引用
+- 使用測試進行驗證
+
+### 選項 3：雙格式支援
+- 支援舊格式和新格式
+- 隨時間淘汰舊格式
+- 顯示舊樣式 key 的警告
+
+---
+
+## 附錄：比較表
+
+| 方面 | 當前方法 | 提議方法 |
 |--------|-----------------|-------------------|
-| **Structure** | Flat, element-type based | Hierarchical, context-aware |
-| **Example** | `label.xxx_aaa_sss_ddd` | `editor.aiWebGame.gameConfig.title` |
-| **Context** | Element type only | File path + module + component |
-| **Scalability** | Poor (flat namespace) | Excellent (nested structure) |
-| **Maintainability** | Difficult | Easy |
-| **Semantic** | Low (generic names) | High (meaningful names) |
-| **Code-splitting** | Not supported | Fully supported |
-| **Team collaboration** | Conflicts likely | Isolated by module |
-| **Max depth** | Unlimited | 4-5 levels |
+| **結構** | 平坦、基於元素類型 | 階層式、上下文感知 |
+| **範例** | `label.xxx_aaa_sss_ddd` | `editor.aiWebGame.gameConfig.title` |
+| **上下文** | 僅元素類型 | 文件路徑 + 模組 + 元件 |
+| **可擴展性** | 差（平坦命名空間） | 優秀（巢狀結構） |
+| **可維護性** | 困難 | 容易 |
+| **語義性** | 低（通用名稱） | 高（有意義的名稱） |
+| **程式碼分割** | 不支援 | 完全支援 |
+| **團隊協作** | 可能發生衝突 | 按模組隔離 |
+| **最大深度** | 無限制 | 4-5 層 |
 
 ---
 
-## References
+## 參考資料
 
 1. **Locize** - "The Art of the Key: A Definitive Guide to i18n Key Naming"
 2. **Tolgee** - "The Key to Translation: The Ultimate Guide to Naming Translation Keys"
@@ -783,7 +783,7 @@ Output Key: common.button.cancel
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2025-01-13
-**Status:** Proposed
-**Next Steps:** Review → Implement → Test → Deploy
+**文件版本：** 1.0
+**最後更新：** 2025-01-13
+**狀態：** 提議
+**下一步：** 審查 → 實作 → 測試 → 部署

@@ -1,54 +1,54 @@
-# Testing Guide for i18n MCP Translator
+# i18n MCP Translator 測試指南
 
-## Overview
+## 概述
 
-This document describes the testing strategy for the context-aware i18n key generation feature.
+本文件說明上下文感知 i18n key 生成功能的測試策略。
 
-## Test Structure
+## 測試結構
 
-### 1. TDD (Test-Driven Development) Unit Tests
+### 1. TDD（測試驅動開發）單元測試
 
-**Location:** `src/core/__tests__/*.test.ts`
+**位置:** `src/core/__tests__/*.test.ts`
 
-#### Path Analysis Tests (`ai-service-path-analysis.test.ts`)
-Tests the file path parsing and context extraction:
-- ✅ Editor namespace detection
-- ✅ Client namespace detection
-- ✅ UGC namespace detection
-- ✅ Common namespace detection
-- ✅ Module extraction (game_xxx, feature modules)
-- ✅ Component extraction
-- ✅ CamelCase conversion
-- ✅ Edge cases (deep nesting, index files)
+#### 路徑分析測試 (`ai-service-path-analysis.test.ts`)
+測試文件路徑解析和上下文提取:
+- ✅ Editor 命名空間偵測
+- ✅ Client 命名空間偵測
+- ✅ UGC 命名空間偵測
+- ✅ Common 命名空間偵測
+- ✅ 模組提取（game_xxx、功能模組）
+- ✅ 元件提取
+- ✅ CamelCase 轉換
+- ✅ 邊界情況（深度巢狀、索引文件）
 
-#### Element Detection Tests (`ai-service-element-detection.test.ts`)
-Tests the element type detection from code context:
-- ✅ Button detection (<button>, onClick, Material-UI Button)
-- ✅ Title/Heading detection (<h1>-<h6>, Typography)
-- ✅ Placeholder detection (input, TextField)
-- ✅ Tooltip detection
-- ✅ Error message detection
-- ✅ Description detection
-- ✅ Label detection (default)
-- ✅ Complex contexts
+#### 元素偵測測試 (`ai-service-element-detection.test.ts`)
+測試從程式碼上下文偵測元素類型:
+- ✅ 按鈕偵測（<button>、onClick、Material-UI Button）
+- ✅ 標題/Heading 偵測（<h1>-<h6>、Typography）
+- ✅ Placeholder 偵測（input、TextField）
+- ✅ Tooltip 偵測
+- ✅ 錯誤訊息偵測
+- ✅ 描述偵測
+- ✅ Label 偵測（預設）
+- ✅ 複雜上下文
 
-#### Key Construction Tests (`ai-service-key-construction.test.ts`)
-Tests the intelligent key building logic:
-- ✅ Hierarchical structure (4-5 levels max)
-- ✅ Element type suffix rules
-- ✅ Semantic naming (camelCase)
-- ✅ Common namespace detection
-- ✅ Pattern consistency
-- ✅ Edge cases
+#### Key 建構測試 (`ai-service-key-construction.test.ts`)
+測試智能 key 建構邏輯:
+- ✅ 階層結構（最多 4-5 層）
+- ✅ 元素類型後綴規則
+- ✅ 語義命名（camelCase）
+- ✅ Common 命名空間偵測
+- ✅ 模式一致性
+- ✅ 邊界情況
 
-### 2. BDD (Behavior-Driven Development) Integration Tests
+### 2. BDD（行為驅動開發）整合測試
 
-**Location:** `src/core/__tests__/*.spec.ts`
+**位置:** `src/core/__tests__/*.spec.ts`
 
-#### Integration Scenarios (`ai-service-integration.spec.ts`)
-Tests complete workflows with real-world scenarios:
+#### 整合情境 (`ai-service-integration.spec.ts`)
+使用真實世界情境測試完整工作流程:
 
-**Scenario 1: Developer edits AI Web Game in Editor**
+**情境 1: 開發者在 Editor 中編輯 AI Web Game**
 ```gherkin
 GIVEN I am in the Editor flow editing AI Web Game settings
 WHEN I translate a title
@@ -56,7 +56,7 @@ THEN The key should be editor.aiWebGame.gameConfig.title
 AND Translations should be provided for all languages
 ```
 
-**Scenario 2: User interacts with Check-In game**
+**情境 2: 用戶與 Check-In 遊戲互動**
 ```gherkin
 GIVEN I am building a check-in card for the client flow
 WHEN Displaying check-in button
@@ -64,47 +64,47 @@ THEN Should use client.checkIn.card.checkIn
 AND Should not have .button suffix
 ```
 
-**Scenario 3: Developer creates reusable UI components**
+**情境 3: 開發者創建可重用的 UI 元件**
 ```gherkin
 GIVEN I create a common Save button component
 WHEN Processing common button text
 THEN Should use common.button.save
 ```
 
-**Scenario 4: Working with form inputs**
-**Scenario 5: Managing Prize configuration**
-**Scenario 6: Edge cases and consistency**
+**情境 4: 使用表單輸入**
+**情境 5: 管理獎品配置**
+**情境 6: 邊界情況和一致性**
 
-## Running Tests
+## 執行測試
 
-### All Tests
+### 所有測試
 ```bash
 npm test
 ```
 
-### Watch Mode
+### Watch 模式
 ```bash
 npm run test:watch
 ```
 
-### Coverage Report
+### 覆蓋率報告
 ```bash
 npm run test:coverage
 ```
 
-### UI Mode
+### UI 模式
 ```bash
 npm run test:ui
 ```
 
-## Test Coverage Goals
+## 測試覆蓋率目標
 
-- **Path Analysis:** 100% coverage of all namespace/module/component patterns
-- **Element Detection:** 100% coverage of all element types
-- **Key Construction:** 100% coverage of all rules and edge cases
-- **Integration:** Coverage of all real-world scenarios from Fever Admin project
+- **路徑分析:** 100% 覆蓋所有命名空間/模組/元件模式
+- **元素偵測:** 100% 覆蓋所有元素類型
+- **Key 建構:** 100% 覆蓋所有規則和邊界情況
+- **整合:** 覆蓋 Fever Admin 專案的所有真實世界情境
 
-## Mock Strategy
+## Mock 策略
 
 ### Google AI API Mocking
 ```typescript
@@ -117,52 +117,52 @@ vi.mock('@google/generative-ai', () => ({
 }));
 ```
 
-### File System Mocking
-Not required - tests use in-memory data
+### 文件系統 Mocking
+不需要 - 測試使用記憶體內數據
 
 ### Lang Manager Mocking
-Mocked at the method level to avoid file system dependencies
+在方法層級 mock 以避免文件系統依賴
 
-## Test Data
+## 測試數據
 
-### Sample File Paths
+### 範例文件路徑
 - Editor: `/fever-admin/src/editor/game_aiWebGame/SettingPanel/GameConfig.jsx`
 - Client: `/fever-admin/src/client/game_checkIn/CheckInCard.jsx`
 - Common: `/fever-admin/src/components/common/Button/SaveButton.jsx`
 - UGC: `/fever-admin/src/ugc/components/ugcGallery/waterfall/index.jsx`
 
-### Sample Translations
-All tests include 7 languages:
-- zh-TW (Traditional Chinese)
-- en-US (English)
-- ja (Japanese)
-- th (Thai)
-- es-419 (Spanish Latin America)
-- pt-BR (Portuguese Brazil)
-- zh-CN (Simplified Chinese)
+### 範例翻譯
+所有測試包含 7 種語言:
+- zh-TW（繁體中文）
+- en-US（英文）
+- ja（日文）
+- th（泰文）
+- es-419（拉丁美洲西班牙文）
+- pt-BR（巴西葡萄牙文）
+- zh-CN（簡體中文）
 
-## Known Issues
+## 已知問題
 
-### Issue: Module mocking timing
-**Problem:** `vi.mock()` inside `beforeEach()` doesn't work correctly
-**Solution:** Move `vi.mock()` to top-level, use `vi.doMock()` for dynamic mocking
+### 問題: 模組 mocking 時機
+**問題:** `vi.mock()` 在 `beforeEach()` 內無法正確工作
+**解決方案:** 將 `vi.mock()` 移至頂層，使用 `vi.doMock()` 進行動態 mocking
 
-### Issue: ESM module mocking
-**Problem:** ESM modules harder to mock than CommonJS
-**Solution:** Use Vitest's built-in ESM support
+### 問題: ESM 模組 mocking
+**問題:** ESM 模組比 CommonJS 更難 mock
+**解決方案:** 使用 Vitest 的內建 ESM 支援
 
-## Future Improvements
+## 未來改進
 
-1. **Snapshot Testing:** Add snapshot tests for generated keys
-2. **Property-Based Testing:** Use fast-check for random test generation
-3. **Performance Testing:** Add benchmarks for path analysis speed
-4. **E2E Testing:** Test with real Google AI API (separate test suite)
+1. **快照測試:** 為生成的 key 新增快照測試
+2. **屬性基礎測試:** 使用 fast-check 進行隨機測試生成
+3. **效能測試:** 為路徑分析速度新增基準測試
+4. **E2E 測試:** 使用真實的 Google AI API 測試（單獨的測試套件）
 
-## Continuous Integration
+## 持續整合
 
 ### Pre-commit Hooks
 ```bash
-# Add to package.json
+# 新增到 package.json
 "husky": {
   "hooks": {
     "pre-commit": "npm test"
@@ -172,22 +172,22 @@ All tests include 7 languages:
 
 ### CI Pipeline
 ```yaml
-# GitHub Actions example
+# GitHub Actions 範例
 - name: Run Tests
   run: npm test
 - name: Upload Coverage
   uses: codecov/codecov-action@v3
 ```
 
-## Documentation
+## 文件
 
-- Test files include inline documentation
-- Each test has clear GIVEN/WHEN/THEN structure (BDD) or AAA structure (TDD)
-- Complex logic explained with comments
+- 測試文件包含內聯文件
+- 每個測試都有清晰的 GIVEN/WHEN/THEN 結構（BDD）或 AAA 結構（TDD）
+- 複雜邏輯以註解說明
 
-## Examples
+## 範例
 
-### TDD Unit Test Example
+### TDD 單元測試範例
 ```typescript
 it('should extract namespace "editor" from editor flow paths', async () => {
   // Arrange
@@ -201,7 +201,7 @@ it('should extract namespace "editor" from editor flow paths', async () => {
 });
 ```
 
-### BDD Integration Test Example
+### BDD 整合測試範例
 ```typescript
 it('GIVEN I am in the Editor flow editing AI Web Game settings', async () => {
   // GIVEN
@@ -215,16 +215,16 @@ it('GIVEN I am in the Editor flow editing AI Web Game settings', async () => {
 });
 ```
 
-## Maintenance
+## 維護
 
-- Update tests when adding new namespaces or modules
-- Add new test cases for new element types
-- Keep test data in sync with Fever Admin structure
-- Review and update mocks when dependencies change
+- 新增新的命名空間或模組時更新測試
+- 為新的元素類型新增新測試案例
+- 保持測試數據與 Fever Admin 結構同步
+- 當依賴變更時審查和更新 mock
 
 ---
 
-**Last Updated:** 2025-01-13
-**Test Framework:** Vitest 4.0.8
-**Coverage Tool:** V8
-**Test Files:** 4 files, 68 tests
+**最後更新:** 2025-01-13
+**測試框架:** Vitest 4.0.8
+**覆蓋率工具:** V8
+**測試文件:** 4 個文件，68 個測試
